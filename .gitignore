@@ -1,0 +1,13 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/ProjectNoctis/UtilFiles/credentials.json
+/ProjectNoctis/Migrations
+/ProjectNoctis/GoogleApiWrapper/credentials.json
+/ProjectNoctis/bin/Debug/netcoreapp3.0/UtilFiles/credentials.json
+/.vs/ProjectNoctis/v16
+/.vs/ProjectNoctis
+/ProjectNoctis/bin/Debug/netcoreapp3.0
+ProjectNoctis/ProjectNoctis/token.json
+/ProjectNoctis/token.json
