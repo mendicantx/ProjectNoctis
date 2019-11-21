@@ -21,14 +21,17 @@ namespace ProjectNoctis.Controllers
         private readonly FFRecordContext dbContext;
         private readonly ICharacterRepository characterRepository;
         private readonly ISoulbreakRepository soulbreakRepository;
+        private readonly IMagiciteRepository magiciteRepository;
 
-      
-        public BotController(ILogger<BotController> logger, FFRecordContext dbContext, ICharacterRepository characterRepository, ISoulbreakRepository soulbreakRepository)
+       //TODO: Make a service layer
+        public BotController(ILogger<BotController> logger, FFRecordContext dbContext, ICharacterRepository characterRepository, ISoulbreakRepository soulbreakRepository,
+            IMagiciteRepository magiciteRepository)
         {
             _logger = logger;
             this.dbContext = dbContext;
             this.characterRepository = characterRepository;
             this.soulbreakRepository = soulbreakRepository;
+            this.magiciteRepository = magiciteRepository;
         }
 
         [HttpGet]
@@ -37,9 +40,9 @@ namespace ProjectNoctis.Controllers
 
             
             var sheetContext = new FfrkSheetContext();
-            
-   
 
+
+            magiciteRepository.AddOrUpdateMagicitesFromSheet(sheetContext.Magicites);
             characterRepository.UpdateCharactersFromSheet(sheetContext.Characters);
             var charNames = characterRepository.GetAllCharacterNames();
             soulbreakRepository.UpdateSoulbreaksFromSheet(sheetContext.Soulbreaks, charNames);

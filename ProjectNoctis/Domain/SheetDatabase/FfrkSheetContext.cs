@@ -494,19 +494,19 @@ namespace ProjectNoctis.Domain.SheetDatabase
             {
                 magicites.Add(new SheetMagicites
                 {
-                    Name = magicite[headers.IndexOf("Name")].ToString(),
-                    JPName = magicite[headers.IndexOf("Name (JP)")].ToString(),
-                    Effects = magicite[headers.IndexOf("Effects")].ToString(),
-                    Element = magicite[headers.IndexOf("Element")].ToString(),
-                    Formula = magicite[headers.IndexOf("Formula")].ToString(),
-                    MagiciteId = magicite[headers.IndexOf("ID")].ToString(),
-                    MagiciteUltra = magicite[headers.IndexOf("Magicite Ultra Skill")].ToString(),
-                    Multiplier = magicite[headers.IndexOf("Multiplier")].ToString(),
-                    Rarity = Int32.Parse(magicite[headers.IndexOf("Rarity")].ToString()),
-                    UltraElement = magicite[headers.IndexOf("Ultra Skill Element")].ToString(),
-                    Realm = magicite[headers.IndexOf("Realm")].ToString(),
-                    Type = magicite[headers.IndexOf("Type")].ToString(),
-                    Time = magicite[headers.IndexOf("Time")].ToString(),
+                    Name = GetStringValueFromHeader(magicite, headers, "Name"),
+                    JPName = GetStringValueFromHeader(magicite, headers, "Name (JP)"),
+                    Effects = GetStringValueFromHeader(magicite, headers, "Effects"),
+                    Element = GetStringValueFromHeader(magicite, headers, "Element"),
+                    Formula = GetStringValueFromHeader(magicite, headers, "Formula"),
+                    MagiciteId = GetStringValueFromHeader(magicite, headers, "ID"),
+                    MagiciteUltra = GetStringValueFromHeader(magicite, headers, "Magicite Ultra Skill"),
+                    Multiplier = GetStringValueFromHeader(magicite, headers, "Multiplier"),
+                    Rarity = GetIntValueFromHeader(magicite, headers, "Rarity"),
+                    UltraElement = GetStringValueFromHeader(magicite, headers, "Ultra Skill Element"),
+                    Realm = GetStringValueFromHeader(magicite, headers, "Realm"),
+                    Type = GetStringValueFromHeader(magicite, headers, "Type"),
+                    Time = GetStringValueFromHeader(magicite, headers, "Time"),
                     Passives = ParseMagicitePassives(magicite, headers)
 
                 });
@@ -535,6 +535,30 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
             return passives;
         }
+
+        public string GetStringValueFromHeader(IList<object> item, IList<object> headers, string headerValue)
+        {
+            try
+            {
+                return item[headers.IndexOf(headerValue)].ToString();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public int GetIntValueFromHeader(IList<object> item, IList<object> headers, string headerValue)
+        {
+            try
+            {
+                return Int32.Parse(item[headers.IndexOf(headerValue)].ToString());
+            }
+            catch
+            {
+                return 0;
+            }
+        }
         public void ParseAbilities(IList<IList<object>> abilityData, IList<object> headers)
         {
             var abilities = new List<SheetAbilities>();
@@ -543,22 +567,22 @@ namespace ProjectNoctis.Domain.SheetDatabase
             {
                 abilities.Add(new SheetAbilities
                 {
-                    Name = ability[headers.IndexOf("Name")].ToString(),
-                    School = ability[headers.IndexOf("School")].ToString(),
-                    SB = ability[headers.IndexOf("SB")].ToString(),
-                    ID = ability[headers.IndexOf("ID")].ToString(),
-                    AutoTarget = ability[headers.IndexOf("Auto Target")].ToString(),
-                    Effects = ability[headers.IndexOf("Effects")].ToString(),
-                    Element = ability[headers.IndexOf("Element")].ToString(),
-                    Formula = ability[headers.IndexOf("Formula")].ToString(),
-                    JPName = ability[headers.IndexOf("Name (JP)")].ToString(),
-                    Max = ability[headers.IndexOf("Max")].ToString(),
-                    Multiplier = ability[headers.IndexOf("Multiplier")].ToString(),
-                    Rarity = ability[headers.IndexOf("Rarity")].ToString(),
-                    Target = ability[headers.IndexOf("Target")].ToString(),
-                    Time = ability[headers.IndexOf("Time")].ToString(),
-                    Type = ability[headers.IndexOf("Type")].ToString(),
-                    Uses = ability[headers.IndexOf("Uses")].ToString()
+                    Name = GetStringValueFromHeader(ability,headers,"Name"),
+                    School = GetStringValueFromHeader(ability, headers, "School"),
+                    SB = GetStringValueFromHeader(ability, headers, "SB"),
+                    ID = GetStringValueFromHeader(ability, headers, "ID"),
+                    AutoTarget = GetStringValueFromHeader(ability, headers, "Auto Target"),
+                    Effects = GetStringValueFromHeader(ability, headers, "Effects"),
+                    Element = GetStringValueFromHeader(ability, headers, "Element"),
+                    Formula = GetStringValueFromHeader(ability, headers, "Formula"),
+                    JPName = GetStringValueFromHeader(ability, headers, "Name (JP)"),
+                    Max = GetStringValueFromHeader(ability, headers, "Max"),
+                    Multiplier = GetStringValueFromHeader(ability, headers, "Multiplier"),
+                    Rarity = GetStringValueFromHeader(ability, headers, "Rarity"),
+                    Target = GetStringValueFromHeader(ability, headers, "Target"),
+                    Time = GetStringValueFromHeader(ability, headers, "Time"),
+                    Type = GetStringValueFromHeader(ability, headers, "Type"),
+                    Uses = GetStringValueFromHeader(ability, headers, "Uses")
                 });
             }
 

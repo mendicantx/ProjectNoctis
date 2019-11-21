@@ -20,6 +20,7 @@ namespace ProjectNoctis.Domain.Database
         public DbSet<DbSkills> Skills { get; set; }
         public DbSet<DbEquipment> Equipment { get; set; }
         public DbSet<DbSoulbreaks> Soulbreaks { get; set; }
+        public DbSet<DbMagicite> Magicites { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -54,6 +55,10 @@ namespace ProjectNoctis.Domain.Database
                 HasOne(x => x.Skill).
                 WithMany(x => x.Characters).
                 HasForeignKey(x => x.SkillId);
+
+            modelBuilder.Entity<DbMagicite>().
+                HasMany(x => x.Passives);
+                
         }
     }
 }

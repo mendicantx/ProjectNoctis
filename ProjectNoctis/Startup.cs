@@ -35,7 +35,7 @@ namespace ProjectNoctis
             services.AddDbContext<FFRecordContext>();
             services.AddTransient<ICharacterRepository, CharacterRepository>();
             services.AddTransient<ISoulbreakRepository, SoulbreakRepository>();
-            services.AddMvc().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            services.AddTransient<IMagiciteRepository, MagiciteRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
