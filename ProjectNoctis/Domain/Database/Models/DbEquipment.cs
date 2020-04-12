@@ -11,7 +11,6 @@ namespace ProjectNoctis.Domain.Database.Models
         [Key]
         public int EquipmentId { get; set; }
         public string Equipment { get; set; }
-        public virtual ICollection<DbCharacterEquipment> Characters { get; set; }
 
     }
 }

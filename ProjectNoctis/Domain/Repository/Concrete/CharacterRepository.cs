@@ -7,6 +7,7 @@ using ProjectNoctis.Domain.SheetDatabase.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace ProjectNoctis.Domain.Repository.Concrete
@@ -14,51 +15,35 @@ namespace ProjectNoctis.Domain.Repository.Concrete
     public class CharacterRepository : ICharacterRepository
     {
         private readonly FFRecordContext dbContext;
+        private List<DbEquipment> dbEquipmentCache;
+        private List<DbSkills> dbSkillsCache;
+
         public CharacterRepository(FFRecordContext context)
         {
             dbContext = context;
         }
 
+        private void InitializeEquipmentAndSkillCache()
+        {
+            dbEquipmentCache = dbContext.Equipment.ToList();
+            dbSkillsCache = dbContext.Skills.ToList();
+        }
 
         public void UpdateCharactersFromSheet(IList<SheetCharacters> characters)
         {
+            InitializeEquipmentAndSkillCache();
             var charactersToUpdate = new List<DbCharacters>();
-            foreach (var c in characters)
+            try
             {
-                var characterToUpdate = GetCharacterByName(c.Name);
-
-                if (characterToUpdate == null)
+                foreach (var c in characters)
                 {
+                    var characterToUpdate = dbContext.Characters.FirstOrDefault(x => x.CharacterId == c.CharacterId);
 
-                    var character = new DbCharacters
+                    if (characterToUpdate == null)
                     {
-                        BaseDef = c.BaseDef,
-                        BaseAcc = c.BaseAcc,
-                        BaseAtk = c.BaseAtk,
-                        BaseEva = c.BaseEva,
-                        BaseHp = c.BaseHp,
-                        BaseMag = c.BaseMag,
-                        BaseMnd = c.BaseMnd,
-                        BaseRes = c.BaseRes,
-                        BaseSpd = c.BaseSpd,
-                        CharacterId = c.CharacterId,
-                        Name = c.Name,
-                        Realm = c.Realm,
+                        characterToUpdate = new DbCharacters();
+                    }
 
-                    };
-
-                    character.Equipment = UpdateOrAddEquipmentFromSheet(c.Equipment).
-                        Select(x => new DbCharacterEquipment { Equipment = x, EquipmentId = x.EquipmentId, Character = character }).
-                        ToList();
-
-                    character.Skills = UpdateOrAddSkillsFromSheet(c.Skills).
-                        Select(x => new DbCharacterSkills { Skill = x, SkillId = x.SkillId, Character = character }).
-                        ToList();
-
-                    dbContext.Add(character);
-                }
-                else
-                {
                     characterToUpdate.BaseDef = c.BaseDef;
                     characterToUpdate.BaseAcc = c.BaseAcc;
                     characterToUpdate.BaseAtk = c.BaseAtk;
@@ -71,75 +56,96 @@ namespace ProjectNoctis.Domain.Repository.Concrete
                     characterToUpdate.Name = c.Name;
                     characterToUpdate.Realm = c.Realm;
                     characterToUpdate.CharacterId = c.CharacterId;
-                    var characterSkills = UpdateOrAddSkillsFromSheet(c.Skills);
-                    var characterEquips = UpdateOrAddEquipmentFromSheet(c.Equipment);
 
-                    foreach (var equip in characterEquips)
+                    if(characterToUpdate.Id == 0)
                     {
-                        DbCharacterEquipment matchedCharacterEquip = null;
-                        if (characterToUpdate.Equipment != null && characterToUpdate.Equipment.Count() != 0)
-                        {
-                            matchedCharacterEquip = characterToUpdate.Equipment.FirstOrDefault(x => x.Equipment == equip);
-                        }
-                        else
-                        {
-                            characterToUpdate.Equipment = new List<DbCharacterEquipment>();
-                        }
-
-                        if (matchedCharacterEquip == null)
-                        {
-                            characterToUpdate.Equipment.Add(new DbCharacterEquipment
-                            {
-                                Character = characterToUpdate,
-                                CharacterId = characterToUpdate.Id,
-                                Equipment = equip,
-                                EquipmentId = equip.EquipmentId
-                            });
-                        }
-                        else
-                        {
-                            matchedCharacterEquip.Equipment = equip;
-                        }
+                        dbContext.Characters.Add(characterToUpdate);
                     }
-
-                    foreach (var skill in characterSkills)
-                    {
-                        DbCharacterSkills matchedSkill = null;
-
-                        if (characterToUpdate.Skills != null)
-                        {
-                            matchedSkill = characterToUpdate.Skills.FirstOrDefault(x => x.Skill == skill);
-                        }
-                        else
-                        {
-                            characterToUpdate.Skills = new List<DbCharacterSkills>();
-                        }
-
-                        if (matchedSkill == null)
-                        {
-                            characterToUpdate.Skills.Add(new DbCharacterSkills
-                            {
-                                Skill = skill,
-                                SkillId = skill.SkillId,
-                                Character = characterToUpdate,
-                                CharacterId = characterToUpdate.Id
-                            });
-                        }
-                        else
-                        {
-                            matchedSkill.Skill = skill;
-                        }
-                    }
-
-                    charactersToUpdate.Add(characterToUpdate);
                     
+                    foreach (var equip in c.Equipment)
+                    {
+                        var existingEquip = GetDbEquipment(equip);
+                    }
+
+                    foreach (var skill in c.Skills.Keys)
+                    {
+                        var existingSkill = GetDbSkills(new KeyValuePair<string, int>(skill, c.Skills[skill]));
+                    }
                 }
+            }
+            catch(Exception ex)
+            {
 
             }
-            dbContext.UpdateRange(charactersToUpdate);
+            
+
             dbContext.SaveChanges();
+
+            UpdateCharacterEquipmentFromSheet(characters);
+            UpdateCharacterSkillsFromSheet(characters);
         }
 
+
+        public void UpdateCharacterEquipmentFromSheet(IList<SheetCharacters> characters)
+        {
+            foreach (var c in characters)
+            {
+                var characterToUpdate = dbContext.Characters.Include(x => x.CharacterEquipment).FirstOrDefault(x => x.CharacterId == c.CharacterId);
+
+                if(characterToUpdate.CharacterEquipment == null)
+                {
+                    characterToUpdate.CharacterEquipment = new List<DbCharacterEquipment>();
+                }
+
+                foreach (var equip in c.Equipment)
+                {
+                    var existingEquip = GetDbEquipment(equip);
+                    var currentEquip = characterToUpdate.CharacterEquipment.FirstOrDefault(x => x.EquipmentId == existingEquip.EquipmentId);
+
+                    if (currentEquip == null)
+                    {
+                        currentEquip = new DbCharacterEquipment();
+                        currentEquip.EquipmentId = existingEquip.EquipmentId;
+                        currentEquip.Equipment = existingEquip;
+                        currentEquip.Character = characterToUpdate;
+                        currentEquip.CharacterId = characterToUpdate.Id;
+                        characterToUpdate.CharacterEquipment.Add(currentEquip);
+                    }
+                }
+
+                dbContext.SaveChanges();
+            }
+        }
+
+        public void UpdateCharacterSkillsFromSheet(IList<SheetCharacters> characters)
+        {
+            foreach (var c in characters)
+            {
+                var characterToUpdate = dbContext.Characters.Include(x => x.CharacterSkills).FirstOrDefault(x => x.CharacterId == c.CharacterId);
+
+                if (characterToUpdate.CharacterSkills == null)
+                {
+                    characterToUpdate.CharacterSkills = new List<DbCharacterSkills>();
+                }
+
+                foreach (var skill in c.Skills.Keys)
+                {
+                    var existingSkill = GetDbSkills(new KeyValuePair<string, int>(skill, c.Skills[skill]));
+                    var currentSkill = characterToUpdate.CharacterSkills.FirstOrDefault(x => x.SkillId == existingSkill.SkillId);
+
+                    if (currentSkill == null)
+                    {
+                        currentSkill = new DbCharacterSkills();
+                        currentSkill.SkillId = existingSkill.SkillId;
+                        currentSkill.Skill = existingSkill;
+                        currentSkill.Character = characterToUpdate;
+                        currentSkill.CharacterId = characterToUpdate.Id;
+                        characterToUpdate.CharacterSkills.Add(currentSkill);
+                    }
+                }
+                
+            }
+        }
         public IList<DbCharacters> GetAllCharacters()
         {
             return dbContext.Characters.
@@ -156,74 +162,150 @@ namespace ProjectNoctis.Domain.Repository.Concrete
             return dbContext.Characters.FirstOrDefault(x => x.CharacterId == characterId);
         }
 
-        public DbEquipment GetEquipmentByName(string name)
+        public void UpdateLegendSpheresFromSheet(IList<SheetLegendSpheres> legendSpheres)
         {
-            return dbContext.Equipment.FirstOrDefault(x => x.Equipment == name);
-        }
-
-        public DbSkills GetSkillByNameAndValue(string name, int value)
-        {
-            return dbContext.Skills.FirstOrDefault(x => x.SkillName == name && x.SkillValue == value);
-        }
-
-        public IList<DbSkills> UpdateOrAddSkillsFromSheet(Dictionary<string, int> skills)
-        {
-            var skillsToAddOrUpdate = new List<DbSkills>();
-            foreach (var skill in skills)
+            foreach (var sphere in legendSpheres)
             {
-                var matchedSkill = GetSkillByNameAndValue(skill.Key, skill.Value);
-                if (matchedSkill == null)
+                var currentSphere = dbContext.LegendSpheres.FirstOrDefault(x => x.Character == sphere.Character);
+
+                if (currentSphere == null)
                 {
-                    skillsToAddOrUpdate.Add(new DbSkills
-                    {
-                        SkillName = skill.Key,
-                        SkillValue = skill.Value
-                    });
+                    currentSphere = new DbLegendSpheres();
+                }
+
+                currentSphere.Character = sphere.Character;
+                currentSphere.Misc = String.Join("&", sphere.Misc);
+                currentSphere.Stats = JsonSerializer.Serialize(sphere.Stats);
+                currentSphere.MoteOne = sphere.MoteOne;
+                currentSphere.MoteTwo = sphere.MoteTwo;
+
+                if (currentSphere.Id == 0)
+                {
+                    dbContext.Add(currentSphere);
                 }
                 else
                 {
-                    skillsToAddOrUpdate.Add(matchedSkill);
+                    dbContext.Update(currentSphere);
                 }
             }
 
-            dbContext.UpdateRange(skillsToAddOrUpdate);
             dbContext.SaveChanges();
-            return skillsToAddOrUpdate;
         }
 
-        public IList<DbEquipment> UpdateOrAddEquipmentFromSheet(List<string> equipment)
+        public void UpdateRecordSpheresFromSheet(IList<SheetRecordSpheres> recordSpheres)
         {
-            var equipmentToAddOrUpdate = new List<DbEquipment>();
-            foreach (var equip in equipment)
+            foreach (var sphere in recordSpheres)
             {
-                var matchedEquip = GetEquipmentByName(equip);
-                if (matchedEquip == null)
+                var currentSphere = dbContext.RecordSpheres.FirstOrDefault(x => x.Character == sphere.Character);
+
+                if (currentSphere == null)
                 {
-                    equipmentToAddOrUpdate.Add(new DbEquipment
-                    {
-                        Equipment = equip
-                    });
+                    currentSphere = new DbRecordSpheres();
+                }
+
+                currentSphere.Character = sphere.Character;
+                currentSphere.Misc = String.Join("&", sphere.Misc);
+                currentSphere.Stats = JsonSerializer.Serialize(sphere.Stats);
+
+                if (currentSphere.Id == 0)
+                {
+                    dbContext.Add(currentSphere);
                 }
                 else
                 {
-                    equipmentToAddOrUpdate.Add(matchedEquip);
+                    dbContext.Update(currentSphere);
                 }
             }
 
-            dbContext.UpdateRange(equipmentToAddOrUpdate);
             dbContext.SaveChanges();
-            return equipmentToAddOrUpdate;
+        }
+
+        public void UpdateRecordBoardsFromSheet(IList<SheetRecordBoards> recordBoards)
+        {
+            foreach (var board in recordBoards)
+            {
+                var currentBoard = dbContext.RecordBoards.FirstOrDefault(x => x.Character == board.Character);
+
+                if (currentBoard == null)
+                {
+                    currentBoard = new DbRecordBoards();
+                }
+
+                currentBoard.Character = board.Character;
+                currentBoard.BoardMisc = String.Join("&", board.BoardMisc);
+                currentBoard.BoardBonusStats = JsonSerializer.Serialize(board.BoardBonusStats);
+                currentBoard.MotesRequired = JsonSerializer.Serialize(board.MotesRequired);
+
+                if (currentBoard.Id == 0)
+                {
+                    dbContext.Add(currentBoard);
+                }
+                else
+                {
+                    dbContext.Update(currentBoard);
+                }
+            }
+
+            dbContext.SaveChanges();
         }
 
         public DbCharacters GetCharacterByName(string name)
         {
             return dbContext.Characters.
+                Include(x => x.RecordBoard).
+                Include(x => x.RecordMaterias).
+                Include(x => x.LegendMaterias).
+                Include(x => x.LegendSphere).
                 Include(x => x.Soulbreaks).
-                Include(x => x.Equipment).
-                ThenInclude(x => x.Equipment).
-                Include(x => x.Skills).
-                ThenInclude(x => x.Skill).
+                Include(x => x.RecordSphere).
                 FirstOrDefault(x => x.Name.ToLower() == name.ToLower());
+        }
+
+      
+
+        private DbEquipment GetDbEquipment(string equipmentName)
+        {
+            var equipment = dbEquipmentCache.FirstOrDefault(x => x.Equipment == equipmentName);
+
+            if (equipment == null)
+            {
+                if (equipment == null)
+                {
+                    equipment = new DbEquipment
+                    {
+                        Equipment = equipmentName
+                    };
+
+                    dbContext.Equipment.Add(equipment);
+                }
+
+                dbEquipmentCache.Add(equipment);
+            }
+
+            return equipment;
+        }
+
+        private DbSkills GetDbSkills(KeyValuePair<string,int> skill)
+        {
+            var currentSkill = dbSkillsCache.FirstOrDefault(x => x.SkillName == skill.Key && x.SkillValue == skill.Value );
+
+            if (currentSkill == null)
+            {
+                if (currentSkill == null)
+                {
+                    currentSkill = new DbSkills
+                    {
+                        SkillValue = skill.Value,
+                        SkillName = skill.Key
+                    };
+
+                    dbContext.Add(currentSkill);
+                }
+
+                dbSkillsCache.Add(currentSkill);
+            }
+
+            return currentSkill;
         }
     }
 }

@@ -99,30 +99,45 @@ namespace ProjectNoctis.Domain.SheetDatabase
             var recordBoards = new List<SheetRecordBoards>();
             boardData = boardData.Where(x => x.Count() >= 5).ToList();
             var boards = boardData.GroupBy(x => x[1]);
-
-            foreach (var board in boards)
+            try
             {
-                var characterStats = new Dictionary<string, int>();
-                var characterMisc = new List<string>();
-                var characterName = board.Key.ToString();
-                var boardMotes = new Dictionary<string, int>();
-                
-                foreach(var characterBonus in board)
+                foreach (var board in boards)
                 {
-                    ParseBoardBonus(characterBonus, characterStats, characterMisc);
-                    ParseBoardMotes(characterBonus, boardMotes);
+                    var characterStats = new Dictionary<string, int>();
+                    var characterMisc = new List<string>();
+                    var characterName = board.Key.ToString();
+                    var boardMotes = new Dictionary<string, int>();
+
+                    try
+                    {
+                        foreach (var characterBonus in board)
+                        {
+
+                            ParseBoardBonus(characterBonus, characterStats, characterMisc);
+                            ParseBoardMotes(characterBonus, boardMotes);
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        
+                    }
+
+                    recordBoards.Add(new SheetRecordBoards
+                    {
+                        BoardBonusStats = characterStats,
+                        BoardMisc = characterMisc,
+                        Character = characterName,
+                        MotesRequired = boardMotes
+                    });
                 }
 
-                recordBoards.Add(new SheetRecordBoards
-                {
-                    BoardBonusStats = characterStats,
-                    BoardMisc = characterMisc,
-                    Character = characterName,
-                    MotesRequired = boardMotes
-                });
+                RecordBoards = recordBoards;
             }
+            catch(Exception ex)
+            {
 
-            RecordBoards = recordBoards;
+            }
+            
         }
 
         public void ParseBoardBonus(IList<object> board, Dictionary<string,int> bonusStats, List<string> misc)
@@ -133,7 +148,15 @@ namespace ProjectNoctis.Domain.SheetDatabase
             {
                 var statSplit = stringStat.Split("+");
                 var statName = statSplit[0];
-                var statValue = Int32.Parse(new String(statSplit[1].Where(Char.IsDigit).ToArray()));
+                var statValue = 0;
+                try
+                {
+                    statValue = Int32.Parse(new String(statSplit[1].Where(Char.IsDigit).ToArray())); 
+                }
+                catch(Exception ex)
+                {
+
+                }
 
                 if (bonusStats.ContainsKey(statName))
                 {
@@ -273,7 +296,8 @@ namespace ProjectNoctis.Domain.SheetDatabase
                     Character = characterName,
                     Misc = characterMisc,
                     Stats = characterStats,
-                    MoteOne = mote1
+                    MoteOne = mote1,
+                    MoteTwo = mote2
 
                 });
             }
@@ -481,7 +505,8 @@ namespace ProjectNoctis.Domain.SheetDatabase
                     SoulbreakId = soulbreak[headers.IndexOf("ID")].ToString(),
                     Target = soulbreak[headers.IndexOf("Target")].ToString(),
                     Tier = soulbreak[headers.IndexOf("Tier")].ToString(),
-                    Type = soulbreak[headers.IndexOf("Type")].ToString()
+                    Type = soulbreak[headers.IndexOf("Type")].ToString(),
+                    Time = soulbreak[headers.IndexOf("Time")].ToString()
                 });
             }
             Soulbreaks = soulbreaks;

@@ -24,8 +24,41 @@ namespace ProjectNoctis.Domain.Database.Models
         public int BaseAcc { get; set; }
         public int BaseEva { get; set; }
         public int BaseSpd { get; set; }
-        public virtual ICollection<DbCharacterSkills> Skills { get; set; }
-        public virtual ICollection<DbCharacterEquipment> Equipment { get; set; }
+        public virtual ICollection<DbCharacterSkills> CharacterSkills { get; set; }
+        public virtual ICollection<DbCharacterEquipment> CharacterEquipment { get; set; }
+
         public virtual ICollection<DbSoulbreaks> Soulbreaks { get; set; }
+        public virtual ICollection<DbLegendMaterias> LegendMaterias { get; set; }
+        public virtual ICollection<DbRecordMaterias> RecordMaterias { get; set; }
+        public virtual DbLegendSpheres LegendSphere { get; set; }
+        public virtual DbRecordSpheres RecordSphere { get; set; }
+        public virtual DbRecordBoards RecordBoard { get; set; }
+
+
+        [NotMapped]
+        public ICollection<DbSkills> Skills
+        {
+            get
+            {
+                if (CharacterSkills != null)
+                {
+                    return CharacterSkills.Select(x => x.Skill).ToList();
+                }
+                return null;
+            }
+        }
+
+        [NotMapped]
+        public ICollection<DbEquipment> Equipment
+        {
+            get
+            {
+                if (CharacterEquipment != null)
+                {
+                    return CharacterEquipment.Select(x => x.Equipment).ToList();
+                }
+                return null;
+            }
+        }
     }
 }

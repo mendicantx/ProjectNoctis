@@ -13,3 +13,4 @@ namespace ProjectNoctis.Domain.Database.Models
         public virtual DbCharacters Character { get; set;}
     }
 }
+

@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ProjectNoctis.Domain.SheetDatabase.Models
+namespace ProjectNoctis.Services.Models
 {
-    public class SheetSoulbreaks
+    public class Soulbreak
     {
         public string Name { get; set; }
         public string Realm { get; set; }
         public string Character { get; set; }
         public string Tier { get; set; }
-        public string Time { get; set; }
         public string Type { get; set; }
         public string Element { get; set; }
         public string Effects { get; set; }
@@ -20,9 +19,15 @@ namespace ProjectNoctis.Domain.SheetDatabase.Models
         public string Multiplier { get; set; }
         public string Formula { get; set; }
         public string Target { get; set; }
+        public string Time { get; set; }
         public string Relic { get; set; }
         public string JPName { get; set; }
         public string SoulbreakId { get; set; }
         public string Anima { get; set; }
+
+        public IList<BraveCommand> BraveCommands { get; set; }
+        public IList<BurstCommand> BurstCommands { get; set; }
+        public IList<SynchroCommand> SynchroCommands { get; set; }
+        public IList<Status> Statuses { get; set; }
     }
 }

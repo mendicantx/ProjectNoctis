@@ -18,6 +18,7 @@ namespace ProjectNoctis.Domain.Database.Models
         public string Type { get; set; }
         public string Element { get; set; }
         public string Effects { get; set; }
+        public string Time { get; set; }
         public string Points { get; set; }
         public string SoulbreakBonus { get; set; }
         public string Multiplier { get; set; }
@@ -27,6 +28,27 @@ namespace ProjectNoctis.Domain.Database.Models
         public string JPName { get; set; }
         public string SoulbreakId { get; set; }
         public string Anima { get; set; }
-        
+
+        public virtual ICollection<DbBurstCommands> BurstCommands { get; set; }
+        public virtual ICollection<DbBraveCommands> BraveCommands { get; set; }
+        public virtual ICollection<DbSynchroCommands> SynchroCommands { get; set; }
+        public virtual ICollection<DbSoulbreakStatuses> SoulbreakStatuses { get; set; }
+
+        [NotMapped]
+        public ICollection<DbStatuses> Statuses { get 
+            {
+                if(SoulbreakStatuses != null)
+                {
+                    return SoulbreakStatuses.Select(x => x.Status).ToList();
+                }
+                return null;
+            }
+
+            set
+            {
+                Statuses = value;
+            }
+        }
+         
     }
 }

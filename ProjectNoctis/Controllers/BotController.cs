@@ -5,49 +5,76 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using ProjectNoctis.Domain.Database;
 using ProjectNoctis.Domain.Repository.Concrete;
 using ProjectNoctis.Domain.Repository.Interfaces;
 using ProjectNoctis.Domain.SheetDatabase;
+using ProjectNoctis.Services.Interfaces;
 
 namespace ProjectNoctis.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    //[Route("[controller]/[action]")]
     public class BotController : ControllerBase
     {    
         private readonly ILogger<BotController> _logger;
-        private readonly FFRecordContext dbContext;
+        private readonly ISheetUpdateService sheetUpdateService;
         private readonly ICharacterRepository characterRepository;
         private readonly ISoulbreakRepository soulbreakRepository;
-        private readonly IMagiciteRepository magiciteRepository;
+        private readonly ISoulbreakManager soulbreakManager;
+        
 
        //TODO: Make a service layer
-        public BotController(ILogger<BotController> logger, FFRecordContext dbContext, ICharacterRepository characterRepository, ISoulbreakRepository soulbreakRepository,
-            IMagiciteRepository magiciteRepository)
+        public BotController(ILogger<BotController> logger, ISheetUpdateService sheetUpdateService, ICharacterRepository characterRepository, ISoulbreakRepository soulbreakRepository,
+            ISoulbreakManager soulbreakManager)
         {
             _logger = logger;
-            this.dbContext = dbContext;
+            this.sheetUpdateService = sheetUpdateService;
             this.characterRepository = characterRepository;
             this.soulbreakRepository = soulbreakRepository;
-            this.magiciteRepository = magiciteRepository;
+            this.soulbreakManager = soulbreakManager;
         }
 
+        [Route("Bot/Index")]
         [HttpGet]
         public ActionResult<string> Index()
         {
 
-            
-            var sheetContext = new FfrkSheetContext();
-
-
-            magiciteRepository.AddOrUpdateMagicitesFromSheet(sheetContext.Magicites);
-            characterRepository.UpdateCharactersFromSheet(sheetContext.Characters);
-            var charNames = characterRepository.GetAllCharacterNames();
-            soulbreakRepository.UpdateSoulbreaksFromSheet(sheetContext.Soulbreaks, charNames);
-            var character = characterRepository.GetCharacterByName("Lunafreya");
-            return JsonConvert.SerializeObject(character);
+            return "Hello";
         }
+
+        [Route("Bot/UpdateDatabase")]
+        [HttpGet]
+        public ActionResult<string> UpdateDatabase()
+        {
+            var updated = sheetUpdateService.UpdateDatabase();
+            return updated.ToString();
+
+        }
+
+        [Route("Bot/GetCharacter")]
+        [HttpGet]
+        public ActionResult<string> GetCharacter(string charName)
+        {
+            var character = characterRepository.GetCharacterByName(charName);
+            return System.Text.Json.JsonSerializer.Serialize(character);
+        }
+
+        [HttpGet]
+        [Route("Bot/UpdateSoulbreakStatuses")]
+        public ActionResult<string> UpdateSoulbreakStatuses()
+        {
+            soulbreakRepository.UpdateSoulbreakStatuses();
+            return "true";
+        }
+
+        [HttpGet]
+        [Route("Bot/GetSoulbreakByCharacterName")]
+        public ActionResult<string> GetSoulbreakByCharacterName(string charName)
+        {
+            var soulbreaks = soulbreakManager.GetSoulbreaksByCharacter(charName);
+            return JsonSerializer.Serialize(soulbreaks);
+        }
+
     }
 }

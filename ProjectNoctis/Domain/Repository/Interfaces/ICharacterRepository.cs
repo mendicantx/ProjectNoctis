@@ -10,10 +10,10 @@ namespace ProjectNoctis.Domain.Repository.Interfaces
         IList<string> GetAllCharacterNames();
         DbCharacters GetCharacterByCharId(string characterId);
         DbCharacters GetCharacterByName(string name);
-        DbEquipment GetEquipmentByName(string name);
-        DbSkills GetSkillByNameAndValue(string name, int value);
         void UpdateCharactersFromSheet(IList<SheetCharacters> characters);
-        IList<DbEquipment> UpdateOrAddEquipmentFromSheet(List<string> equipment);
-        IList<DbSkills> UpdateOrAddSkillsFromSheet(Dictionary<string, int> skills);
+        void UpdateLegendSpheresFromSheet(IList<SheetLegendSpheres> legendSpheres);
+        void UpdateRecordSpheresFromSheet(IList<SheetRecordSpheres> recordSpheres);
+        void UpdateRecordBoardsFromSheet(IList<SheetRecordBoards> recordBoards);
+
     }
 }

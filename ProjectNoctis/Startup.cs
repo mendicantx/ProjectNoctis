@@ -15,6 +15,9 @@ using Newtonsoft.Json;
 using ProjectNoctis.Domain.Database;
 using ProjectNoctis.Domain.Repository.Concrete;
 using ProjectNoctis.Domain.Repository.Interfaces;
+using ProjectNoctis.Services.Concrete;
+using ProjectNoctis.Services.Interfaces;
+using ProjectNoctis.UtilFiles.AutoMapper;
 
 namespace ProjectNoctis
 {
@@ -31,11 +34,16 @@ namespace ProjectNoctis
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddAutoMapper(typeof(Startup));
+            services.AddAutoMapper(typeof(Startup),typeof(AutoMappingProfile));
             services.AddDbContext<FFRecordContext>();
+            services.AddTransient<ISoulbreakManager, SoulbreakManager>();
             services.AddTransient<ICharacterRepository, CharacterRepository>();
             services.AddTransient<ISoulbreakRepository, SoulbreakRepository>();
             services.AddTransient<IMagiciteRepository, MagiciteRepository>();
+            services.AddTransient<IStatusRepository, StatusRepository>();
+            services.AddTransient<ISheetUpdateService, SheetUpdateService>();
+            services.AddMvc(option => option.EnableEndpointRouting = false);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,14 +56,14 @@ namespace ProjectNoctis
 
             app.UseHttpsRedirection();
 
-            app.UseRouting();
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseMvc(routes =>
+                    routes.MapRoute(
+                        name: "default",
+                        template: "{controller=Home}/{action=Index}"));
         }
     }
 }
+

@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Services\Concrete\" />
-    <Folder Include="Services\Interfaces\" />
+    <Compile Remove="Migrations\20200109181943_addingcommands.cs" />
+    <Compile Remove="Migrations\20200109181943_addingcommands.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
