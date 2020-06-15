@@ -21,5 +21,12 @@ namespace ProjectNoctis.Domain.SheetDatabase.Models
         public string BurstId { get; set; }
         public string Time { get; set; }
         public string JPName { get; set; }
+        public string BurstImage
+        {
+            get
+            {
+                return $"{Constants.Constants.ffrkImageBaseUrl}ability/{BurstId}/{BurstId}_128.png";
+            }
+        }
     }
 }

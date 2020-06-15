@@ -20,5 +20,7 @@ namespace ProjectNoctis.Domain.SheetDatabase.Models
         public string School { get; set; }
         public string OtherId { get; set; }
         public string SB { get; set; }
+
+        public Dictionary<string, List<SheetStatus>> OtherStatuses { get; set; }
     }
 }

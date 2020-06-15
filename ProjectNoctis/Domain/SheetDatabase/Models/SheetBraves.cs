@@ -23,5 +23,13 @@ namespace ProjectNoctis.Domain.SheetDatabase.Models
         public string BraveId { get; set; }
         public string Time { get; set; }
         public string JPName { get; set; }
+        public string BraveImage
+        {
+            get
+            {
+                return $"{Constants.Constants.ffrkImageBaseUrl}brave/level/level_{BraveLevel}.png";
+            }
+        }
+
     }
 }

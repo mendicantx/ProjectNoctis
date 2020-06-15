@@ -1,293 +1,131 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ProjectNoctis.Domain.Database;
-using ProjectNoctis.Domain.Database.Models;
+﻿using Discord;
+using Discord.Commands;
+using FuzzySharp;
+using Google.Apis.Sheets.v4.Data;
+using ProjectNoctis.Domain.Models;
 using ProjectNoctis.Domain.Repository.Interfaces;
+using ProjectNoctis.Domain.SheetDatabase;
 using ProjectNoctis.Domain.SheetDatabase.Models;
-using System;
+using ProjectNoctis.Services.Models;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ProjectNoctis.Domain.Repository.Concrete
 {
     public class SoulbreakRepository : ISoulbreakRepository
     {
-        private readonly FFRecordContext dbContext;
-        public SoulbreakRepository(FFRecordContext context)
+        private readonly IFfrkSheetContext dbContext;
+        private readonly Aliases aliases;
+
+        public SoulbreakRepository(IFfrkSheetContext context, Aliases aliases)
         {
             dbContext = context;
+            this.aliases = aliases;
         }
 
-        public DbSoulbreaks GetSoulbreakById(string id)
+        public List<SheetSoulbreaks> GetSoulbreaksByCharacterName(string tier, string name, int? index = null)
         {
-            return dbContext.Soulbreaks.FirstOrDefault(x => x.SoulbreakId == id);
-        }
+            var charNames = dbContext.Characters.Select(x => x.Name.ToLower());
 
-        public IList<DbSoulbreaks> GetSoulbreaksByCharacters(string charName)
-        {
-            var soulbreaks = dbContext.Soulbreaks
-                .Include(x => x.BraveCommands)
-                .Include(x => x.BurstCommands)
-                .Include(x => x.SynchroCommands)
-                .Include(x => x.SoulbreakStatuses)
-                .ThenInclude(x => x.Status)
-                .Where(x => x.Character.ToUpper() == charName.ToUpper())
-                .ToList();
+            name = aliases.ResolveAlias(name);
+
+            if (!charNames.Contains(name.ToLower()))
+            {
+                name = charNames.OrderByDescending(x => Fuzz.PartialRatio(x, name.ToLower())).FirstOrDefault();
+            }
+
+            List<SheetSoulbreaks> soulbreaks = new List<SheetSoulbreaks>(); 
+            if (tier == "g")
+            {
+                soulbreaks = dbContext.Soulbreaks.Where(x => x.Character.ToLower() == name.ToLower() && (x.Tier == "Glint" || x.Tier == "Glint+")).ToList();
+            }
+            else if (tier == "brave")
+            {
+                soulbreaks = dbContext.Soulbreaks.Where(x => x.Character.ToLower() == name.ToLower() && x.Effects.Contains("[Brave Mode]")).ToList();
+            }
+            else
+            {
+                soulbreaks = dbContext.Soulbreaks.Where(x => x.Character.ToLower() == name.ToLower() && x.Tier == tier).ToList();
+            }
+           
+            if (index != null)
+            {
+                if (index.Value < soulbreaks.Count() && index > -1)
+                {
+                    return new List<SheetSoulbreaks>() { soulbreaks[index.Value] };
+                }
+            }
 
             return soulbreaks;
         }
-        public void UpdateSynchroCommandsFromSheet(IList<SheetSynchros> sheetSynchros)
+
+        public List<SheetSoulbreaks> GetAllSoulbreaksByCharacterName(string name)
         {
-            foreach(var synchro in sheetSynchros)
+            var charNames = dbContext.Characters.Select(x => x.Name.ToLower());
+
+            if (aliases.AliasList.ContainsKey(name.ToLower()))
             {
-                var currentSynchro = dbContext.SynchroCommands.FirstOrDefault(x => x.SynchroId == synchro.SynchroId);
-
-                if(currentSynchro == null)
-                {
-                    currentSynchro = new DbSynchroCommands();
-                }
-
-                currentSynchro.SynchroId = synchro.SynchroId;
-                currentSynchro.SynchroSlot = synchro.SynchroSlot;
-                currentSynchro.SynchroConditionId = synchro.SynchroConditionId;
-                currentSynchro.SynchroCondition = synchro.SynchroCondition;
-                currentSynchro.Source = synchro.Source;
-                currentSynchro.School = synchro.School;
-                currentSynchro.SB = synchro.SB;
-                currentSynchro.Name = synchro.Name;
-                currentSynchro.Character = synchro.Character;
-                currentSynchro.Effects = synchro.Effects;
-                currentSynchro.Element = synchro.Element;
-                currentSynchro.Formula = synchro.Formula;
-                currentSynchro.JPName = synchro.JPName;
-                currentSynchro.Target = synchro.Target;
-                currentSynchro.Time = synchro.Time;
-                currentSynchro.Type = synchro.Type;
-
-                if(currentSynchro.Id == 0)
-                {
-                    dbContext.Add(currentSynchro);
-                }
+                name = aliases.AliasList[name.ToLower()];
+            }
+            else if (!charNames.Contains(name.ToLower()))
+            {
+                name = charNames.OrderByDescending(x => Fuzz.PartialRatio(x, name.ToLower())).FirstOrDefault();
             }
 
-            dbContext.SaveChanges();
+            var soulbreaks = dbContext.Soulbreaks.Where(x => x.Character.ToLower() == name.ToLower() && x.Tier != "RW").ToList();
+
+            return soulbreaks;
         }
 
-        public void UpdateSoulbreakStatuses()
+        public List<SheetLimitBreaks> GetLimitBreaksByCharacterNameAndTier(string tier, string name, int? index = null)
         {
-            var soulbreaks = dbContext.Soulbreaks.Include(x => x.SoulbreakStatuses).ToList();
-            var statuses = dbContext.Statuses.ToList();
+            var charNames = dbContext.Characters.Select(x => x.Name.ToLower());
 
-            foreach(var soulbreak in soulbreaks)
+            if (aliases.AliasList.ContainsKey(name.ToLower()))
             {
-                var matchedStatuses = statuses.Where(x => soulbreak.Effects.Contains(x.Name)).ToList();
-
-                var uniqueStatuses = new List<DbStatuses>();
-
-                var orderedmatches = matchedStatuses.OrderByDescending(x => x.Name.Length).ToList();
-
-                foreach(var match in orderedmatches.Where(x => x.Effects != ""))
-                {
-                    if(uniqueStatuses.Where(x => x.Name.Contains(match.Name)).Count() == 0)
-                    {
-                        uniqueStatuses.Add(match);
-                    }
-                }
-
-                foreach(var status in uniqueStatuses)
-                {
-                    if(soulbreak.SoulbreakStatuses == null)
-                    {
-                        soulbreak.SoulbreakStatuses = new List<DbSoulbreakStatuses>();
-                    }
-                    
-                    var matchedStatus = soulbreak.SoulbreakStatuses.FirstOrDefault(x => x.StatusId == status.Id);
-
-                    if(matchedStatus == null)
-                    {
-                        matchedStatus = new DbSoulbreakStatuses();
-                        soulbreak.SoulbreakStatuses.Add(matchedStatus);
-                    }
-                    matchedStatus.StatusId = status.Id;
-                    matchedStatus.Status = status;
-                    matchedStatus.Soulbreak = soulbreak;
-                    matchedStatus.SoulbreakId = soulbreak.Id;
-                }
-
-
+                name = aliases.AliasList[name.ToLower()];
+            }
+            else if (!charNames.Contains(name.ToLower()))
+            {
+                name = charNames.OrderByDescending(x => Fuzz.PartialRatio(x, name.ToLower())).FirstOrDefault();
             }
 
-            dbContext.SaveChanges();
-        }
-        public void UpdateBurstCommandsFromSheet(IList<SheetBursts> sheetBursts)
-        {
-            foreach (var burst in sheetBursts)
+            List<SheetLimitBreaks> limits = new List<SheetLimitBreaks>();
+            
+            
+            limits = dbContext.LimitBreaks.Where(x => x.Character.ToLower() == name.ToLower() && x.Tier == tier).ToList();
+            
+
+            if (index != null)
             {
-                var currentBurst = dbContext.BurstCommands.FirstOrDefault(x => x.BurstId == burst.BurstId);
-
-                if (currentBurst == null)
+                if (index.Value < limits.Count() && index > -1)
                 {
-                    currentBurst = new DbBurstCommands();
-                }
-
-                currentBurst.BurstId = burst.BurstId;
-                currentBurst.Source = burst.Source;
-                currentBurst.School = burst.School;
-                currentBurst.SB = burst.SB;
-                currentBurst.Name = burst.Name;
-                currentBurst.Character = burst.Character;
-                currentBurst.Effects = burst.Effects;
-                currentBurst.Element = burst.Element;
-                currentBurst.Formula = burst.Formula;
-                currentBurst.JPName = burst.JPName;
-                currentBurst.Target = burst.Target;
-                currentBurst.Time = burst.Time;
-                currentBurst.Type = burst.Type;
-
-                if (currentBurst.Id == 0)
-                {
-                    dbContext.Add(currentBurst);
+                    return new List<SheetLimitBreaks>() { limits[index.Value] };
                 }
             }
 
-            dbContext.SaveChanges();
+            return limits;
         }
 
-        public void UpdateBraveCommandsFromSheet(IList<SheetBraves> sheetBraves)
+        public List<SheetBraves> GetBravesByCharacterAndSoulbreak(string character, string soulbreak)
         {
-            foreach (var brave in sheetBraves)
-            {
-                var currentBrave = dbContext.BraveCommands.FirstOrDefault(x => x.BraveId == brave.BraveId);
+            var braves = dbContext.Braves.Where(x => x.Character == character && x.Source == soulbreak).ToList();
 
-                if (currentBrave == null)
-                {
-                    currentBrave = new DbBraveCommands();
-                }
-
-                currentBrave.BraveId = brave.BraveId;
-                currentBrave.BraveCondition = brave.BraveCondition;
-                currentBrave.BraveLevel = brave.BraveLevel;
-                currentBrave.Source = brave.Source;
-                currentBrave.School = brave.School;
-                currentBrave.SB = brave.SB;
-                currentBrave.Name = brave.Name;
-                currentBrave.Character = brave.Character;
-                currentBrave.Effects = brave.Effects;
-                currentBrave.Element = brave.Element;
-                currentBrave.Formula = brave.Formula;
-                currentBrave.JPName = brave.JPName;
-                currentBrave.Target = brave.Target;
-                currentBrave.Time = brave.Time;
-                currentBrave.Type = brave.Type;
-
-                if (currentBrave.Id == 0)
-                {
-                    dbContext.Add(currentBrave);
-                }
-            }
-
-            dbContext.SaveChanges();
+            return braves;
         }
 
-        public void UpdateRecordMateriaFromSheet(IList<SheetRecordMaterias> recordMaterias)
+        public List<SheetBursts> GetBurstsByCharacterAndSoulbreak(string character, string soulbreak)
         {
-            foreach(var materia in recordMaterias)
-            {
-                var currentMateria = dbContext.RecordMaterias.FirstOrDefault(x => x.RMId == materia.RMId);
-                
-                if(currentMateria == null)
-                {
-                    currentMateria = new DbRecordMaterias();
-                }
+            var bursts = dbContext.Bursts.Where(x => x.Character == character && x.Source == soulbreak).ToList();
 
-                currentMateria.RMId = materia.RMId;
-                currentMateria.Realm = materia.Realm;
-                currentMateria.Name = materia.Name;
-                currentMateria.JPName = materia.JPName;
-                currentMateria.Effect = materia.Effect;
-                currentMateria.Character = materia.Character;
-                currentMateria.UnlockCriteria = materia.UnlockCriteria;
-                
-                if(currentMateria.Id == 0)
-                {
-                    dbContext.Add(currentMateria);
-                }
-                else
-                {
-                    dbContext.Update(currentMateria);
-                }
-
-            }
+            return bursts;
         }
 
-        public void UpdateLegendMateriaFromSheet(IList<SheetLegendMaterias> legendMaterias)
+        public List<SheetSynchros> GetSynchrosByCharacterAndSoulbreak(string character, string soulbreak)
         {
-            foreach (var materia in legendMaterias)
-            {
-                var currentMateria = dbContext.LegendMaterias.FirstOrDefault(x => x.LMId == materia.LMId);
+            var synchros = dbContext.Synchros.Where(x => x.Character == character && x.Source == soulbreak).ToList();
 
-                if (currentMateria == null)
-                {
-                    currentMateria = new DbLegendMaterias();
-                }
-
-                currentMateria.LMId = materia.LMId;
-                currentMateria.Realm = materia.Realm;
-                currentMateria.Name = materia.Name;
-                currentMateria.JPName = materia.JPName;
-                currentMateria.Effect = materia.Effect;
-                currentMateria.Character = materia.Character;
-                currentMateria.Master = materia.Master;
-                currentMateria.Relic = materia.Relic;
-                currentMateria.Anima = materia.Anima;
-
-                if (currentMateria.Id == 0)
-                {
-                    dbContext.Add(currentMateria);
-                }
-                else
-                {
-                    dbContext.Update(currentMateria);
-                }
-
-            }
-        }
-        public void UpdateSoulbreaksFromSheet(IList<SheetSoulbreaks> soulbreaks, IList<string> charNames)
-        {
-            foreach (var soulbreak in soulbreaks.Where(x => x.Tier != "RW" && charNames.Contains(x.Character)))
-            {
-                var soulbreakToUpdate = dbContext.Soulbreaks.FirstOrDefault(x => x.SoulbreakId == soulbreak.SoulbreakId);
-                if(soulbreakToUpdate == null)
-                {
-                    soulbreakToUpdate = new DbSoulbreaks();
-                    soulbreakToUpdate.Name = soulbreak.Name;
-                    soulbreakToUpdate.Character = soulbreak.Character;
-                }
-                else
-                {
-                    soulbreakToUpdate.Anima = soulbreak.Anima;
-                    soulbreakToUpdate.Effects = soulbreak.Effects;
-                    soulbreakToUpdate.Element = soulbreak.Element;
-                    soulbreakToUpdate.Formula = soulbreak.Formula;
-                    soulbreakToUpdate.JPName = soulbreak.JPName;
-                    soulbreakToUpdate.Multiplier = soulbreak.Multiplier;
-                    soulbreakToUpdate.Points = soulbreak.Points;
-                    soulbreakToUpdate.Realm = soulbreak.Realm;
-                    soulbreakToUpdate.Relic = soulbreak.Relic;
-                    soulbreakToUpdate.SoulbreakBonus = soulbreak.SoulbreakBonus;
-                    soulbreakToUpdate.SoulbreakId = soulbreak.SoulbreakId;
-                    soulbreakToUpdate.Target = soulbreak.Target;
-                    soulbreakToUpdate.Tier = soulbreak.Tier;
-                    soulbreakToUpdate.Type = soulbreak.Type;
-                    soulbreakToUpdate.Time = soulbreak.Time;
-
-                    if(soulbreakToUpdate.Id == 0)
-                    {
-                        dbContext.Add(soulbreakToUpdate);
-                    }
-                }
-            }
-            dbContext.SaveChanges();
+            return synchros;
         }
     }
 }

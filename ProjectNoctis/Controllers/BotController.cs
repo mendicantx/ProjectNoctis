@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using ProjectNoctis.Domain.Database;
-using ProjectNoctis.Domain.Repository.Concrete;
+using Newtonsoft.Json;
 using ProjectNoctis.Domain.Repository.Interfaces;
 using ProjectNoctis.Domain.SheetDatabase;
-using ProjectNoctis.Services.Interfaces;
+using ProjectNoctis.Services.Concrete;
 
 namespace ProjectNoctis.Controllers
 {
@@ -18,36 +13,33 @@ namespace ProjectNoctis.Controllers
     public class BotController : ControllerBase
     {    
         private readonly ILogger<BotController> _logger;
-        private readonly ISheetUpdateService sheetUpdateService;
         private readonly ICharacterRepository characterRepository;
         private readonly ISoulbreakRepository soulbreakRepository;
-        private readonly ISoulbreakManager soulbreakManager;
+        private readonly IFfrkSheetContext ffrkSheetContext;
         
 
        //TODO: Make a service layer
-        public BotController(ILogger<BotController> logger, ISheetUpdateService sheetUpdateService, ICharacterRepository characterRepository, ISoulbreakRepository soulbreakRepository,
-            ISoulbreakManager soulbreakManager)
+        public BotController(ILogger<BotController> logger, ICharacterRepository characterRepository, ISoulbreakRepository soulbreakRepository, IFfrkSheetContext ffrkSheetContext)
         {
             _logger = logger;
-            this.sheetUpdateService = sheetUpdateService;
             this.characterRepository = characterRepository;
             this.soulbreakRepository = soulbreakRepository;
-            this.soulbreakManager = soulbreakManager;
+            this.ffrkSheetContext = ffrkSheetContext;
         }
 
         [Route("Bot/Index")]
         [HttpGet]
-        public ActionResult<string> Index()
+        public void Index()
         {
 
-            return "Hello";
         }
 
         [Route("Bot/UpdateDatabase")]
         [HttpGet]
         public ActionResult<string> UpdateDatabase()
         {
-            var updated = sheetUpdateService.UpdateDatabase();
+            ffrkSheetContext.SetupProperties();
+            var updated = ffrkSheetContext.LastUpdateSuccessful;
             return updated.ToString();
 
         }
@@ -56,24 +48,8 @@ namespace ProjectNoctis.Controllers
         [HttpGet]
         public ActionResult<string> GetCharacter(string charName)
         {
-            var character = characterRepository.GetCharacterByName(charName);
+            var character = ffrkSheetContext.RecordSpheres.FirstOrDefault(x => x.Character == charName);
             return System.Text.Json.JsonSerializer.Serialize(character);
-        }
-
-        [HttpGet]
-        [Route("Bot/UpdateSoulbreakStatuses")]
-        public ActionResult<string> UpdateSoulbreakStatuses()
-        {
-            soulbreakRepository.UpdateSoulbreakStatuses();
-            return "true";
-        }
-
-        [HttpGet]
-        [Route("Bot/GetSoulbreakByCharacterName")]
-        public ActionResult<string> GetSoulbreakByCharacterName(string charName)
-        {
-            var soulbreaks = soulbreakManager.GetSoulbreaksByCharacter(charName);
-            return JsonSerializer.Serialize(soulbreaks);
         }
 
     }

@@ -24,6 +24,12 @@ namespace ProjectNoctis.Domain.SheetDatabase.Models
         public string JPName { get; set; }
         public string SynchroId { get; set; }
         public string SynchroConditionId { get; set; }
-
+        public string SynchroImage
+        {
+            get
+            {
+                return $"{Constants.Constants.ffrkImageBaseUrl}synchro/{SynchroConditionId}.png";
+            }
+        }
     }
 }

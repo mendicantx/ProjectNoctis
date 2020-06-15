@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Threading.Tasks;
 
 namespace ProjectNoctis.Domain.SheetDatabase.Models
@@ -21,8 +22,10 @@ namespace ProjectNoctis.Domain.SheetDatabase.Models
         public int BaseSpd { get; set; }
         public List<string> Equipment { get; set; }
         public Dictionary<string, int> Skills {get; set;}
-
-
-
+        public string CharacterImage { get
+            {
+                var random = new Random();
+                return $"{Constants.Constants.ffrkImageBaseUrl}buddy/{CharacterId}/{Constants.Constants.ffrkImagePoseList[random.Next(Constants.Constants.ffrkImagePoseList.Count())]}";
+            } }
     }
 }

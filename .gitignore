@@ -11,3 +11,6 @@
 /ProjectNoctis/bin/Debug/netcoreapp3.0
 ProjectNoctis/ProjectNoctis/token.json
 /ProjectNoctis/token.json
+/ProjectNoctis/Services/Concrete/BotServices/BotService.cs
+/.vs
+/ProjectNoctis/Domain - Shortcut.lnk

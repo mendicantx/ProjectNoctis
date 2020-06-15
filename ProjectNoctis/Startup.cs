@@ -1,22 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
+using Discord;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using ProjectNoctis.Domain.Database;
+using ProjectNoctis.Domain.Models;
 using ProjectNoctis.Domain.Repository.Concrete;
 using ProjectNoctis.Domain.Repository.Interfaces;
+using ProjectNoctis.Domain.SheetDatabase;
+using ProjectNoctis.Factories.Concrete;
+using ProjectNoctis.Factories.Interfaces;
 using ProjectNoctis.Services.Concrete;
 using ProjectNoctis.Services.Interfaces;
+using ProjectNoctis.Services.Models;
 using ProjectNoctis.UtilFiles.AutoMapper;
 
 namespace ProjectNoctis
@@ -35,27 +32,42 @@ namespace ProjectNoctis
         {
             services.AddControllers();
             services.AddAutoMapper(typeof(Startup),typeof(AutoMappingProfile));
-            services.AddDbContext<FFRecordContext>();
-            services.AddTransient<ISoulbreakManager, SoulbreakManager>();
+            services.AddSingleton<IFfrkSheetContext, FfrkSheetContext>();
+            services.AddSingleton<Aliases>();
+
+            services.AddTransient<ICharacterService, CharacterService>();
+            services.AddTransient<IAbilityService, AbilityService>();
+            services.AddTransient<ISoulbreakService, SoulbreakService>();
+            services.AddTransient<IDiveService, DiveService>();
+            services.AddTransient<IMagiciteService, MagiciteService>();
+            services.AddTransient<IStatusService, StatusService>();
+            services.AddTransient<IMateriaService, MateriaService>();
+
             services.AddTransient<ICharacterRepository, CharacterRepository>();
+            services.AddTransient<IDiveRepository, DiveRepository>();
             services.AddTransient<ISoulbreakRepository, SoulbreakRepository>();
             services.AddTransient<IMagiciteRepository, MagiciteRepository>();
+            services.AddTransient<IAbilityRepository, AbilityRepository>();
             services.AddTransient<IStatusRepository, StatusRepository>();
-            services.AddTransient<ISheetUpdateService, SheetUpdateService>();
+            services.AddTransient<IMateriaRepository, MateriaRepository>();
+
+            services.AddTransient<IEmbedBuilderFactory, EmbedBuilderFactory>();
             services.AddMvc(option => option.EnableEndpointRouting = false);
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public async void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            var client = new BotService(app.ApplicationServices);
+            await client.RunBotAsync();
 
+            app.UseHttpsRedirection();
 
             app.UseAuthorization();
 

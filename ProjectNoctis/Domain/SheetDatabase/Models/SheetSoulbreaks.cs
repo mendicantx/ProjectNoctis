@@ -24,5 +24,12 @@ namespace ProjectNoctis.Domain.SheetDatabase.Models
         public string JPName { get; set; }
         public string SoulbreakId { get; set; }
         public string Anima { get; set; }
+        public string SoulbreakImage
+        {
+            get
+            {
+                return $"{Constants.Constants.ffrkImageBaseUrl}soulstrike/{SoulbreakId}/{SoulbreakId}_256.png";
+            }
+        }
     }
 }

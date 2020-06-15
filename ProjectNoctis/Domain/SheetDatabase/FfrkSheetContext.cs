@@ -1,21 +1,21 @@
 ﻿using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using GoogleApiWrapper;
-using ProjectNoctis.Domain.Database;
-using ProjectNoctis.Domain.Database.Models;
 using ProjectNoctis.Domain.SheetDatabase.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ProjectNoctis.Domain.SheetDatabase
 {
-    public class FfrkSheetContext
+    public class FfrkSheetContext : IFfrkSheetContext
     {
         public static String spreadsheetId = "1f8OJIQhpycljDQ8QNDk_va1GJ1u7RVoMaNjFcHH0LKk";
         public static SheetsService service = new GoogleApi().Service;
-        public Spreadsheet spreadsheet_meta = service.Spreadsheets.Get(spreadsheetId).Execute();
+        public Spreadsheet spreadsheet_meta = null;
         public List<SheetCharacters> Characters { get; set; }
         public List<SheetAbilities> Abilities { get; set; }
         public List<SheetMagicites> Magicites { get; set; }
@@ -30,71 +30,111 @@ namespace ProjectNoctis.Domain.SheetDatabase
         public List<SheetLegendSpheres> LegendSpheres { get; set; }
         public List<SheetRecordSpheres> RecordSpheres { get; set; }
         public List<SheetRecordBoards> RecordBoards { get; set; }
+        public List<SheetLimitBreaks> LimitBreaks { get; set; }
+        public bool LastUpdateSuccessful { get; set; }
+        public DateTime LastUpdateTime { get; set; }
+
         public FfrkSheetContext()
         {
-            foreach (Sheet sheet in spreadsheet_meta.Sheets)
-            {
-                string sheetName = sheet.Properties.Title;
-
-                if (sheetName != "Header" && sheetName != "Calculator")
-                {
-                    
-                    IList<IList<object>> data = service.Spreadsheets.Values.Get(spreadsheetId, sheetName).Execute().Values;
-                    var headers = data[0];
-                    data.Remove(data[0]);
-                    switch (sheetName)
-                    {
-                        case "Characters":
-                            ParseCharacters(data, headers);
-                            break;
-                        case "Abilities":
-                            ParseAbilities(data, headers);
-                            break;
-                        case "Magicite":
-                            ParseMagicites(data, headers);
-                            break;
-                        case "Soul Breaks":
-                            ParseSoulbreaks(data, headers);
-                            break;
-                        case "Status":
-                            ParseStatus(data, headers);
-                            break;
-                        case "Other":
-                            ParseOthers(data, headers);
-                            break;
-                        case "Synchro":
-                            ParseSynchros(data, headers);
-                            break;
-                        case "Brave":
-                            ParseBraves(data, headers);
-                            break;
-                        case "Burst":
-                            ParseBursts(data, headers);
-                            break;
-                        case "Record Materia":
-                            ParseRecordMaterias(data, headers);
-                            break;
-                        case "Legend Materia":
-                            ParseLegendMaterias(data, headers);
-                            break;
-                        case "Legend Spheres":
-                            ParseLegendSpheres(data, headers);
-                            break;
-                        case "Record Spheres":
-                            ParseRecordSpheres(data, headers);
-                            break;
-                        case "Record Board":
-                            ParseRecordBoard(data, headers);
-                            break;
-                        default:
-                            break;
-                    }
-                   
-                }
-            }
+            LastUpdateSuccessful = SetupProperties().Result;
         }
 
-        public void ParseRecordBoard (IList<IList<object>> boardData, IList<object> headers)
+        public async Task<bool> SetupProperties()
+        {
+            try
+            {
+                while (spreadsheet_meta == null)
+                {
+                    try
+                    {
+                        spreadsheet_meta = await service.Spreadsheets.Get(spreadsheetId).ExecuteAsync();
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                }
+
+                foreach (Sheet sheet in spreadsheet_meta.Sheets)
+                {
+                    string sheetName = sheet.Properties.Title;
+
+                    if (sheetName != "Header" && sheetName != "Calculator")
+                    {
+                        IList<IList<object>> data = GetSpreadsheetData(sheetName).Result;
+                        var headers = data[0];
+                        data.Remove(data[0]);
+                        switch (sheetName)
+                        {
+                            case "Characters":
+                                ParseCharacters(data, headers);
+                                break;
+                            case "Abilities":
+                                ParseAbilities(data, headers);
+                                break;
+                            case "Magicite":
+                                ParseMagicites(data, headers);
+                                break;
+                            case "Soul Breaks":
+                                ParseSoulbreaks(data, headers);
+                                break;
+                            case "Limit Breaks":
+                                ParseLimitBreaks(data, headers);
+                                break;
+                            case "Status":
+                                ParseStatus(data, headers);
+                                break;
+                            case "Other":
+                                ParseOthers(data, headers);
+                                break;
+                            case "Synchro":
+                                ParseSynchros(data, headers);
+                                break;
+                            case "Brave":
+                                ParseBraves(data, headers);
+                                break;
+                            case "Burst":
+                                ParseBursts(data, headers);
+                                break;
+                            case "Record Materia":
+                                ParseRecordMaterias(data, headers);
+                                break;
+                            case "Legend Materia":
+                                ParseLegendMaterias(data, headers);
+                                break;
+                            case "Legend Spheres":
+                                ParseLegendSpheres(data, headers);
+                                break;
+                            case "Record Spheres":
+                                ParseRecordSpheres(data, headers);
+                                break;
+                            case "Record Board":
+                                ParseRecordBoard(data, headers);
+                                break;
+                            default:
+                                break;
+                        }
+
+                    }
+                }
+                LastUpdateTime = DateTime.Now;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            
+        }
+
+        public async Task<IList<IList<object>>> GetSpreadsheetData(string sheetName)
+        {
+            var data = await service.Spreadsheets.Values.Get(spreadsheetId, sheetName).ExecuteAsync();
+
+            return data.Values;
+        }
+
+        public void ParseRecordBoard(IList<IList<object>> boardData, IList<object> headers)
         {
             var recordBoards = new List<SheetRecordBoards>();
             boardData = boardData.Where(x => x.Count() >= 5).ToList();
@@ -117,9 +157,9 @@ namespace ProjectNoctis.Domain.SheetDatabase
                             ParseBoardMotes(characterBonus, boardMotes);
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
-                        
+
                     }
 
                     recordBoards.Add(new SheetRecordBoards
@@ -133,16 +173,16 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
                 RecordBoards = recordBoards;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
 
             }
-            
+
         }
 
-        public void ParseBoardBonus(IList<object> board, Dictionary<string,int> bonusStats, List<string> misc)
+        public void ParseBoardBonus(IList<object> board, Dictionary<string, int> bonusStats, List<string> misc)
         {
-           
+
             var stringStat = board[2].ToString();
             if (stringStat.Contains("+"))
             {
@@ -151,9 +191,9 @@ namespace ProjectNoctis.Domain.SheetDatabase
                 var statValue = 0;
                 try
                 {
-                    statValue = Int32.Parse(new String(statSplit[1].Where(Char.IsDigit).ToArray())); 
+                    statValue = Int32.Parse(new String(statSplit[1].Where(Char.IsDigit).ToArray()));
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
 
                 }
@@ -173,7 +213,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
             }
         }
 
-        public void ParseBoardMotes(IList<object> board, Dictionary<string,int> motes)
+        public void ParseBoardMotes(IList<object> board, Dictionary<string, int> motes)
         {
             var boardCount = board.Count();
             if (motes.ContainsKey(board[3].ToString()))
@@ -185,7 +225,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
                 motes.Add(board[3].ToString(), Int32.Parse(board[4].ToString()));
             }
 
-            if(boardCount >= 7)
+            if (boardCount >= 7)
             {
                 if (motes.ContainsKey(board[5].ToString()))
                 {
@@ -246,13 +286,14 @@ namespace ProjectNoctis.Domain.SheetDatabase
             }
             RecordSpheres = characters;
         }
-        public void ParseStatsFromSpheres(Dictionary<string,int> stats, List<string> misc, IList<object> sphere, int start, int end)
+        public void ParseStatsFromSpheres(Dictionary<string, int> stats, List<string> misc, IList<object> sphere, int start, int end)
         {
-            for(var i = start; i < end; i++)
+            for (var i = start; i <= end; i++)
             {
                 var sphereValue = sphere[i].ToString();
 
-                if (sphereValue.Contains("+")){
+                if (sphereValue.Contains("+"))
+                {
                     var sphereSplit = sphereValue.Split("+");
                     var statName = sphereSplit[0];
                     var statValue = Int32.Parse(new String(sphereSplit[1].Where(Char.IsDigit).ToArray()));
@@ -266,8 +307,19 @@ namespace ProjectNoctis.Domain.SheetDatabase
                         stats.Add(statName, statValue);
                     }
                 }
-                else if(!sphereValue.Contains("Materia") && sphereValue != "" && sphereValue != "-")
+                else if (!sphereValue.Contains("Materia") && sphereValue != "" && sphereValue != "-")
                 {
+                    //if(Constants.Constants.nightmareEnhancedSkills.Any(x => sphereValue.Contains(x)))
+                    //{
+                    //    if(sphereValue.Contains("-> 5★"))
+                    //    {
+                    //        sphereValue = sphereValue.Replace("-> 5★", "-> 6★");
+                    //    }
+                    //    if(sphereValue.Contains("5★") && sphereValue.Contains("Enable"))
+                    //    {
+                    //        sphereValue = sphereValue.Replace("5★", "6★");
+                    //    }
+                    //}
                     misc.Add(sphereValue);
                 }
             }
@@ -344,7 +396,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
                     UnlockCriteria = rm[headers.IndexOf("Unlock Criteria")].ToString(),
                     JPName = rm[headers.IndexOf("Name (JP)")].ToString(),
                     RMId = rm[headers.IndexOf("ID")].ToString()
-           
+
                 });
             }
 
@@ -409,8 +461,8 @@ namespace ProjectNoctis.Domain.SheetDatabase
         public void ParseSynchros(IList<IList<object>> synchroData, IList<object> headers)
         {
             var synchros = new List<SheetSynchros>();
-            
-            foreach(var synchro in synchroData)
+
+            foreach (var synchro in synchroData)
             {
                 synchros.Add(new SheetSynchros
                 {
@@ -439,9 +491,9 @@ namespace ProjectNoctis.Domain.SheetDatabase
         {
             var others = new List<SheetOthers>();
 
-            foreach(var other in otherData)
+            foreach (var other in otherData)
             {
-                others.Add(new SheetOthers 
+                others.Add(new SheetOthers
                 {
                     Name = other[headers.IndexOf("Name")].ToString(),
                     SB = other[headers.IndexOf("SB")].ToString(),
@@ -455,17 +507,17 @@ namespace ProjectNoctis.Domain.SheetDatabase
                     SourceType = other[headers.IndexOf("Source Type")].ToString(),
                     Target = other[headers.IndexOf("Target")].ToString(),
                     Type = other[headers.IndexOf("Type")].ToString(),
-                    Time = other[headers.IndexOf("Time")].ToString(),                  
+                    Time = other[headers.IndexOf("Time")].ToString(),
                 });
 
             }
             Others = others;
         }
-        public void ParseStatus(IList<IList<object>> statusData,IList<object> headers)
+        public void ParseStatus(IList<IList<object>> statusData, IList<object> headers)
         {
             var statuses = new List<SheetStatus>();
 
-            foreach(var status in statusData.Where(x => x.Count() >= 7))
+            foreach (var status in statusData.Where(x => x.Count() >= 7))
             {
                 statuses.Add(new SheetStatus
                 {
@@ -484,7 +536,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
         {
             var soulbreaks = new List<SheetSoulbreaks>();
 
-            foreach(var soulbreak in soulbreakData.Where(x => x.Count() >= 19))
+            foreach (var soulbreak in soulbreakData.Where(x => x.Count() >= 19))
             {
                 var animaIndex = headers.IndexOf("Anima");
                 var anima = animaIndex < soulbreak.Count() ? soulbreak[headers.IndexOf("Anima")].ToString() : "";
@@ -497,11 +549,11 @@ namespace ProjectNoctis.Domain.SheetDatabase
                     Element = soulbreak[headers.IndexOf("Element")].ToString(),
                     Formula = soulbreak[headers.IndexOf("Formula")].ToString(),
                     JPName = soulbreak[headers.IndexOf("Name (JP)")].ToString(),
-                    Multiplier = soulbreak[headers.IndexOf("Multiplier")].ToString(), 
+                    Multiplier = soulbreak[headers.IndexOf("Multiplier")].ToString(),
                     Points = soulbreak[headers.IndexOf("Points")].ToString(),
                     Realm = soulbreak[headers.IndexOf("Realm")].ToString(),
                     Relic = soulbreak[headers.IndexOf("Relic")].ToString(),
-                    SoulbreakBonus = soulbreak[headers.IndexOf("Soulbreak Bonus")].ToString(),
+                    SoulbreakBonus = soulbreak[headers.IndexOf("Mastery Bonus")].ToString(),
                     SoulbreakId = soulbreak[headers.IndexOf("ID")].ToString(),
                     Target = soulbreak[headers.IndexOf("Target")].ToString(),
                     Tier = soulbreak[headers.IndexOf("Tier")].ToString(),
@@ -511,11 +563,41 @@ namespace ProjectNoctis.Domain.SheetDatabase
             }
             Soulbreaks = soulbreaks;
         }
+
+        public void ParseLimitBreaks(IList<IList<object>> limitData, IList<object> headers)
+        {
+            var limits = new List<SheetLimitBreaks>();
+
+            foreach (var limit in limitData.Where(x => x.Count() >= 19))
+            {
+                limits.Add(new SheetLimitBreaks
+                {
+                    Name = limit[headers.IndexOf("Name")].ToString(),
+                    Character = limit[headers.IndexOf("Character")].ToString(),
+                    Effects = limit[headers.IndexOf("Effects")].ToString(),
+                    Element = limit[headers.IndexOf("Element")].ToString(),
+                    Formula = limit[headers.IndexOf("Formula")].ToString(),
+                    JPName = limit[headers.IndexOf("Name (JP)")].ToString(),
+                    Multiplier = limit[headers.IndexOf("Multiplier")].ToString(),
+                    Minimum = limit[headers.IndexOf("Minimum LB Points")].ToString(),
+                    Realm = limit[headers.IndexOf("Realm")].ToString(),
+                    Relic = limit[headers.IndexOf("Relic")].ToString(),
+                    LimitBonus = limit[headers.IndexOf("Limit Break Bonus")].ToString(),
+                    ID = limit[headers.IndexOf("ID")].ToString(),
+                    Target = limit[headers.IndexOf("Target")].ToString(),
+                    Tier = limit[headers.IndexOf("Tier")].ToString(),
+                    Type = limit[headers.IndexOf("Type")].ToString(),
+                    Time = limit[headers.IndexOf("Time")].ToString(),
+                });
+            }
+            LimitBreaks = limits;
+        }
+
         public void ParseMagicites(IList<IList<object>> magiciteData, IList<object> headers)
         {
             var magicites = new List<SheetMagicites>();
 
-            foreach(var magicite in magiciteData.Where(x => x.Count() >= 56))
+            foreach (var magicite in magiciteData.Where(x => x.Count() >= 56))
             {
                 magicites.Add(new SheetMagicites
                 {
@@ -540,7 +622,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
             Magicites = magicites;
         }
 
-        public Dictionary<string,int> ParseMagicitePassives(IList<object> magicite, IList<object> headers)
+        public Dictionary<string, int> ParseMagicitePassives(IList<object> magicite, IList<object> headers)
         {
             var passives = new Dictionary<string, int>();
 
@@ -548,10 +630,10 @@ namespace ProjectNoctis.Domain.SheetDatabase
             var i = 1;
             foreach (var passive in passiveList)
             {
-                
+
                 var parsedPassive = magicite[headers.IndexOf(passive)].ToString();
                 var passiveIndex = i.ToString();
-                if(parsedPassive != "")
+                if (parsedPassive != "")
                 {
                     passives.Add(parsedPassive, Int32.Parse(magicite[headers.IndexOf($"{passiveIndex}-99")].ToString()));
                 }
@@ -588,11 +670,11 @@ namespace ProjectNoctis.Domain.SheetDatabase
         {
             var abilities = new List<SheetAbilities>();
 
-            foreach(var ability in abilityData)
+            foreach (var ability in abilityData)
             {
-                abilities.Add(new SheetAbilities
+                var newAbility = new SheetAbilities
                 {
-                    Name = GetStringValueFromHeader(ability,headers,"Name"),
+                    Name = GetStringValueFromHeader(ability, headers, "Name"),
                     School = GetStringValueFromHeader(ability, headers, "School"),
                     SB = GetStringValueFromHeader(ability, headers, "SB"),
                     ID = GetStringValueFromHeader(ability, headers, "ID"),
@@ -607,13 +689,39 @@ namespace ProjectNoctis.Domain.SheetDatabase
                     Target = GetStringValueFromHeader(ability, headers, "Target"),
                     Time = GetStringValueFromHeader(ability, headers, "Time"),
                     Type = GetStringValueFromHeader(ability, headers, "Type"),
-                    Uses = GetStringValueFromHeader(ability, headers, "Uses")
-                });
+                    Uses = GetStringValueFromHeader(ability, headers, "Uses"),
+                    OrbsRequired = new Dictionary<string, string>(),
+                    OrbCosts = new Dictionary<string, string>()
+                };
+
+                //Orb Required 1-4
+                for (int i = 1; i <= 4; i++)
+                {
+                    var orbReq = GetStringValueFromHeader(ability, headers, $"Orb {i} Required");
+
+                    if (orbReq != String.Empty && orbReq != null)
+                    {
+                        newAbility.OrbsRequired.Add($"{i}", orbReq);
+                    }
+                    
+                    //Ranks 1-5
+                    for (int x = 1; x <= 5; x++)
+                    {
+                        var orbCost = GetStringValueFromHeader(ability, headers, $"{i}-R{x}");
+
+                        if (orbCost != string.Empty && orbCost != null && orbCost != "0")
+                        {
+                            newAbility.OrbCosts.Add($"{i}-R{x}", orbCost);
+                        }                        
+                    }
+                }
+
+                abilities.Add(newAbility);
             }
 
             this.Abilities = abilities;
         }
-        public void ParseCharacters(IList<IList<object>> characterData, IList<Object> headers) 
+        public void ParseCharacters(IList<IList<object>> characterData, IList<Object> headers)
         {
             var characters = new List<SheetCharacters>();
             foreach (var character in characterData.Where(x => x.Count == 108))
@@ -627,13 +735,13 @@ namespace ProjectNoctis.Domain.SheetDatabase
                     BaseSpd = Int32.Parse(character[headers.IndexOf("SPD - 99")].ToString() != "?" ? character[headers.IndexOf("SPD - 99")].ToString() : "0"),
                     BaseDef = Int32.Parse(character[headers.IndexOf("DEF - 99")].ToString() != "?" ? character[headers.IndexOf("DEF - 99")].ToString() : "0"),
                     BaseEva = Int32.Parse(character[headers.IndexOf("EVA - 99")].ToString() != "?" ? character[headers.IndexOf("EVA - 99")].ToString() : "0"),
-                    BaseHp = Int32.Parse(character[headers.IndexOf("HP - 99")].ToString()   != "?" ? character[headers.IndexOf("HP - 99")].ToString() : "0"),
+                    BaseHp = Int32.Parse(character[headers.IndexOf("HP - 99")].ToString() != "?" ? character[headers.IndexOf("HP - 99")].ToString() : "0"),
                     BaseMag = Int32.Parse(character[headers.IndexOf("MAG - 99")].ToString() != "?" ? character[headers.IndexOf("MAG - 99")].ToString() : "0"),
                     BaseMnd = Int32.Parse(character[headers.IndexOf("MND - 99")].ToString() != "?" ? character[headers.IndexOf("MND - 99")].ToString() : "0"),
                     BaseRes = Int32.Parse(character[headers.IndexOf("RES - 99")].ToString() != "?" ? character[headers.IndexOf("RES - 99")].ToString() : "0"),
                     CharacterId = character[headers.IndexOf("ID")].ToString(),
-                    Skills = ParseCharacterSkills(character,headers),
-                    Equipment = ParseCharacterEquipment(character,headers)
+                    Skills = ParseCharacterSkills(character, headers),
+                    Equipment = ParseCharacterEquipment(character, headers)
 
                 });
             }
@@ -641,21 +749,26 @@ namespace ProjectNoctis.Domain.SheetDatabase
             this.Characters = characters;
         }
 
-        public Dictionary<string,int> ParseCharacterSkills(IList<Object> character,IList<object> headers)
+        public Dictionary<string, int> ParseCharacterSkills(IList<Object> character, IList<object> headers)
         {
             var skills = new Dictionary<string, int>();
 
-            var skillList = new List<string>() 
+            var skillList = new List<string>()
             {   "Black Magic", "White Magic", "Combat", "Support", "Celerity", "Summoning",
                 "Spellblade", "Dragoon", "Monk", "Thief", "Knight", "Samurai","Ninja","Bard",
-                "Dancer","Machinist", "Darkness", "Sharpshooter", "Witch", "Heavy" 
+                "Dancer","Machinist", "Darkness", "Sharpshooter", "Witch", "Heavy"
             };
 
-            foreach(var skill in skillList)
+
+            foreach (var skill in skillList)
             {
                 var characterSkill = character[headers.IndexOf(skill)].ToString();
-                if(characterSkill != "")
+                if (characterSkill != "")
                 {
+                    if (Int32.Parse(characterSkill) == 5 && Constants.Constants.nightmareEnhancedSkills.Contains(skill))
+                    {
+                        characterSkill = "6";
+                    }
                     skills.Add(skill, Int32.Parse(characterSkill));
                 }
             }
@@ -667,16 +780,16 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
             var equipmentList = new List<string>()
             {
-                "Dagger", "Sword", "Katana", "Axe", "Hammer", "Spear", "Fist", "Rod", "Staff",  
-                "Bow", "Instrument", "Whip", "Thrown", "Gun", "Book", "Blitzball","Hairpin", 
-                "Gun-arm", "Gambling Gear", "Doll", "Keyblade", "Shield", "Hat", 
+                "Dagger", "Sword", "Katana", "Axe", "Hammer", "Spear", "Fist", "Rod", "Staff",
+                "Bow", "Instrument", "Whip", "Thrown", "Gun", "Book", "Blitzball","Hairpin",
+                "Gun-arm", "Gambling Gear", "Doll", "Keyblade", "Shield", "Hat",
                 "Helm", "Light Armor", "Heavy Armor", "Robe", "Bracer", "Accessory"
             };
 
-            foreach(var equipment in equipmentList)
+            foreach (var equipment in equipmentList)
             {
                 var isEquipable = character[headers.IndexOf(equipment)].ToString();
-                if(isEquipable == "Y")
+                if (isEquipable == "Y")
                 {
                     equipments.Add(equipment);
                 }

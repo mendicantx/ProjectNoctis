@@ -23,6 +23,15 @@ namespace ProjectNoctis.Domain.SheetDatabase.Models
         public string Max { get; set; }
         public string JPName { get; set; }
         public string ID { get; set; }
+        public Dictionary<string,string> OrbsRequired { get; set; }
+        public Dictionary<string,string> OrbCosts { get; set; }
+        public string AbilityImage
+        {
+            get
+            {
+                return $"{Constants.Constants.ffrkImageBaseUrl}ability/{ID}/{ID}_256.png";
+            }
+        }
 
     }
 }

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using ProjectNoctis.Domain.Database.Models;
 using ProjectNoctis.Services.Models;
 using System;
 using System.Collections.Generic;
@@ -12,11 +11,6 @@ namespace ProjectNoctis.UtilFiles.AutoMapper
     {
         public AutoMappingProfile()
         {
-            CreateMap<DbSoulbreaks, Soulbreak>().PreserveReferences();
-            CreateMap<DbBraveCommands, BraveCommand>();
-            CreateMap<DbBurstCommands, BurstCommand>();
-            CreateMap<DbSynchroCommands, SynchroCommand>();
-            CreateMap<DbStatuses, Status>().PreserveReferences();
         }
     }
 }
