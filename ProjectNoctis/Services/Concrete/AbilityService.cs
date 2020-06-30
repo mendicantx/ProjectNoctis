@@ -18,12 +18,12 @@ namespace ProjectNoctis.Services.Concrete
             this.statusRepository = statusRepository;
         }
 
-        public Ability BuildAbilityInfo(string name, bool heroAbility)
+        public Ability BuildAbilityInfo(string name)
         {
             var statusRegex = new Regex(Constants.Constants.statusRegex);
             var ability = new Ability();
 
-            var abilityMatch = heroAbility ? abilityRepository.GetHeroAbilityByCharacterName(name) : abilityRepository.GetAbilityByName(name);
+            var abilityMatch = abilityRepository.GetAbilityByName(name);
 
             if(abilityMatch == null)
             {
@@ -34,6 +34,32 @@ namespace ProjectNoctis.Services.Concrete
             ability.AbilityStatuses = statusRepository.GetStatusByNamesAndSource(ability.Info.Name, statuses, 0);
 
             return ability;
+        }
+
+        public List<Ability> BuildHeroAbilityInfo(string name)
+        {
+            var statusRegex = new Regex(Constants.Constants.statusRegex);
+            var abilityMatch = abilityRepository.GetHeroAbilityByCharacterName(name);
+
+            if (abilityMatch.Count == 0)
+            {
+                return null;
+            }
+
+            var abilityList = new List<Ability>();
+
+            foreach (var abil in abilityMatch)
+            {
+                var ability = new Ability();
+
+                ability.Info = abil;
+                var statuses = statusRegex.Matches(abil.Effects).Select(x => x?.Groups[1]?.Value).ToList();
+                ability.AbilityStatuses = statusRepository.GetStatusByNamesAndSource(ability.Info.Name, statuses, 0);
+
+                abilityList.Add(ability);
+            }
+
+            return abilityList;         
         }
 
         public List<Ability> BuildAbilityBySchoolInfo(string school, string rank, string element = null)

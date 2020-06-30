@@ -10,6 +10,6 @@ namespace ProjectNoctis.Domain.Repository.Interfaces
     {
         List<SheetRecordMaterias> GetRecordMateriasByCharName(string name);
 
-        List<SheetLegendMaterias> GetLegendMateriasByCharName(string name)
+        List<SheetLegendMaterias> GetLegendMateriasByCharName(string name);
     }
 }

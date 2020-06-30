@@ -16,5 +16,13 @@ namespace ProjectNoctis.Domain.SheetDatabase.Models
         public string Relic { get; set; }
         public string Master { get; set; }
         public string Anima { get; set; }
+
+        public string MateriaImage
+        {
+            get
+            {
+                return $"{Constants.Constants.ffrkImageBaseUrl}legend_materia/{LMId}/{LMId}_128.png";
+            }
+        }
     }
 }

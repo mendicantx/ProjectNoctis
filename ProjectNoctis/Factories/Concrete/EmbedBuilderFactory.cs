@@ -2,6 +2,7 @@
 using Google.Apis.Util;
 using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
 using Microsoft.Extensions.DependencyInjection;
+using ProjectNoctis.Domain.Models;
 using ProjectNoctis.Domain.SheetDatabase.Models;
 using ProjectNoctis.Factories.Interfaces;
 using ProjectNoctis.Services.Interfaces;
@@ -9,6 +10,7 @@ using ProjectNoctis.Services.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 
@@ -23,6 +25,8 @@ namespace ProjectNoctis.Factories.Concrete
         private readonly IDiveService diveService;
         private readonly IMagiciteService magiciteService;
         private readonly IStatusService statusService;
+        private readonly IMateriaService materiaService;
+        private readonly Settings settings;
 
         public EmbedBuilderFactory
             (
@@ -31,7 +35,9 @@ namespace ProjectNoctis.Factories.Concrete
                 ISoulbreakService soulbreakService,
                 IDiveService diveService,
                 IMagiciteService magiciteService,
-                IStatusService statusService
+                IStatusService statusService,
+                IMateriaService materiaService,
+                Settings settings
             )
         {
             this.characterService = characterService;
@@ -40,6 +46,8 @@ namespace ProjectNoctis.Factories.Concrete
             this.diveService = diveService;
             this.magiciteService = magiciteService;
             this.statusService = statusService;
+            this.materiaService = materiaService;
+            this.settings = settings;
         }
 
         public Embed BuildEmbedForBasicCharacterInfo(string name)
@@ -207,120 +215,135 @@ namespace ProjectNoctis.Factories.Concrete
             return embed.Build();
         }
 
-        public Embed BuildEmbedForAbilityInformation(string name, bool heroAbility)
+        public List<Embed> BuildEmbedForAbilityInformation(string name, bool heroAbility)
         {
-            var ability = abilityService.BuildAbilityInfo(name, heroAbility);
+            var abilities = heroAbility ? abilityService.BuildHeroAbilityInfo(name) : new List<Ability>() { abilityService.BuildAbilityInfo(name) };
+            var embeds = new List<Embed>();
 
-            var embed = new EmbedBuilder();
-
-            if (ability == null)
+            if (abilities == null)
             {
+                var embed = new EmbedBuilder();
                 embed.Title = "No Matches Found";
-                return embed.Build();
+                embeds.Add(embed.Build());
+                return embeds;
             }
 
-            embed.Title = ability.Info.Name;
-            embed.ThumbnailUrl = ability.Info.AbilityImage;
-
-            embed.Fields.Add(new EmbedFieldBuilder()
+            foreach (var ability in abilities)
             {
-                Name = "Effect",
-                Value = ability.Info.Effects != string.Empty ? ability.Info.Effects : "-"
-            });
+                var embed = new EmbedBuilder();
 
-            var statusFields = BuildStatusEmbedFields(ability.AbilityStatuses);
-
-            embed.Fields.AddRange(statusFields);
-
-            embed.Fields.Add(new EmbedFieldBuilder()
-            {
-                Name = "Type",
-                Value = ability.Info.Type != string.Empty ? ability.Info.Type : "-",
-                IsInline = true
-            });
-
-            embed.Fields.Add(new EmbedFieldBuilder()
-            {
-                Name = "Target",
-                Value = ability.Info.Target != string.Empty ? ability.Info.Target : "-",
-                IsInline = true
-            });
-
-            embed.Fields.Add(new EmbedFieldBuilder()
-            {
-                Name = "Multiplier",
-                Value = ability.Info.Multiplier != string.Empty ? ability.Info.Multiplier : "-",
-                IsInline = true
-            });
-
-            embed.Fields.Add(new EmbedFieldBuilder()
-            {
-                Name = "Cast Time",
-                Value = ability.Info.Time != string.Empty ? ability.Info.Time : "-",
-                IsInline = true
-            });
-
-            embed.Fields.Add(new EmbedFieldBuilder()
-            {
-                Name = "SB Charge",
-                Value = ability.Info.SB != string.Empty ? ability.Info.SB : "-",
-                IsInline = true
-            });
-
-            embed.Fields.Add(new EmbedFieldBuilder()
-            {
-                Name = "School",
-                Value = ability.Info.School != string.Empty ? ability.Info.School : "-",
-                IsInline = true
-            });
-
-            embed.Fields.Add(new EmbedFieldBuilder()
-            {
-                Name = "Element",
-                Value = ability.Info.Element != string.Empty ? ability.Info.Element : "-",
-                IsInline = true
-            });
-
-            var orbs = new List<string>();
-
-            foreach (var orb in ability.Info.OrbsRequired.Keys)
-            {
-                var orbReq = $"**{ability.Info.OrbsRequired[orb]}: **";
-                var total = 0;
-
-                for (int i = 1; i <= 5; i++)
+                if (ability == null)
                 {
-                    if (ability.Info.OrbCosts.ContainsKey($"{orb}-R{i}"))
-                    {
-                        var orbCost = ability.Info.OrbCosts[$"{orb}-R{i}"];
-
-                        if (orbCost == "-")
-                        {
-                            continue;
-                        }
-
-                        total += Int32.Parse(orbCost);
-                        orbReq += $"| {orbCost} ";
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    embed.Title = "No Matches Found";
+                    embeds.Add(embed.Build());
+                    return embeds;
                 }
 
-                orbReq += $"| ({total})";
+                embed.Title = ability.Info.Name;
+                embed.ThumbnailUrl = ability.Info.AbilityImage;
 
-                orbs.Add(orbReq);
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "Effect",
+                    Value = ability.Info.Effects != string.Empty ? ability.Info.Effects : "-"
+                });
+
+                var statusFields = BuildStatusEmbedFields(ability.AbilityStatuses);
+
+                embed.Fields.AddRange(statusFields);
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "Type",
+                    Value = ability.Info.Type != string.Empty ? ability.Info.Type : "-",
+                    IsInline = true
+                });
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "Target",
+                    Value = ability.Info.Target != string.Empty ? ability.Info.Target : "-",
+                    IsInline = true
+                });
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "Multiplier",
+                    Value = ability.Info.Multiplier != string.Empty ? ability.Info.Multiplier : "-",
+                    IsInline = true
+                });
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "Cast Time",
+                    Value = ability.Info.Time != string.Empty ? ability.Info.Time : "-",
+                    IsInline = true
+                });
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "SB Charge",
+                    Value = ability.Info.SB != string.Empty ? ability.Info.SB : "-",
+                    IsInline = true
+                });
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "School",
+                    Value = ability.Info.School != string.Empty ? ability.Info.School : "-",
+                    IsInline = true
+                });
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "Element",
+                    Value = ability.Info.Element != string.Empty ? ability.Info.Element : "-",
+                    IsInline = true
+                });
+
+                var orbs = new List<string>();
+
+                foreach (var orb in ability.Info.OrbsRequired.Keys)
+                {
+                    var orbReq = $"**{ability.Info.OrbsRequired[orb]}: **";
+                    var total = 0;
+
+                    for (int i = 1; i <= 5; i++)
+                    {
+                        if (ability.Info.OrbCosts.ContainsKey($"{orb}-R{i}"))
+                        {
+                            var orbCost = ability.Info.OrbCosts[$"{orb}-R{i}"];
+
+                            if (orbCost == "-")
+                            {
+                                continue;
+                            }
+
+                            total += Int32.Parse(orbCost);
+                            orbReq += $"| {orbCost} ";
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    orbReq += $"| ({total})";
+
+                    orbs.Add(orbReq);
+                }
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "Orbs Required",
+                    Value = string.Join("\n", orbs),
+                    IsInline = false
+                });
+
+                embeds.Add(embed.Build());
             }
 
-            embed.Fields.Add(new EmbedFieldBuilder()
-            {
-                Name = "Orbs Required",
-                Value = string.Join("\n", orbs),
-                IsInline = false
-            });
-
-            return embed.Build();
+            return embeds;
         }
 
         public List<List<Embed>> BuildSoulbreakEmbeds(string tier, string charName, int? index)
@@ -402,19 +425,18 @@ namespace ProjectNoctis.Factories.Concrete
                 
                 if (soulbreak.Info.Anima != null)
                 {
-                    var animaValue = "Yes";
+                    var animaValue = $"Yes (Wave: {soulbreak.Info.Anima})";
 
-                    switch (soulbreak.Info.Anima)
+                    if(soulbreak.Info.Anima == settings.JpAnimaWave)
                     {
-                        case "":
-                            animaValue = "No";
-                            break;
-                        case "4":
-                            animaValue = "JP Only";
-                                break;
-                        default:
-                            break;
+                        animaValue = $"JP Only (Wave: {soulbreak.Info.Anima})";
                     }
+
+                    if(soulbreak.Info.Anima == "")
+                    {
+                        animaValue = "No";
+                    }
+
                     embed.Fields.Add(new EmbedFieldBuilder()
                     {
                         Name = "Anima Available",
@@ -1238,6 +1260,96 @@ namespace ProjectNoctis.Factories.Concrete
             embed.Fields.AddRange(BuildOtherEmbedFields(other.Others));
 
             return embed.Build();
+        }
+
+        public List<Embed> BuildEmbedsForRecordMaterias(string name)
+        {
+            var embeds = new List<Embed>();
+
+            var recordMaterias = materiaService.BuildRecordMateriaInfoByName(name);
+
+            foreach (var materia in recordMaterias)
+            {
+                var embed = new EmbedBuilder();
+
+                embed.Title = materia.Info.Name;
+                embed.ThumbnailUrl = materia.Info.MateriaImage;
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "Effects",
+                    Value = materia.Info.Effect != string.Empty ? materia.Info.Effect : "-"
+                });
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "How to Obtain",
+                    Value = materia.Info.UnlockCriteria != string.Empty ? materia.Info.UnlockCriteria : "-"
+                });
+
+
+                embed.Fields.AddRange(BuildStatusEmbedFields(materia.Statuses));
+
+                embeds.Add(embed.Build());
+            }
+
+            return embeds;
+        }
+
+        public List<Embed> BuildEmbedsForLegendMaterias(string name)
+        {
+            var embeds = new List<Embed>();
+
+            var legendMaterias = materiaService.BuildLegendMateriaInfoByName(name);
+
+            foreach (var materia in legendMaterias)
+            {
+                var embed = new EmbedBuilder();
+                var relic = materia.Info.Relic == "-" ? "Dive" : materia.Info.Relic;
+                embed.Title = $"{materia.Info.Name} ({relic})";
+                embed.ThumbnailUrl = materia.Info.MateriaImage;
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "Effects",
+                    Value = materia.Info.Effect != string.Empty ? materia.Info.Effect : "-"
+                });
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "JP Name",
+                    Value = materia.Info.JPName != string.Empty ? materia.Info.JPName : "-",
+                    IsInline = true
+                });
+
+                if (materia.Info.Anima != null && materia.Info.Relic != "-")
+                {
+                    var animaValue = $"Yes (Wave: {materia.Info.Anima})";
+
+                    if (materia.Info.Anima == settings.JpAnimaWave)
+                    {
+                        animaValue = $"JP Only (Wave: {materia.Info.Anima})";
+                    }
+
+                    if (materia.Info.Anima == "")
+                    {
+                        animaValue = "No";
+                    }
+
+                    embed.Fields.Add(new EmbedFieldBuilder()
+                    {
+                        Name = "Anima Available",
+                        Value = animaValue,
+                        IsInline = true
+                    });
+                }
+
+                embed.Fields.AddRange(BuildStatusEmbedFields(materia.Statuses));
+
+                embeds.Add(embed.Build());
+            }
+
+            return embeds;
         }
 
         IList<Soulbreak> GetPage(IList<Soulbreak> list, int page, int pageSize)

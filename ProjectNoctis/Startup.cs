@@ -34,6 +34,7 @@ namespace ProjectNoctis
             services.AddAutoMapper(typeof(Startup),typeof(AutoMappingProfile));
             services.AddSingleton<IFfrkSheetContext, FfrkSheetContext>();
             services.AddSingleton<Aliases>();
+            services.AddSingleton<Settings>();
 
             services.AddTransient<ICharacterService, CharacterService>();
             services.AddTransient<IAbilityService, AbilityService>();

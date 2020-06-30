@@ -10,7 +10,7 @@ namespace ProjectNoctis.Domain.Repository.Interfaces
     {
         SheetAbilities GetAbilityByName(string name);
 
-        SheetAbilities GetHeroAbilityByCharacterName(string name);
+        List<SheetAbilities> GetHeroAbilityByCharacterName(string name);
 
         List<SheetAbilities> GetAbilitiesBySchoolRank(string school, string rank, string element = null);
     }

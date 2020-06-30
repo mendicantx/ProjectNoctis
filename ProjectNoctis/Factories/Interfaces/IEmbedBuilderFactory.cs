@@ -8,7 +8,7 @@ namespace ProjectNoctis.Factories.Interfaces
     {
         Embed BuildEmbedForBasicCharacterInfo(string name);
 
-        Embed BuildEmbedForAbilityInformation(string name, bool heroAbility);
+        List<Embed> BuildEmbedForAbilityInformation(string name, bool heroAbility);
 
         Embed BuildEmbedForAbilityBySchoolInformation(string school, string rank, string element);
 
@@ -31,5 +31,9 @@ namespace ProjectNoctis.Factories.Interfaces
         Embed BuildEmbedForStatus(string name);
 
         Embed BuildEmbedForOther(string name);
+
+        List<Embed> BuildEmbedsForRecordMaterias(string name);
+
+        List<Embed> BuildEmbedsForLegendMaterias(string name);
     }
 }

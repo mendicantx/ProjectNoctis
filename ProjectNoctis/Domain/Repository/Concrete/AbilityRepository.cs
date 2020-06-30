@@ -37,7 +37,7 @@ namespace ProjectNoctis.Domain.Repository.Concrete
             return ability;
         }
 
-        public SheetAbilities GetHeroAbilityByCharacterName(string name)
+        public List<SheetAbilities> GetHeroAbilityByCharacterName(string name)
         {
             var charNames = dbContext.Characters.Select(x => x.Name.ToLower());
 
@@ -50,7 +50,7 @@ namespace ProjectNoctis.Domain.Repository.Concrete
                 name = charNames.OrderByDescending(x => Fuzz.PartialRatio(x, name.ToLower())).FirstOrDefault();
             }
 
-            var ability = dbContext.Abilities.FirstOrDefault(x => x.Name.ToLower().Contains($"({name.ToLower()} only)"));
+            var ability = dbContext.Abilities.Where(x => x.Name.ToLower().Contains($"({name.ToLower()} only)")).ToList();
 
             return ability;
         }

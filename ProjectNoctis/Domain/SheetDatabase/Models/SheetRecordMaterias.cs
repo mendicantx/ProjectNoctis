@@ -11,8 +11,16 @@ namespace ProjectNoctis.Domain.SheetDatabase.Models
         public string Name { get; set; }
         public string Realm { get; set; }
         public string Effect { get; set; }
-        public string UnlockCriteria {get; set;}
+        public string UnlockCriteria { get; set; }
         public string JPName { get; set; }
         public string RMId { get; set; }
+
+        public string MateriaImage
+        {
+            get
+            {
+                return $"{Constants.Constants.ffrkImageBaseUrl}record_materia/{RMId}/{RMId}_128.png";
+            }
+        }
     }
 }

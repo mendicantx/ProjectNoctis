@@ -2,6 +2,7 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using Newtonsoft.Json;
+using ProjectNoctis.Domain.Models;
 using ProjectNoctis.Domain.SheetDatabase;
 using ProjectNoctis.Factories.Interfaces;
 using ProjectNoctis.Services.Interfaces;
@@ -18,11 +19,15 @@ namespace ProjectNoctis.BotModules
 	{
 		private readonly IEmbedBuilderFactory embedBuilder;
 		private readonly IFfrkSheetContext ffrkSheetContext;
+		private readonly Aliases aliases;
+		private readonly Settings settings;
 
-		public FfrkModule(IEmbedBuilderFactory embedBuilder, IFfrkSheetContext ffrkSheetContext)
+		public FfrkModule(IEmbedBuilderFactory embedBuilder, IFfrkSheetContext ffrkSheetContext, Aliases aliases, Settings settings)
 		{
 			this.embedBuilder = embedBuilder;
 			this.ffrkSheetContext = ffrkSheetContext;
+			this.aliases = aliases;
+			this.settings = settings;
 		}
 
 		[Command("bsb")]
@@ -144,7 +149,7 @@ namespace ProjectNoctis.BotModules
 		}
 
 		[Command("g")]
-		[Alias(new string[3] { "glint", "glint+", "g+" })]
+		[Alias(new string[5] { "glint", "glint+", "g+", "fsb", "fsb+" })]
 		public async Task GlintSoulbreakInfo(string name, int? index = null)
 		{
 			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("g", name, index);
@@ -225,6 +230,20 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
+		[Command("tasb")]
+		public async Task TasbSoulbreakInfo(string name)
+		{
+			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("TASB", name, null);
+
+			foreach (var soulbreak in soulbreaks)
+			{
+				foreach (var soulbreakGroup in soulbreak)
+				{
+					await Context.Channel.SendMessageAsync(embed: soulbreakGroup);
+				}
+			}
+		}
+
 		[Command("sb")]
 		[Alias("sbs")]
 		public async Task SsbSoulbreakInfo([Remainder] string name)
@@ -236,15 +255,6 @@ namespace ProjectNoctis.BotModules
 				await Context.Channel.SendMessageAsync(embed: soulbreak);
 			}
 		}
-
-		//[Command("update")]
-		//[Summary("Return Character Info.")]
-		//public async Task UpdateDbAsync()
-		//{
-		//	await Context.Channel.SendMessageAsync("updating");
-		//	var update = ffrkSheetContext.SetupProperties();
-		//	await Context.Channel.SendMessageAsync(update.ToString());
-		//}
 
 		[Command("char")]
 		[Summary("Return Character Info.")]
@@ -296,7 +306,11 @@ namespace ProjectNoctis.BotModules
 		public async Task AbilityInfoAsync([Remainder] string name)
 		{
 			var ability = embedBuilder.BuildEmbedForAbilityInformation(name, false);
-			await Context.Channel.SendMessageAsync(embed:ability);
+
+			foreach(var abilEmbed in ability)
+			{
+				await Context.Channel.SendMessageAsync(embed: abilEmbed);
+			}
 		}
 
 		[Command("abs")]
@@ -313,7 +327,11 @@ namespace ProjectNoctis.BotModules
 		public async Task HeroAbilityInfoAsync([Remainder] string name)
 		{
 			var ability = embedBuilder.BuildEmbedForAbilityInformation(name, true);
-			await Context.Channel.SendMessageAsync(embed: ability);
+
+			foreach (var abilEmbed in ability)
+			{
+				await Context.Channel.SendMessageAsync(embed: abilEmbed);
+			}
 		}
 
 		[Command("status")]
@@ -340,6 +358,117 @@ namespace ProjectNoctis.BotModules
 			var magicite = embedBuilder.BuildEmbedForMagicite(name);
 
 			await Context.Channel.SendMessageAsync(embed: magicite);
+		}
+
+		[Command("lm")]
+		[Alias("lms")]
+		public async Task LegendMateriaInfoAsync([Remainder] string name)
+		{
+			var materias = embedBuilder.BuildEmbedsForLegendMaterias(name);
+
+			foreach(var materia in materias)
+			{
+				await Context.Channel.SendMessageAsync(embed: materia);
+			}
+		}
+
+		[Command("rm")]
+		[Alias("rms")]
+		public async Task RecordMateriaInfoAsync([Remainder] string name)
+		{
+			var materias = embedBuilder.BuildEmbedsForRecordMaterias(name);
+
+			foreach (var materia in materias)
+			{
+				await Context.Channel.SendMessageAsync(embed: materia);
+			}
+		}
+
+		[Command("LastUpdate")]
+		public async Task LastUpdate()
+		{
+			await Context.Channel.SendMessageAsync($"Last update was {ffrkSheetContext.LastUpdateTime} and Result was: Success {ffrkSheetContext.LastUpdateSuccessful}");
+		}
+
+
+		// Restricted Commands
+
+		[Command("update")]
+		[RequireUserPermission(ChannelPermission.ManageMessages)]
+		[Summary("Updates Sheet Info.")]
+		public async Task UpdateDbAsync()
+		{
+			await Context.Channel.SendMessageAsync("Commencing Sheet Update. Commands will be unavailable until completion.");
+			var update = await ffrkSheetContext.SetupProperties();
+
+			if (update)
+			{
+				await Context.Channel.SendMessageAsync("Update Successful, commands may resume.");
+			}
+			else
+			{
+				await Context.Channel.SendMessageAsync("Update Failed. Feel free to try again later, if it doesn't work ping Purgedmoon");
+			}
+		}
+
+		[Command("addalias")]
+		[RequireUserPermission(ChannelPermission.ManageMessages)]
+		public async Task AddAliasAsync(string alias, [Remainder] string realName)
+		{
+			var result = aliases.AddAlias(alias, realName);
+			if (result)
+			{
+				await Context.Channel.SendMessageAsync("Alias added successfully.");
+			}
+			else
+			{
+				await Context.Channel.SendMessageAsync("Alias was not added, alias may exist already.");
+			}
+		}
+
+		[Command("ralias")]
+		[RequireUserPermission(ChannelPermission.ManageMessages)]
+		public async Task RemoveAliasAsync([Remainder] string alias)
+		{
+			var result = aliases.RemoveAlias(alias);
+			if (result)
+			{
+				await Context.Channel.SendMessageAsync("Alias Removed successfully.");
+			}
+			else
+			{
+				await Context.Channel.SendMessageAsync("Alias was not removed, alias may not exist already.");
+			}
+		}
+
+		[Command("calias")]
+		[RequireUserPermission(ChannelPermission.ManageMessages)]
+		public async Task CheckAliasAsync([Remainder] string alias)
+		{
+			var result = aliases.GetAlias(alias);
+			if (result != null)
+			{
+				await Context.Channel.SendMessageAsync($"Alias is: {result}");
+			}
+			else
+			{
+				await Context.Channel.SendMessageAsync("Alias does not exist");
+			}
+		}
+
+		[Command("updatesetting")]
+		[RequireUserPermission(ChannelPermission.ManageMessages)]
+		public async Task CheckAliasAsync(string setting, [Remainder] string value)
+		{
+			var result = settings.UpdateSettings(setting, value);
+			if (result)
+			{
+				await Context.Channel.SendMessageAsync($"Setting Updated Successfully.");
+			}
+			else
+			{
+				await Context.Channel.SendMessageAsync("Failed to update setting.");
+			}
 		}
 	}
 }

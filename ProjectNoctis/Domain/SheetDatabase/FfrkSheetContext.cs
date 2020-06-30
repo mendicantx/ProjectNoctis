@@ -36,7 +36,16 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
         public FfrkSheetContext()
         {
-            LastUpdateSuccessful = SetupProperties().Result;
+            while (!LastUpdateSuccessful)
+            {
+                LastUpdateSuccessful = SetupProperties().Result;
+
+                if (!LastUpdateSuccessful)
+                {
+                    Console.WriteLine("Setting up properties failed, initiating sleep");
+                    Thread.Sleep(60000);
+                }
+            }
         }
 
         public async Task<bool> SetupProperties()
@@ -117,6 +126,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
                     }
                 }
+
                 LastUpdateTime = DateTime.Now;
                 return true;
             }
@@ -191,7 +201,10 @@ namespace ProjectNoctis.Domain.SheetDatabase
                 var statValue = 0;
                 try
                 {
-                    statValue = Int32.Parse(new String(statSplit[1].Where(Char.IsDigit).ToArray()));
+                    if(!statSplit.Any(x => x.Contains("?")))
+                    {
+                        statValue = Int32.Parse(new String(statSplit[1].Where(Char.IsDigit).ToArray()));
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -255,7 +268,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
                 }
                 else
                 {
-                    motes.Add(board[10].ToString(), Int32.Parse(board[10].ToString()));
+                    motes.Add(board[9].ToString(), Int32.Parse(board[10].ToString()));
                 }
             }
 
@@ -491,25 +504,31 @@ namespace ProjectNoctis.Domain.SheetDatabase
         {
             var others = new List<SheetOthers>();
 
-            foreach (var other in otherData)
+            foreach (var other in otherData.Where(x => x.Count() == 18))
             {
-                others.Add(new SheetOthers
+                try
                 {
-                    Name = other[headers.IndexOf("Name")].ToString(),
-                    SB = other[headers.IndexOf("SB")].ToString(),
-                    Effects = other[headers.IndexOf("Effects")].ToString(),
-                    Element = other[headers.IndexOf("Element")].ToString(),
-                    School = other[headers.IndexOf("School")].ToString(),
-                    OtherId = other[headers.IndexOf("ID")].ToString(),
-                    Source = other[headers.IndexOf("Source")].ToString(),
-                    Multiplier = other[headers.IndexOf("Multiplier")].ToString(),
-                    Formula = other[headers.IndexOf("Formula")].ToString(),
-                    SourceType = other[headers.IndexOf("Source Type")].ToString(),
-                    Target = other[headers.IndexOf("Target")].ToString(),
-                    Type = other[headers.IndexOf("Type")].ToString(),
-                    Time = other[headers.IndexOf("Time")].ToString(),
-                });
+                    others.Add(new SheetOthers
+                    {
+                        Name = other[headers.IndexOf("Name")].ToString(),
+                        SB = other[headers.IndexOf("SB")].ToString(),
+                        Effects = other[headers.IndexOf("Effects")].ToString(),
+                        Element = other[headers.IndexOf("Element")].ToString(),
+                        School = other[headers.IndexOf("School")].ToString(),
+                        OtherId = other[headers.IndexOf("ID")].ToString(),
+                        Source = other[headers.IndexOf("Source")].ToString(),
+                        Multiplier = other[headers.IndexOf("Multiplier")].ToString(),
+                        Formula = other[headers.IndexOf("Formula")].ToString(),
+                        SourceType = other[headers.IndexOf("Source Type")].ToString(),
+                        Target = other[headers.IndexOf("Target")].ToString(),
+                        Type = other[headers.IndexOf("Type")].ToString(),
+                        Time = other[headers.IndexOf("Time")].ToString(),
+                    });
+                }
+                catch (Exception)
+                {
 
+                }
             }
             Others = others;
         }
@@ -730,15 +749,15 @@ namespace ProjectNoctis.Domain.SheetDatabase
                 {
                     Realm = character[headers.IndexOf("Realm")].ToString(),
                     Name = character[headers.IndexOf("Name")].ToString(),
-                    BaseAtk = Int32.Parse(character[headers.IndexOf("ATK - 99")].ToString() != "?" ? character[headers.IndexOf("ATK - 99")].ToString() : "0"),
-                    BaseAcc = Int32.Parse(character[headers.IndexOf("ACC - 99")].ToString() != "?" ? character[headers.IndexOf("ACC - 99")].ToString() : "0"),
-                    BaseSpd = Int32.Parse(character[headers.IndexOf("SPD - 99")].ToString() != "?" ? character[headers.IndexOf("SPD - 99")].ToString() : "0"),
-                    BaseDef = Int32.Parse(character[headers.IndexOf("DEF - 99")].ToString() != "?" ? character[headers.IndexOf("DEF - 99")].ToString() : "0"),
-                    BaseEva = Int32.Parse(character[headers.IndexOf("EVA - 99")].ToString() != "?" ? character[headers.IndexOf("EVA - 99")].ToString() : "0"),
-                    BaseHp = Int32.Parse(character[headers.IndexOf("HP - 99")].ToString() != "?" ? character[headers.IndexOf("HP - 99")].ToString() : "0"),
-                    BaseMag = Int32.Parse(character[headers.IndexOf("MAG - 99")].ToString() != "?" ? character[headers.IndexOf("MAG - 99")].ToString() : "0"),
-                    BaseMnd = Int32.Parse(character[headers.IndexOf("MND - 99")].ToString() != "?" ? character[headers.IndexOf("MND - 99")].ToString() : "0"),
-                    BaseRes = Int32.Parse(character[headers.IndexOf("RES - 99")].ToString() != "?" ? character[headers.IndexOf("RES - 99")].ToString() : "0"),
+                    BaseAtk = Int32.Parse(character[headers.IndexOf("ATK - 99")].ToString() != "?" && character[headers.IndexOf("ATK - 99")].ToString() != "" ? character[headers.IndexOf("ATK - 99")].ToString() : "0"),
+                    BaseAcc = Int32.Parse(character[headers.IndexOf("ACC - 99")].ToString() != "?" && character[headers.IndexOf("ACC - 99")].ToString() != "" ? character[headers.IndexOf("ACC - 99")].ToString() : "0"),
+                    BaseSpd = Int32.Parse(character[headers.IndexOf("SPD - 99")].ToString() != "?" && character[headers.IndexOf("SPD - 99")].ToString() != "" ? character[headers.IndexOf("SPD - 99")].ToString() : "0"),
+                    BaseDef = Int32.Parse(character[headers.IndexOf("DEF - 99")].ToString() != "?" && character[headers.IndexOf("DEF - 99")].ToString() != "" ? character[headers.IndexOf("DEF - 99")].ToString() : "0"),
+                    BaseEva = Int32.Parse(character[headers.IndexOf("EVA - 99")].ToString() != "?" && character[headers.IndexOf("EVA - 99")].ToString() != ""? character[headers.IndexOf("EVA - 99")].ToString() : "0"),
+                    BaseHp = Int32.Parse(character[headers.IndexOf("HP - 99")].ToString() != "?" && character[headers.IndexOf("HP - 99")].ToString() != "" ? character[headers.IndexOf("HP - 99")].ToString() : "0"),
+                    BaseMag = Int32.Parse(character[headers.IndexOf("MAG - 99")].ToString() != "?" && character[headers.IndexOf("MAG - 99")].ToString() != "" ? character[headers.IndexOf("MAG - 99")].ToString() : "0"),
+                    BaseMnd = Int32.Parse(character[headers.IndexOf("MND - 99")].ToString() != "?" && character[headers.IndexOf("MND - 99")].ToString() != "" ? character[headers.IndexOf("MND - 99")].ToString() : "0"),
+                    BaseRes = Int32.Parse(character[headers.IndexOf("RES - 99")].ToString() != "?" && character[headers.IndexOf("RES - 99")].ToString() != "" ? character[headers.IndexOf("RES - 99")].ToString() : "0"),
                     CharacterId = character[headers.IndexOf("ID")].ToString(),
                     Skills = ParseCharacterSkills(character, headers),
                     Equipment = ParseCharacterEquipment(character, headers)
