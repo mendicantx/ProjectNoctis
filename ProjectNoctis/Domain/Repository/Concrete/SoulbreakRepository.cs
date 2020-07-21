@@ -63,11 +63,9 @@ namespace ProjectNoctis.Domain.Repository.Concrete
         {
             var charNames = dbContext.Characters.Select(x => x.Name.ToLower());
 
-            if (aliases.AliasList.ContainsKey(name.ToLower()))
-            {
-                name = aliases.AliasList[name.ToLower()];
-            }
-            else if (!charNames.Contains(name.ToLower()))
+            name = aliases.ResolveAlias(name);
+
+            if (!charNames.Contains(name.ToLower()))
             {
                 name = charNames.OrderByDescending(x => Fuzz.PartialRatio(x, name.ToLower())).FirstOrDefault();
             }

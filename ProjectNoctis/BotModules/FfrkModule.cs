@@ -343,8 +343,8 @@ namespace ProjectNoctis.BotModules
 			await Context.Channel.SendMessageAsync(embed: status);
 		}
 
-		[Command("other")]
-		[Alias("o")]
+		[Command("chase")]
+		[Alias(new string[2] { "0", "other" })]
 		[Summary("Return Other Info.")]
 		public async Task OtherInfoAsync([Remainder] string name)
 		{
@@ -390,6 +390,14 @@ namespace ProjectNoctis.BotModules
 			await Context.Channel.SendMessageAsync($"Last update was {ffrkSheetContext.LastUpdateTime} and Result was: Success {ffrkSheetContext.LastUpdateSuccessful}");
 		}
 
+		[Command("help")]
+		public async Task Help()
+		{
+			var embed = new EmbedBuilder();
+			embed.ImageUrl = "https://i.imgur.com/zL4RNEQ.png";
+
+			await Context.Channel.SendMessageAsync(embed:embed.Build());
+		}
 
 		// Restricted Commands
 

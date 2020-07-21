@@ -453,7 +453,7 @@ namespace ProjectNoctis.Factories.Concrete
                     embed.AddField(new EmbedFieldBuilder()
                     {
                         Name = "Commands",
-                        Value = $"**Please use !brave to see commands and use index if there are multiple braves for that character (e.g: !brave {soulbreak.Info.Character} 1)**",
+                        Value = $"**Please use ?brave to see commands and use index if there are multiple braves for that character (e.g: ?brave {soulbreak.Info.Character} 1)**",
                         IsInline = false
                     });
                 }
@@ -463,7 +463,7 @@ namespace ProjectNoctis.Factories.Concrete
                     embed.AddField(new EmbedFieldBuilder()
                     {
                         Name = "Commands",
-                        Value = $"**Please use !bsb {soulbreak.Info.Character} {soulbreaks.IndexOf(soulbreak) + 1} to see commands for this particular bsb**",
+                        Value = $"**Please use ?bsb {soulbreak.Info.Character} {soulbreaks.IndexOf(soulbreak) + 1} to see commands for this particular bsb**",
                         IsInline = false
                     });
                 }
@@ -473,7 +473,7 @@ namespace ProjectNoctis.Factories.Concrete
                     embed.AddField(new EmbedFieldBuilder()
                     {
                         Name = "Commands",
-                        Value = $"**Please use !brave {soulbreak.Info.Character} {soulbreaks.IndexOf(soulbreak) + 1} to see commands for this particular brave**",
+                        Value = $"**Please use ?brave {soulbreak.Info.Character} {soulbreaks.IndexOf(soulbreak) + 1} to see commands for this particular brave**",
                         IsInline = false
                     });
                 }
@@ -483,7 +483,7 @@ namespace ProjectNoctis.Factories.Concrete
                     embed.AddField(new EmbedFieldBuilder()
                     {
                         Name = "Commands",
-                        Value = $"**Please use !sasb {soulbreak.Info.Character} {soulbreaks.IndexOf(soulbreak) + 1} to see commands for this particular synchro**",
+                        Value = $"**Please use ?sasb {soulbreak.Info.Character} {soulbreaks.IndexOf(soulbreak) + 1} to see commands for this particular synchro**",
                         IsInline = false
                     });
                 }

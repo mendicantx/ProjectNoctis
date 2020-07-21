@@ -34,15 +34,29 @@ namespace ProjectNoctis.Services.Concrete
         {
             var message = messageParam as SocketUserMessage;
             if (message == null) return;
-
+ 
             int argPos = 0;
 
-            if (!(message.HasCharPrefix('?', ref argPos) ||
-                message.HasMentionPrefix(_client.CurrentUser, ref argPos)) ||
+            if ((message.HasMentionPrefix(_client.CurrentUser, ref argPos)) ||
                 message.Author.IsBot)
                 return;
 
             var context = new SocketCommandContext(_client, message);
+
+            if (message.Channel is Discord.WebSocket.SocketDMChannel)
+            {
+                var dmResult = await _commands.ExecuteAsync(
+                context: context,
+                argPos: argPos,
+                services: services);
+
+                return;
+            }
+
+            else if(!message.HasCharPrefix('?', ref argPos))
+            {
+                return;
+            }
 
             var result = await _commands.ExecuteAsync(
                 context: context,
@@ -51,3 +65,4 @@ namespace ProjectNoctis.Services.Concrete
         }
     }
 }
+ 

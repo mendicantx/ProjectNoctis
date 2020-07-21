@@ -14,6 +14,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
     public class FfrkSheetContext : IFfrkSheetContext
     {
         public static String spreadsheetId = "1f8OJIQhpycljDQ8QNDk_va1GJ1u7RVoMaNjFcHH0LKk";
+        public bool initialUpdate = true;
         public static SheetsService service = new GoogleApi().Service;
         public Spreadsheet spreadsheet_meta = null;
         public List<SheetCharacters> Characters { get; set; }
@@ -34,6 +35,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
         public bool LastUpdateSuccessful { get; set; }
         public DateTime LastUpdateTime { get; set; }
 
+
         public FfrkSheetContext()
         {
             while (!LastUpdateSuccessful)
@@ -44,6 +46,10 @@ namespace ProjectNoctis.Domain.SheetDatabase
                 {
                     Console.WriteLine("Setting up properties failed, initiating sleep");
                     Thread.Sleep(60000);
+                }
+                else
+                {
+                    Console.WriteLine("Database Updated");
                 }
             }
         }
@@ -60,7 +66,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
                     }
                     catch (Exception ex)
                     {
-
+                        Console.WriteLine("Failed To Pull Sheet Retrying...");
                     }
                 }
 
@@ -77,48 +83,63 @@ namespace ProjectNoctis.Domain.SheetDatabase
                         {
                             case "Characters":
                                 ParseCharacters(data, headers);
+                                Console.WriteLine("Updated Chars ");
                                 break;
                             case "Abilities":
                                 ParseAbilities(data, headers);
+                                Console.WriteLine("Updated Abils ");
                                 break;
                             case "Magicite":
                                 ParseMagicites(data, headers);
+                                Console.WriteLine("Updated Magicites");
                                 break;
                             case "Soul Breaks":
                                 ParseSoulbreaks(data, headers);
+                                Console.WriteLine("Updated Sbs");
                                 break;
                             case "Limit Breaks":
                                 ParseLimitBreaks(data, headers);
+                                Console.WriteLine("Updated LBs");
                                 break;
                             case "Status":
                                 ParseStatus(data, headers);
+                                Console.WriteLine("Updated Statuses");
                                 break;
                             case "Other":
                                 ParseOthers(data, headers);
+                                Console.WriteLine("Updated Others");
                                 break;
                             case "Synchro":
                                 ParseSynchros(data, headers);
+                                Console.WriteLine("Updated Syncs");
                                 break;
                             case "Brave":
                                 ParseBraves(data, headers);
+                                Console.WriteLine("Updated Braves ");
                                 break;
                             case "Burst":
                                 ParseBursts(data, headers);
+                                Console.WriteLine("Updated Burst");
                                 break;
                             case "Record Materia":
                                 ParseRecordMaterias(data, headers);
+                                Console.WriteLine("Updated RMs");
                                 break;
                             case "Legend Materia":
                                 ParseLegendMaterias(data, headers);
+                                Console.WriteLine("Updated LMs ");
                                 break;
                             case "Legend Spheres":
                                 ParseLegendSpheres(data, headers);
+                                Console.WriteLine("Updated LSs");
                                 break;
                             case "Record Spheres":
                                 ParseRecordSpheres(data, headers);
+                                Console.WriteLine("Updated RSs");
                                 break;
                             case "Record Board":
                                 ParseRecordBoard(data, headers);
+                                Console.WriteLine("Updated RBs");
                                 break;
                             default:
                                 break;
