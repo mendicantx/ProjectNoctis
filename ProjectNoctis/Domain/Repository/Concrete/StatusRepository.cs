@@ -25,7 +25,7 @@ namespace ProjectNoctis.Domain.Repository.Concrete
         {
             name = aliases.ResolveAlias(name);
 
-            var status = dbContext.Statuses.FirstOrDefault(x => x.Name.ToLower() == name.ToLower());
+            var status = dbContext.Statuses.FirstOrDefault(x => x.Name.ToLower() == name.ToLower() || x.StatusId == name);
 
             if (status == null)
             {

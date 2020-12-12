@@ -403,7 +403,7 @@ namespace ProjectNoctis.Factories.Concrete
 
                 embed.Fields.Add(new EmbedFieldBuilder()
                 {
-                    Name = "Multipier",
+                    Name = "Multiplier",
                     Value = soulbreak.Info.Multiplier != string.Empty ? soulbreak.Info.Multiplier : "-",
                     IsInline = true
                 });
@@ -566,7 +566,7 @@ namespace ProjectNoctis.Factories.Concrete
 
                 embed.Fields.Add(new EmbedFieldBuilder()
                 {
-                    Name = "Multipier",
+                    Name = "Multiplier",
                     Value = limit.Info.Multiplier != string.Empty ? limit.Info.Multiplier : "-",
                     IsInline = true
                 });

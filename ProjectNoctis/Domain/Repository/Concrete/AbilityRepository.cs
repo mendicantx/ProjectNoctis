@@ -27,7 +27,7 @@ namespace ProjectNoctis.Domain.Repository.Concrete
                 name = aliases.AliasList[name.ToLower()];
             }
 
-            var ability = dbContext.Abilities.FirstOrDefault(x => x.Name.ToLower() == name.ToLower() || x.JPName == name);
+            var ability = dbContext.Abilities.FirstOrDefault(x => x.Name.ToLower() == name.ToLower() || x.JPName == name || x.ID == name);
 
             if (ability == null)
             {

@@ -37,15 +37,15 @@ namespace ProjectNoctis.Domain.Repository.Concrete
             List<SheetSoulbreaks> soulbreaks = new List<SheetSoulbreaks>(); 
             if (tier == "g")
             {
-                soulbreaks = dbContext.Soulbreaks.Where(x => x.Character.ToLower() == name.ToLower() && (x.Tier == "Glint" || x.Tier == "Glint+")).ToList();
+                soulbreaks = dbContext.Soulbreaks.Where(x => (x.Character.ToLower() == name.ToLower() || x.SoulbreakId == name) && (x.Tier == "Glint" || x.Tier == "Glint+")).ToList();
             }
             else if (tier == "brave")
             {
-                soulbreaks = dbContext.Soulbreaks.Where(x => x.Character.ToLower() == name.ToLower() && x.Effects.Contains("[Brave Mode]")).ToList();
+                soulbreaks = dbContext.Soulbreaks.Where(x => (x.Character.ToLower() == name.ToLower() || x.SoulbreakId == name) && x.Effects.Contains("[Brave Mode]")).ToList();
             }
             else
             {
-                soulbreaks = dbContext.Soulbreaks.Where(x => x.Character.ToLower() == name.ToLower() && x.Tier == tier).ToList();
+                soulbreaks = dbContext.Soulbreaks.Where(x => (x.Character.ToLower() == name.ToLower() || x.SoulbreakId == name) && x.Tier == tier).ToList();
             }
            
             if (index != null)
@@ -91,7 +91,7 @@ namespace ProjectNoctis.Domain.Repository.Concrete
             List<SheetLimitBreaks> limits = new List<SheetLimitBreaks>();
             
             
-            limits = dbContext.LimitBreaks.Where(x => x.Character.ToLower() == name.ToLower() && x.Tier == tier).ToList();
+            limits = dbContext.LimitBreaks.Where(x => (x.Character.ToLower() == name.ToLower() || x.ID == name) && x.Tier == tier).ToList();
             
 
             if (index != null)

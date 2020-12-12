@@ -82,6 +82,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
                         switch (sheetName)
                         {
                             case "Characters":
+                                Console.WriteLine("Started Chars ");
                                 ParseCharacters(data, headers);
                                 Console.WriteLine("Updated Chars ");
                                 break;
@@ -153,6 +154,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.TargetSite);
                 return false;
             }
             
@@ -395,21 +397,30 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
             foreach (var lm in lmData)
             {
-                var animaIndex = headers.IndexOf("Anima");
-                var anima = animaIndex < lm.Count() ? lm[headers.IndexOf("Anima")].ToString() : "";
-
-                legendMaterias.Add(new SheetLegendMaterias
+                try
                 {
-                    Name = lm[headers.IndexOf("Name")].ToString(),
-                    Character = lm[headers.IndexOf("Character")].ToString(),
-                    Effect = lm[headers.IndexOf("Effect")].ToString(),
-                    Realm = lm[headers.IndexOf("Realm")].ToString(),
-                    Master = lm[headers.IndexOf("Master")].ToString(),
-                    JPName = lm[headers.IndexOf("Name (JP)")].ToString(),
-                    LMId = lm[headers.IndexOf("ID")].ToString(),
-                    Relic = lm[headers.IndexOf("Relic")].ToString(),
-                    Anima = anima
-                });
+                    var animaIndex = headers.IndexOf("Anima");
+                    var anima = animaIndex < lm.Count() ? lm[headers.IndexOf("Anima")].ToString() : "";
+
+                    legendMaterias.Add(new SheetLegendMaterias
+                    {
+                        Name = lm[headers.IndexOf("Name")].ToString(),
+                        Character = lm[headers.IndexOf("Character")].ToString(),
+                        Effect = lm[headers.IndexOf("Effect")].ToString(),
+                        Realm = lm[headers.IndexOf("Realm")].ToString(),
+                        Master = lm[headers.IndexOf("Master")].ToString(),
+                        JPName = lm[headers.IndexOf("Name (JP)")].ToString(),
+                        LMId = lm[headers.IndexOf("ID")].ToString(),
+                        Relic = lm[headers.IndexOf("Relic")].ToString(),
+                        Anima = anima
+                    });
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine($"Failed To add LM: {string.Join(',', lm)}");
+                    continue;
+                }
+                
             }
 
             LegendMaterias = legendMaterias;
@@ -764,7 +775,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
         public void ParseCharacters(IList<IList<object>> characterData, IList<Object> headers)
         {
             var characters = new List<SheetCharacters>();
-            foreach (var character in characterData.Where(x => x.Count == 108))
+            foreach (var character in characterData.Where(x => x.Count >= 108))
             {
                 characters.Add(new SheetCharacters
                 {
