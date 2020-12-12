@@ -87,58 +87,72 @@ namespace ProjectNoctis.Domain.SheetDatabase
                                 Console.WriteLine("Updated Chars ");
                                 break;
                             case "Abilities":
+                                Console.WriteLine("Started Abils ");
                                 ParseAbilities(data, headers);
                                 Console.WriteLine("Updated Abils ");
                                 break;
                             case "Magicite":
+                                Console.WriteLine("Started Magicites");
                                 ParseMagicites(data, headers);
                                 Console.WriteLine("Updated Magicites");
                                 break;
                             case "Soul Breaks":
+                                Console.WriteLine("Started Sbs");
                                 ParseSoulbreaks(data, headers);
                                 Console.WriteLine("Updated Sbs");
                                 break;
                             case "Limit Breaks":
+                                Console.WriteLine("Started LBs");
                                 ParseLimitBreaks(data, headers);
                                 Console.WriteLine("Updated LBs");
                                 break;
                             case "Status":
+                                Console.WriteLine("Started Statuses");
                                 ParseStatus(data, headers);
                                 Console.WriteLine("Updated Statuses");
                                 break;
                             case "Other":
+                                Console.WriteLine("Started Others");
                                 ParseOthers(data, headers);
                                 Console.WriteLine("Updated Others");
                                 break;
                             case "Synchro":
+                                Console.WriteLine("Started Syncs");
                                 ParseSynchros(data, headers);
                                 Console.WriteLine("Updated Syncs");
                                 break;
                             case "Brave":
+                                Console.WriteLine("Started Braves ");
                                 ParseBraves(data, headers);
                                 Console.WriteLine("Updated Braves ");
                                 break;
                             case "Burst":
+                                Console.WriteLine("Started Burst");
                                 ParseBursts(data, headers);
                                 Console.WriteLine("Updated Burst");
                                 break;
                             case "Record Materia":
+                                Console.WriteLine("Started RMs");
                                 ParseRecordMaterias(data, headers);
                                 Console.WriteLine("Updated RMs");
                                 break;
                             case "Legend Materia":
+                                Console.WriteLine("Started LMs ");
                                 ParseLegendMaterias(data, headers);
                                 Console.WriteLine("Updated LMs ");
                                 break;
                             case "Legend Spheres":
+                                Console.WriteLine("Started LSs");
                                 ParseLegendSpheres(data, headers);
                                 Console.WriteLine("Updated LSs");
                                 break;
                             case "Record Spheres":
+                                Console.WriteLine("Started RSs");
                                 ParseRecordSpheres(data, headers);
                                 Console.WriteLine("Updated RSs");
                                 break;
                             case "Record Board":
+                                Console.WriteLine("Started RBs");
                                 ParseRecordBoard(data, headers);
                                 Console.WriteLine("Updated RBs");
                                 break;
@@ -192,7 +206,8 @@ namespace ProjectNoctis.Domain.SheetDatabase
                     }
                     catch (Exception ex)
                     {
-
+                        Console.WriteLine($"Throwing out board for {characterName} due to bad data during update");
+                        continue;
                     }
 
                     recordBoards.Add(new SheetRecordBoards
@@ -208,7 +223,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine($"Unhandled record boards error due to bad data during update");
             }
 
         }
@@ -222,17 +237,11 @@ namespace ProjectNoctis.Domain.SheetDatabase
                 var statSplit = stringStat.Split("+");
                 var statName = statSplit[0];
                 var statValue = 0;
-                try
+            
+                if(!statSplit.Any(x => x.Contains("?")))
                 {
-                    if(!statSplit.Any(x => x.Contains("?")))
-                    {
-                        statValue = Int32.Parse(new String(statSplit[1].Where(Char.IsDigit).ToArray()));
-                    }
-                }
-                catch (Exception ex)
-                {
-
-                }
+                    statValue = Int32.Parse(new String(statSplit[1].Where(Char.IsDigit).ToArray()));
+                }               
 
                 if (bonusStats.ContainsKey(statName))
                 {
@@ -305,20 +314,29 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
             foreach (var character in characterRecordSpheres)
             {
-                var characterStats = new Dictionary<string, int>();
-                var characterMisc = new List<string>();
-                var characterName = character.Key.ToString();
+                try
+                {
+                    var characterStats = new Dictionary<string, int>();
+                    var characterMisc = new List<string>();
+                    var characterName = character.Key.ToString();
 
-                foreach (var recordSphere in character)
-                {
-                    ParseStatsFromSpheres(characterStats, characterMisc, recordSphere, 3, 7);
+                    foreach (var recordSphere in character)
+                    {
+                        ParseStatsFromSpheres(characterStats, characterMisc, recordSphere, 3, 7);
+                    }
+                    characters.Add(new SheetRecordSpheres
+                    {
+                        Character = characterName,
+                        Misc = characterMisc,
+                        Stats = characterStats
+                    });
                 }
-                characters.Add(new SheetRecordSpheres
+                catch(Exception ex)
                 {
-                    Character = characterName,
-                    Misc = characterMisc,
-                    Stats = characterStats
-                });
+                    Console.WriteLine($"Throwing out Record Sphere for {character.Key} due to bad data during update");
+                    continue;
+                }
+                
             }
             RecordSpheres = characters;
         }
@@ -345,17 +363,6 @@ namespace ProjectNoctis.Domain.SheetDatabase
                 }
                 else if (!sphereValue.Contains("Materia") && sphereValue != "" && sphereValue != "-")
                 {
-                    //if(Constants.Constants.nightmareEnhancedSkills.Any(x => sphereValue.Contains(x)))
-                    //{
-                    //    if(sphereValue.Contains("-> 5★"))
-                    //    {
-                    //        sphereValue = sphereValue.Replace("-> 5★", "-> 6★");
-                    //    }
-                    //    if(sphereValue.Contains("5★") && sphereValue.Contains("Enable"))
-                    //    {
-                    //        sphereValue = sphereValue.Replace("5★", "6★");
-                    //    }
-                    //}
                     misc.Add(sphereValue);
                 }
             }
@@ -367,27 +374,35 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
             foreach (var character in characterLegendSpheres)
             {
-                var characterStats = new Dictionary<string, int>();
-                var characterMisc = new List<string>();
-                string mote1 = "";
-                string mote2 = "";
-                var characterName = character.Key.ToString();
-
-                foreach (var legendSphere in character)
+                try
                 {
-                    ParseStatsFromSpheres(characterStats, characterMisc, legendSphere, 2, 6);
-                    mote1 = legendSphere[headers.IndexOf("Mote 1 Required")].ToString();
-                    mote2 = legendSphere[headers.IndexOf("Mote 2 Required")].ToString();
+                    var characterStats = new Dictionary<string, int>();
+                    var characterMisc = new List<string>();
+                    string mote1 = "";
+                    string mote2 = "";
+                    var characterName = character.Key.ToString();
+
+                    foreach (var legendSphere in character)
+                    {
+                        ParseStatsFromSpheres(characterStats, characterMisc, legendSphere, 2, 6);
+                        mote1 = legendSphere[headers.IndexOf("Mote 1 Required")].ToString();
+                        mote2 = legendSphere[headers.IndexOf("Mote 2 Required")].ToString();
+                    }
+                    characters.Add(new SheetLegendSpheres
+                    {
+                        Character = characterName,
+                        Misc = characterMisc,
+                        Stats = characterStats,
+                        MoteOne = mote1,
+                        MoteTwo = mote2
+
+                    });
                 }
-                characters.Add(new SheetLegendSpheres
+                catch(Exception ex)
                 {
-                    Character = characterName,
-                    Misc = characterMisc,
-                    Stats = characterStats,
-                    MoteOne = mote1,
-                    MoteTwo = mote2
-
-                });
+                    Console.WriteLine($"Throwing out Legend Sphere for {character.Key} due to bad data during update");
+                    continue;
+                }
             }
             LegendSpheres = characters;
         }
@@ -432,17 +447,25 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
             foreach (var rm in rmData)
             {
-                recordMaterias.Add(new SheetRecordMaterias
+                try
                 {
-                    Name = rm[headers.IndexOf("Name")].ToString(),
-                    Character = rm[headers.IndexOf("Character")].ToString(),
-                    Effect = rm[headers.IndexOf("Effect")].ToString(),
-                    Realm = rm[headers.IndexOf("Realm")].ToString(),
-                    UnlockCriteria = rm[headers.IndexOf("Unlock Criteria")].ToString(),
-                    JPName = rm[headers.IndexOf("Name (JP)")].ToString(),
-                    RMId = rm[headers.IndexOf("ID")].ToString()
+                    recordMaterias.Add(new SheetRecordMaterias
+                    {
+                        Name = rm[headers.IndexOf("Name")].ToString(),
+                        Character = rm[headers.IndexOf("Character")].ToString(),
+                        Effect = rm[headers.IndexOf("Effect")].ToString(),
+                        Realm = rm[headers.IndexOf("Realm")].ToString(),
+                        UnlockCriteria = rm[headers.IndexOf("Unlock Criteria")].ToString(),
+                        JPName = rm[headers.IndexOf("Name (JP)")].ToString(),
+                        RMId = rm[headers.IndexOf("ID")].ToString()
 
-                });
+                    });
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"Throwing out Record Materia for {rm[headers.IndexOf("Character")]} due to bad data during update");
+                    continue;
+                }               
             }
 
             RecordMaterias = recordMaterias;
@@ -453,23 +476,32 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
             foreach (var burst in burstData)
             {
-                bursts.Add(new SheetBursts
+                try
                 {
-                    Name = burst[headers.IndexOf("Name")].ToString(),
-                    Character = burst[headers.IndexOf("Character")].ToString(),
-                    Effects = burst[headers.IndexOf("Effects")].ToString(),
-                    Element = burst[headers.IndexOf("Element")].ToString(),
-                    Formula = burst[headers.IndexOf("Formula")].ToString(),
-                    JPName = burst[headers.IndexOf("Name (JP)")].ToString(),
-                    Multiplier = burst[headers.IndexOf("Multiplier")].ToString(),
-                    SB = burst[headers.IndexOf("SB")].ToString(),
-                    Source = burst[headers.IndexOf("Source")].ToString(),
-                    School = burst[headers.IndexOf("School")].ToString(),
-                    Target = burst[headers.IndexOf("Target")].ToString(),
-                    BurstId = burst[headers.IndexOf("ID")].ToString(),
-                    Type = burst[headers.IndexOf("Type")].ToString(),
-                    Time = burst[headers.IndexOf("Time")].ToString()
-                });
+                    bursts.Add(new SheetBursts
+                    {
+                        Name = burst[headers.IndexOf("Name")].ToString(),
+                        Character = burst[headers.IndexOf("Character")].ToString(),
+                        Effects = burst[headers.IndexOf("Effects")].ToString(),
+                        Element = burst[headers.IndexOf("Element")].ToString(),
+                        Formula = burst[headers.IndexOf("Formula")].ToString(),
+                        JPName = burst[headers.IndexOf("Name (JP)")].ToString(),
+                        Multiplier = burst[headers.IndexOf("Multiplier")].ToString(),
+                        SB = burst[headers.IndexOf("SB")].ToString(),
+                        Source = burst[headers.IndexOf("Source")].ToString(),
+                        School = burst[headers.IndexOf("School")].ToString(),
+                        Target = burst[headers.IndexOf("Target")].ToString(),
+                        BurstId = burst[headers.IndexOf("ID")].ToString(),
+                        Type = burst[headers.IndexOf("Type")].ToString(),
+                        Time = burst[headers.IndexOf("Time")].ToString()
+                    });
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"Throwing out Burst for {burst[headers.IndexOf("Character")]} due to bad data during update");
+                    continue;
+                }
+               
             }
 
             Bursts = bursts;
@@ -480,25 +512,33 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
             foreach (var brave in braveData)
             {
-                braves.Add(new SheetBraves
+                try 
                 {
-                    Name = brave[headers.IndexOf("Name")].ToString(),
-                    Character = brave[headers.IndexOf("Character")].ToString(),
-                    Effects = brave[headers.IndexOf("Effects")].ToString(),
-                    Element = brave[headers.IndexOf("Element")].ToString(),
-                    Formula = brave[headers.IndexOf("Formula")].ToString(),
-                    JPName = brave[headers.IndexOf("Name (JP)")].ToString(),
-                    Multiplier = brave[headers.IndexOf("Multiplier")].ToString(),
-                    SB = brave[headers.IndexOf("SB")].ToString(),
-                    Source = brave[headers.IndexOf("Source")].ToString(),
-                    School = brave[headers.IndexOf("School")].ToString(),
-                    BraveCondition = brave[headers.IndexOf("Brave Condition")].ToString(),
-                    BraveLevel = brave[headers.IndexOf("Brave")].ToString(),
-                    Target = brave[headers.IndexOf("Target")].ToString(),
-                    BraveId = brave[headers.IndexOf("ID")].ToString(),
-                    Type = brave[headers.IndexOf("Type")].ToString(),
-                    Time = brave[headers.IndexOf("Time")].ToString()
-                });
+                    braves.Add(new SheetBraves
+                    {
+                        Name = brave[headers.IndexOf("Name")].ToString(),
+                        Character = brave[headers.IndexOf("Character")].ToString(),
+                        Effects = brave[headers.IndexOf("Effects")].ToString(),
+                        Element = brave[headers.IndexOf("Element")].ToString(),
+                        Formula = brave[headers.IndexOf("Formula")].ToString(),
+                        JPName = brave[headers.IndexOf("Name (JP)")].ToString(),
+                        Multiplier = brave[headers.IndexOf("Multiplier")].ToString(),
+                        SB = brave[headers.IndexOf("SB")].ToString(),
+                        Source = brave[headers.IndexOf("Source")].ToString(),
+                        School = brave[headers.IndexOf("School")].ToString(),
+                        BraveCondition = brave[headers.IndexOf("Brave Condition")].ToString(),
+                        BraveLevel = brave[headers.IndexOf("Brave")].ToString(),
+                        Target = brave[headers.IndexOf("Target")].ToString(),
+                        BraveId = brave[headers.IndexOf("ID")].ToString(),
+                        Type = brave[headers.IndexOf("Type")].ToString(),
+                        Time = brave[headers.IndexOf("Time")].ToString()
+                    });
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"Throwing out Brave for {brave[headers.IndexOf("Character")]} due to bad data during update");
+                    continue;
+                }
             }
 
             Braves = braves;
@@ -509,26 +549,35 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
             foreach (var synchro in synchroData)
             {
-                synchros.Add(new SheetSynchros
+                try
                 {
-                    Name = synchro[headers.IndexOf("Name")].ToString(),
-                    Character = synchro[headers.IndexOf("Character")].ToString(),
-                    Effects = synchro[headers.IndexOf("Effects")].ToString(),
-                    Element = synchro[headers.IndexOf("Element")].ToString(),
-                    Formula = synchro[headers.IndexOf("Formula")].ToString(),
-                    JPName = synchro[headers.IndexOf("Name (JP)")].ToString(),
-                    Multiplier = synchro[headers.IndexOf("Multiplier")].ToString(),
-                    SB = synchro[headers.IndexOf("SB")].ToString(),
-                    Source = synchro[headers.IndexOf("Source")].ToString(),
-                    School = synchro[headers.IndexOf("School")].ToString(),
-                    SynchroCondition = synchro[headers.IndexOf("Synchro Condition")].ToString(),
-                    SynchroConditionId = synchro[headers.IndexOf("Synchro Condition ID")].ToString(),
-                    Target = synchro[headers.IndexOf("Target")].ToString(),
-                    SynchroId = synchro[headers.IndexOf("ID")].ToString(),
-                    Type = synchro[headers.IndexOf("Type")].ToString(),
-                    SynchroSlot = synchro[headers.IndexOf("Synchro Ability Slot")].ToString(),
-                    Time = synchro[headers.IndexOf("Time")].ToString()
-                });
+                    synchros.Add(new SheetSynchros
+                    {
+                        Name = synchro[headers.IndexOf("Name")].ToString(),
+                        Character = synchro[headers.IndexOf("Character")].ToString(),
+                        Effects = synchro[headers.IndexOf("Effects")].ToString(),
+                        Element = synchro[headers.IndexOf("Element")].ToString(),
+                        Formula = synchro[headers.IndexOf("Formula")].ToString(),
+                        JPName = synchro[headers.IndexOf("Name (JP)")].ToString(),
+                        Multiplier = synchro[headers.IndexOf("Multiplier")].ToString(),
+                        SB = synchro[headers.IndexOf("SB")].ToString(),
+                        Source = synchro[headers.IndexOf("Source")].ToString(),
+                        School = synchro[headers.IndexOf("School")].ToString(),
+                        SynchroCondition = synchro[headers.IndexOf("Synchro Condition")].ToString(),
+                        SynchroConditionId = synchro[headers.IndexOf("Synchro Condition ID")].ToString(),
+                        Target = synchro[headers.IndexOf("Target")].ToString(),
+                        SynchroId = synchro[headers.IndexOf("ID")].ToString(),
+                        Type = synchro[headers.IndexOf("Type")].ToString(),
+                        SynchroSlot = synchro[headers.IndexOf("Synchro Ability Slot")].ToString(),
+                        Time = synchro[headers.IndexOf("Time")].ToString()
+                    });
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"Throwing out Synchro for {synchro[headers.IndexOf("Character")]} due to bad data during update");
+                    continue;
+                }
+                
             }
             Synchros = synchros;
         }
@@ -536,7 +585,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
         {
             var others = new List<SheetOthers>();
 
-            foreach (var other in otherData.Where(x => x.Count() == 18))
+            foreach (var other in otherData.Where(x => x.Count() >= 18))
             {
                 try
                 {
@@ -559,7 +608,8 @@ namespace ProjectNoctis.Domain.SheetDatabase
                 }
                 catch (Exception)
                 {
-
+                    Console.WriteLine($"Throwing out Other for {other[headers.IndexOf("Character")]} due to bad data during update");
+                    continue;
                 }
             }
             Others = others;
@@ -570,15 +620,23 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
             foreach (var status in statusData.Where(x => x.Count() >= 7))
             {
-                statuses.Add(new SheetStatus
+                try
                 {
-                    DefaultDuration = status[headers.IndexOf("Default Duration")].ToString(),
-                    Effects = status[headers.IndexOf("Effects")].ToString(),
-                    ExclusiveStatus = status[headers.IndexOf("Exclusive Status")].ToString(),
-                    MindModifier = status[headers.IndexOf("MND Modifier")].ToString(),
-                    Name = status[headers.IndexOf("Common Name")].ToString(),
-                    StatusId = status[headers.IndexOf("ID")].ToString()
-                });
+                    statuses.Add(new SheetStatus
+                    {
+                        DefaultDuration = status[headers.IndexOf("Default Duration")].ToString(),
+                        Effects = status[headers.IndexOf("Effects")].ToString(),
+                        ExclusiveStatus = status[headers.IndexOf("Exclusive Status")].ToString(),
+                        MindModifier = status[headers.IndexOf("MND Modifier")].ToString(),
+                        Name = status[headers.IndexOf("Common Name")].ToString(),
+                        StatusId = status[headers.IndexOf("ID")].ToString()
+                    });
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"Throwing out Status {status[headers.IndexOf("Common Name")]} due to bad data during update");
+                    continue;
+                }
             }
 
             Statuses = statuses;
@@ -589,28 +647,37 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
             foreach (var soulbreak in soulbreakData.Where(x => x.Count() >= 19))
             {
-                var animaIndex = headers.IndexOf("Anima");
-                var anima = animaIndex < soulbreak.Count() ? soulbreak[headers.IndexOf("Anima")].ToString() : "";
-                soulbreaks.Add(new SheetSoulbreaks
+                try
                 {
-                    Name = soulbreak[headers.IndexOf("Name")].ToString(),
-                    Anima = anima,
-                    Character = soulbreak[headers.IndexOf("Character")].ToString(),
-                    Effects = soulbreak[headers.IndexOf("Effects")].ToString(),
-                    Element = soulbreak[headers.IndexOf("Element")].ToString(),
-                    Formula = soulbreak[headers.IndexOf("Formula")].ToString(),
-                    JPName = soulbreak[headers.IndexOf("Name (JP)")].ToString(),
-                    Multiplier = soulbreak[headers.IndexOf("Multiplier")].ToString(),
-                    Points = soulbreak[headers.IndexOf("Points")].ToString(),
-                    Realm = soulbreak[headers.IndexOf("Realm")].ToString(),
-                    Relic = soulbreak[headers.IndexOf("Relic")].ToString(),
-                    SoulbreakBonus = soulbreak[headers.IndexOf("Mastery Bonus")].ToString(),
-                    SoulbreakId = soulbreak[headers.IndexOf("ID")].ToString(),
-                    Target = soulbreak[headers.IndexOf("Target")].ToString(),
-                    Tier = soulbreak[headers.IndexOf("Tier")].ToString(),
-                    Type = soulbreak[headers.IndexOf("Type")].ToString(),
-                    Time = soulbreak[headers.IndexOf("Time")].ToString()
-                });
+                    var animaIndex = headers.IndexOf("Anima");
+                    var anima = animaIndex < soulbreak.Count() ? soulbreak[headers.IndexOf("Anima")].ToString() : "";
+                    soulbreaks.Add(new SheetSoulbreaks
+                    {
+                        Name = soulbreak[headers.IndexOf("Name")].ToString(),
+                        Anima = anima,
+                        Character = soulbreak[headers.IndexOf("Character")].ToString(),
+                        Effects = soulbreak[headers.IndexOf("Effects")].ToString(),
+                        Element = soulbreak[headers.IndexOf("Element")].ToString(),
+                        Formula = soulbreak[headers.IndexOf("Formula")].ToString(),
+                        JPName = soulbreak[headers.IndexOf("Name (JP)")].ToString(),
+                        Multiplier = soulbreak[headers.IndexOf("Multiplier")].ToString(),
+                        Points = soulbreak[headers.IndexOf("Points")].ToString(),
+                        Realm = soulbreak[headers.IndexOf("Realm")].ToString(),
+                        Relic = soulbreak[headers.IndexOf("Relic")].ToString(),
+                        SoulbreakBonus = soulbreak[headers.IndexOf("Mastery Bonus")].ToString(),
+                        SoulbreakId = soulbreak[headers.IndexOf("ID")].ToString(),
+                        Target = soulbreak[headers.IndexOf("Target")].ToString(),
+                        Tier = soulbreak[headers.IndexOf("Tier")].ToString(),
+                        Type = soulbreak[headers.IndexOf("Type")].ToString(),
+                        Time = soulbreak[headers.IndexOf("Time")].ToString()
+                    });
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"Throwing out Soulbreak for {soulbreak[headers.IndexOf("Character")]} due to bad data during update");
+                    continue;
+                }
+                
             }
             Soulbreaks = soulbreaks;
         }
@@ -621,25 +688,33 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
             foreach (var limit in limitData.Where(x => x.Count() >= 19))
             {
-                limits.Add(new SheetLimitBreaks
+                try
                 {
-                    Name = limit[headers.IndexOf("Name")].ToString(),
-                    Character = limit[headers.IndexOf("Character")].ToString(),
-                    Effects = limit[headers.IndexOf("Effects")].ToString(),
-                    Element = limit[headers.IndexOf("Element")].ToString(),
-                    Formula = limit[headers.IndexOf("Formula")].ToString(),
-                    JPName = limit[headers.IndexOf("Name (JP)")].ToString(),
-                    Multiplier = limit[headers.IndexOf("Multiplier")].ToString(),
-                    Minimum = limit[headers.IndexOf("Minimum LB Points")].ToString(),
-                    Realm = limit[headers.IndexOf("Realm")].ToString(),
-                    Relic = limit[headers.IndexOf("Relic")].ToString(),
-                    LimitBonus = limit[headers.IndexOf("Limit Break Bonus")].ToString(),
-                    ID = limit[headers.IndexOf("ID")].ToString(),
-                    Target = limit[headers.IndexOf("Target")].ToString(),
-                    Tier = limit[headers.IndexOf("Tier")].ToString(),
-                    Type = limit[headers.IndexOf("Type")].ToString(),
-                    Time = limit[headers.IndexOf("Time")].ToString(),
-                });
+                    limits.Add(new SheetLimitBreaks
+                    {
+                        Name = limit[headers.IndexOf("Name")].ToString(),
+                        Character = limit[headers.IndexOf("Character")].ToString(),
+                        Effects = limit[headers.IndexOf("Effects")].ToString(),
+                        Element = limit[headers.IndexOf("Element")].ToString(),
+                        Formula = limit[headers.IndexOf("Formula")].ToString(),
+                        JPName = limit[headers.IndexOf("Name (JP)")].ToString(),
+                        Multiplier = limit[headers.IndexOf("Multiplier")].ToString(),
+                        Minimum = limit[headers.IndexOf("Minimum LB Points")].ToString(),
+                        Realm = limit[headers.IndexOf("Realm")].ToString(),
+                        Relic = limit[headers.IndexOf("Relic")].ToString(),
+                        LimitBonus = limit[headers.IndexOf("Limit Break Bonus")].ToString(),
+                        ID = limit[headers.IndexOf("ID")].ToString(),
+                        Target = limit[headers.IndexOf("Target")].ToString(),
+                        Tier = limit[headers.IndexOf("Tier")].ToString(),
+                        Type = limit[headers.IndexOf("Type")].ToString(),
+                        Time = limit[headers.IndexOf("Time")].ToString(),
+                    });
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"Throwing out limit break for {limit[headers.IndexOf("Character")]} due to bad data during update");
+                    continue;
+                }
             }
             LimitBreaks = limits;
         }
@@ -650,24 +725,32 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
             foreach (var magicite in magiciteData.Where(x => x.Count() >= 56))
             {
-                magicites.Add(new SheetMagicites
+                try
                 {
-                    Name = GetStringValueFromHeader(magicite, headers, "Name"),
-                    JPName = GetStringValueFromHeader(magicite, headers, "Name (JP)"),
-                    Effects = GetStringValueFromHeader(magicite, headers, "Effects"),
-                    Element = GetStringValueFromHeader(magicite, headers, "Element"),
-                    Formula = GetStringValueFromHeader(magicite, headers, "Formula"),
-                    MagiciteId = GetStringValueFromHeader(magicite, headers, "ID"),
-                    MagiciteUltra = GetStringValueFromHeader(magicite, headers, "Magicite Ultra Skill"),
-                    Multiplier = GetStringValueFromHeader(magicite, headers, "Multiplier"),
-                    Rarity = GetIntValueFromHeader(magicite, headers, "Rarity"),
-                    UltraElement = GetStringValueFromHeader(magicite, headers, "Ultra Skill Element"),
-                    Realm = GetStringValueFromHeader(magicite, headers, "Realm"),
-                    Type = GetStringValueFromHeader(magicite, headers, "Type"),
-                    Time = GetStringValueFromHeader(magicite, headers, "Time"),
-                    Passives = ParseMagicitePassives(magicite, headers)
+                    magicites.Add(new SheetMagicites
+                    {
+                        Name = GetStringValueFromHeader(magicite, headers, "Name"),
+                        JPName = GetStringValueFromHeader(magicite, headers, "Name (JP)"),
+                        Effects = GetStringValueFromHeader(magicite, headers, "Effects"),
+                        Element = GetStringValueFromHeader(magicite, headers, "Element"),
+                        Formula = GetStringValueFromHeader(magicite, headers, "Formula"),
+                        MagiciteId = GetStringValueFromHeader(magicite, headers, "ID"),
+                        MagiciteUltra = GetStringValueFromHeader(magicite, headers, "Magicite Ultra Skill"),
+                        Multiplier = GetStringValueFromHeader(magicite, headers, "Multiplier"),
+                        Rarity = GetIntValueFromHeader(magicite, headers, "Rarity"),
+                        UltraElement = GetStringValueFromHeader(magicite, headers, "Ultra Skill Element"),
+                        Realm = GetStringValueFromHeader(magicite, headers, "Realm"),
+                        Type = GetStringValueFromHeader(magicite, headers, "Type"),
+                        Time = GetStringValueFromHeader(magicite, headers, "Time"),
+                        Passives = ParseMagicitePassives(magicite, headers)
 
-                });
+                    });
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"Throwing out magicite for {GetStringValueFromHeader(magicite, headers, "Name")} due to bad data during update");
+                    continue;
+                }
             }
 
             Magicites = magicites;
@@ -681,14 +764,22 @@ namespace ProjectNoctis.Domain.SheetDatabase
             var i = 1;
             foreach (var passive in passiveList)
             {
-
-                var parsedPassive = magicite[headers.IndexOf(passive)].ToString();
-                var passiveIndex = i.ToString();
-                if (parsedPassive != "")
+                try
                 {
-                    passives.Add(parsedPassive, Int32.Parse(magicite[headers.IndexOf($"{passiveIndex}-99")].ToString()));
+                    var parsedPassive = magicite[headers.IndexOf(passive)].ToString();
+                    var passiveIndex = i.ToString();
+                    if (parsedPassive != "")
+                    {
+                        passives.Add(parsedPassive, Int32.Parse(magicite[headers.IndexOf($"{passiveIndex}-99")].ToString()));
+                    }
+                    i++;
                 }
-                i++;
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"Throwing out magicite passive {magicite[headers.IndexOf(passive)]} due to bad data during update");
+                    i++;
+                }
+                
             }
 
             return passives;
@@ -723,51 +814,59 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
             foreach (var ability in abilityData)
             {
-                var newAbility = new SheetAbilities
+                try
                 {
-                    Name = GetStringValueFromHeader(ability, headers, "Name"),
-                    School = GetStringValueFromHeader(ability, headers, "School"),
-                    SB = GetStringValueFromHeader(ability, headers, "SB"),
-                    ID = GetStringValueFromHeader(ability, headers, "ID"),
-                    AutoTarget = GetStringValueFromHeader(ability, headers, "Auto Target"),
-                    Effects = GetStringValueFromHeader(ability, headers, "Effects"),
-                    Element = GetStringValueFromHeader(ability, headers, "Element"),
-                    Formula = GetStringValueFromHeader(ability, headers, "Formula"),
-                    JPName = GetStringValueFromHeader(ability, headers, "Name (JP)"),
-                    Max = GetStringValueFromHeader(ability, headers, "Max"),
-                    Multiplier = GetStringValueFromHeader(ability, headers, "Multiplier"),
-                    Rarity = GetStringValueFromHeader(ability, headers, "Rarity"),
-                    Target = GetStringValueFromHeader(ability, headers, "Target"),
-                    Time = GetStringValueFromHeader(ability, headers, "Time"),
-                    Type = GetStringValueFromHeader(ability, headers, "Type"),
-                    Uses = GetStringValueFromHeader(ability, headers, "Uses"),
-                    OrbsRequired = new Dictionary<string, string>(),
-                    OrbCosts = new Dictionary<string, string>()
-                };
-
-                //Orb Required 1-4
-                for (int i = 1; i <= 4; i++)
-                {
-                    var orbReq = GetStringValueFromHeader(ability, headers, $"Orb {i} Required");
-
-                    if (orbReq != String.Empty && orbReq != null)
+                    var newAbility = new SheetAbilities
                     {
-                        newAbility.OrbsRequired.Add($"{i}", orbReq);
-                    }
-                    
-                    //Ranks 1-5
-                    for (int x = 1; x <= 5; x++)
-                    {
-                        var orbCost = GetStringValueFromHeader(ability, headers, $"{i}-R{x}");
+                        Name = GetStringValueFromHeader(ability, headers, "Name"),
+                        School = GetStringValueFromHeader(ability, headers, "School"),
+                        SB = GetStringValueFromHeader(ability, headers, "SB"),
+                        ID = GetStringValueFromHeader(ability, headers, "ID"),
+                        AutoTarget = GetStringValueFromHeader(ability, headers, "Auto Target"),
+                        Effects = GetStringValueFromHeader(ability, headers, "Effects"),
+                        Element = GetStringValueFromHeader(ability, headers, "Element"),
+                        Formula = GetStringValueFromHeader(ability, headers, "Formula"),
+                        JPName = GetStringValueFromHeader(ability, headers, "Name (JP)"),
+                        Max = GetStringValueFromHeader(ability, headers, "Max"),
+                        Multiplier = GetStringValueFromHeader(ability, headers, "Multiplier"),
+                        Rarity = GetStringValueFromHeader(ability, headers, "Rarity"),
+                        Target = GetStringValueFromHeader(ability, headers, "Target"),
+                        Time = GetStringValueFromHeader(ability, headers, "Time"),
+                        Type = GetStringValueFromHeader(ability, headers, "Type"),
+                        Uses = GetStringValueFromHeader(ability, headers, "Uses"),
+                        OrbsRequired = new Dictionary<string, string>(),
+                        OrbCosts = new Dictionary<string, string>()
+                    };
 
-                        if (orbCost != string.Empty && orbCost != null && orbCost != "0")
+                    //Orb Required 1-4
+                    for (int i = 1; i <= 4; i++)
+                    {
+                        var orbReq = GetStringValueFromHeader(ability, headers, $"Orb {i} Required");
+
+                        if (orbReq != String.Empty && orbReq != null)
                         {
-                            newAbility.OrbCosts.Add($"{i}-R{x}", orbCost);
-                        }                        
-                    }
-                }
+                            newAbility.OrbsRequired.Add($"{i}", orbReq);
+                        }
 
-                abilities.Add(newAbility);
+                        //Ranks 1-5
+                        for (int x = 1; x <= 5; x++)
+                        {
+                            var orbCost = GetStringValueFromHeader(ability, headers, $"{i}-R{x}");
+
+                            if (orbCost != string.Empty && orbCost != null && orbCost != "0")
+                            {
+                                newAbility.OrbCosts.Add($"{i}-R{x}", orbCost);
+                            }
+                        }
+                    }
+
+                    abilities.Add(newAbility);
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"Throwing out ability {GetStringValueFromHeader(ability, headers, "Name")} due to bad data during update");
+                    continue;
+                }
             }
 
             this.Abilities = abilities;
@@ -777,24 +876,32 @@ namespace ProjectNoctis.Domain.SheetDatabase
             var characters = new List<SheetCharacters>();
             foreach (var character in characterData.Where(x => x.Count >= 108))
             {
-                characters.Add(new SheetCharacters
+                try
                 {
-                    Realm = character[headers.IndexOf("Realm")].ToString(),
-                    Name = character[headers.IndexOf("Name")].ToString(),
-                    BaseAtk = Int32.Parse(character[headers.IndexOf("ATK - 99")].ToString() != "?" && character[headers.IndexOf("ATK - 99")].ToString() != "" ? character[headers.IndexOf("ATK - 99")].ToString() : "0"),
-                    BaseAcc = Int32.Parse(character[headers.IndexOf("ACC - 99")].ToString() != "?" && character[headers.IndexOf("ACC - 99")].ToString() != "" ? character[headers.IndexOf("ACC - 99")].ToString() : "0"),
-                    BaseSpd = Int32.Parse(character[headers.IndexOf("SPD - 99")].ToString() != "?" && character[headers.IndexOf("SPD - 99")].ToString() != "" ? character[headers.IndexOf("SPD - 99")].ToString() : "0"),
-                    BaseDef = Int32.Parse(character[headers.IndexOf("DEF - 99")].ToString() != "?" && character[headers.IndexOf("DEF - 99")].ToString() != "" ? character[headers.IndexOf("DEF - 99")].ToString() : "0"),
-                    BaseEva = Int32.Parse(character[headers.IndexOf("EVA - 99")].ToString() != "?" && character[headers.IndexOf("EVA - 99")].ToString() != ""? character[headers.IndexOf("EVA - 99")].ToString() : "0"),
-                    BaseHp = Int32.Parse(character[headers.IndexOf("HP - 99")].ToString() != "?" && character[headers.IndexOf("HP - 99")].ToString() != "" ? character[headers.IndexOf("HP - 99")].ToString() : "0"),
-                    BaseMag = Int32.Parse(character[headers.IndexOf("MAG - 99")].ToString() != "?" && character[headers.IndexOf("MAG - 99")].ToString() != "" ? character[headers.IndexOf("MAG - 99")].ToString() : "0"),
-                    BaseMnd = Int32.Parse(character[headers.IndexOf("MND - 99")].ToString() != "?" && character[headers.IndexOf("MND - 99")].ToString() != "" ? character[headers.IndexOf("MND - 99")].ToString() : "0"),
-                    BaseRes = Int32.Parse(character[headers.IndexOf("RES - 99")].ToString() != "?" && character[headers.IndexOf("RES - 99")].ToString() != "" ? character[headers.IndexOf("RES - 99")].ToString() : "0"),
-                    CharacterId = character[headers.IndexOf("ID")].ToString(),
-                    Skills = ParseCharacterSkills(character, headers),
-                    Equipment = ParseCharacterEquipment(character, headers)
+                    characters.Add(new SheetCharacters
+                    {
+                        Realm = character[headers.IndexOf("Realm")].ToString(),
+                        Name = character[headers.IndexOf("Name")].ToString(),
+                        BaseAtk = Int32.Parse(character[headers.IndexOf("ATK - 99")].ToString() != "?" && character[headers.IndexOf("ATK - 99")].ToString() != "" ? character[headers.IndexOf("ATK - 99")].ToString() : "0"),
+                        BaseAcc = Int32.Parse(character[headers.IndexOf("ACC - 99")].ToString() != "?" && character[headers.IndexOf("ACC - 99")].ToString() != "" ? character[headers.IndexOf("ACC - 99")].ToString() : "0"),
+                        BaseSpd = Int32.Parse(character[headers.IndexOf("SPD - 99")].ToString() != "?" && character[headers.IndexOf("SPD - 99")].ToString() != "" ? character[headers.IndexOf("SPD - 99")].ToString() : "0"),
+                        BaseDef = Int32.Parse(character[headers.IndexOf("DEF - 99")].ToString() != "?" && character[headers.IndexOf("DEF - 99")].ToString() != "" ? character[headers.IndexOf("DEF - 99")].ToString() : "0"),
+                        BaseEva = Int32.Parse(character[headers.IndexOf("EVA - 99")].ToString() != "?" && character[headers.IndexOf("EVA - 99")].ToString() != "" ? character[headers.IndexOf("EVA - 99")].ToString() : "0"),
+                        BaseHp = Int32.Parse(character[headers.IndexOf("HP - 99")].ToString() != "?" && character[headers.IndexOf("HP - 99")].ToString() != "" ? character[headers.IndexOf("HP - 99")].ToString() : "0"),
+                        BaseMag = Int32.Parse(character[headers.IndexOf("MAG - 99")].ToString() != "?" && character[headers.IndexOf("MAG - 99")].ToString() != "" ? character[headers.IndexOf("MAG - 99")].ToString() : "0"),
+                        BaseMnd = Int32.Parse(character[headers.IndexOf("MND - 99")].ToString() != "?" && character[headers.IndexOf("MND - 99")].ToString() != "" ? character[headers.IndexOf("MND - 99")].ToString() : "0"),
+                        BaseRes = Int32.Parse(character[headers.IndexOf("RES - 99")].ToString() != "?" && character[headers.IndexOf("RES - 99")].ToString() != "" ? character[headers.IndexOf("RES - 99")].ToString() : "0"),
+                        CharacterId = character[headers.IndexOf("ID")].ToString(),
+                        Skills = ParseCharacterSkills(character, headers),
+                        Equipment = ParseCharacterEquipment(character, headers)
 
-                });
+                    });
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"Throwing out character {character[headers.IndexOf("Name")]} due to bad data during update");
+                    continue;
+                }
             }
 
             this.Characters = characters;
