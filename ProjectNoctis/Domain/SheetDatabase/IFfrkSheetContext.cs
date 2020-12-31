@@ -24,6 +24,8 @@ namespace ProjectNoctis.Domain.SheetDatabase
         List<SheetSynchros> Synchros { get; set; }
         bool LastUpdateSuccessful { get; set; }
         DateTime LastUpdateTime { get; set; }
+        List<SheetGuardianSummons> GuardianSummons { get; set; }
+
         Task<bool> SetupProperties();
     }
 }

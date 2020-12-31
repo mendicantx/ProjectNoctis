@@ -10,6 +10,8 @@ namespace ProjectNoctis.Services.Models
     {
         public SheetLimitBreaks Info { get; set; }
 
+        public IList<GuardianCommand> GuardianCommands { get; set; }
+
         public Dictionary<string, List<SheetStatus>> LimitStatuses { get; set; }
 
         public Dictionary<string, List<SheetOthers>> LimitOthers { get; set; }

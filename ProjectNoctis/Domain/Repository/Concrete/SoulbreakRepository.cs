@@ -89,10 +89,15 @@ namespace ProjectNoctis.Domain.Repository.Concrete
             }
 
             List<SheetLimitBreaks> limits = new List<SheetLimitBreaks>();
-            
-            
-            limits = dbContext.LimitBreaks.Where(x => (x.Character.ToLower() == name.ToLower() || x.ID == name) && x.Tier == tier).ToList();
-            
+
+            if (tier == null)
+            {
+                limits = dbContext.LimitBreaks.Where(x => (x.Character.ToLower() == name.ToLower() || x.ID == name) && (x.Tier == "LBO" || x.Tier == "LBG" || x.Tier == "LBGS")).ToList();
+            }
+            else
+            {
+                limits = dbContext.LimitBreaks.Where(x => (x.Character.ToLower() == name.ToLower() || x.ID == name) && x.Tier == tier).ToList();
+            }
 
             if (index != null)
             {
@@ -124,6 +129,13 @@ namespace ProjectNoctis.Domain.Repository.Concrete
             var synchros = dbContext.Synchros.Where(x => x.Character == character && x.Source == soulbreak).ToList();
 
             return synchros;
+        }
+
+        public List<SheetGuardianSummons> GetGuardianCommandsByCharacterAndLimitBreak(string character, string limitBreak)
+        {
+            var guardianCommands = dbContext.GuardianSummons.Where(x => x.Character == character && x.Source == limitBreak).ToList();
+
+            return guardianCommands;
         }
     }
 }

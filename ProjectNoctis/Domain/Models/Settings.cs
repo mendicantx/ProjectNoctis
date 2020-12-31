@@ -17,7 +17,7 @@ namespace ProjectNoctis.Domain.Models
         }
         public void SetupSettings()
         {
-            var settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(@"UtilFiles\settings.txt"));
+            var settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText($@"UtilFiles{Path.DirectorySeparatorChar}settings.txt"));
 
             if (settings.ContainsKey("jpAnimaWave"))
             {
@@ -27,14 +27,14 @@ namespace ProjectNoctis.Domain.Models
 
         public bool UpdateSettings(string setting, string value)
         {
-            var settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(@"UtilFiles\settings.txt"));
+            var settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText($@"UtilFiles{Path.DirectorySeparatorChar}settings.txt"));
 
             if (settings.ContainsKey(setting))
             {
                 settings[setting] = value;
                 try
                 {
-                    File.WriteAllText(@"UtilFiles\settings.txt", JsonConvert.SerializeObject(settings));
+                    File.WriteAllText($@"UtilFiles{Path.DirectorySeparatorChar}settings.txt", JsonConvert.SerializeObject(settings));
                     SetupSettings();
                     return true;
                 }

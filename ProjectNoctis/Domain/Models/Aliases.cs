@@ -19,7 +19,7 @@ namespace ProjectNoctis.Domain.Models
 
         public void SetupAliases()
         {
-            AliasList = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(@"UtilFiles\alias.txt"));
+            AliasList = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText($@"UtilFiles{Path.DirectorySeparatorChar}alias.txt"));
         }
 
         public bool AddAlias(string alias, string realName)
@@ -35,7 +35,7 @@ namespace ProjectNoctis.Domain.Models
                     AliasList.Add(alias, realName);
 
                     var aliasListJson = JsonConvert.SerializeObject(AliasList);
-                    File.WriteAllText(@"UtilFiles\alias.txt", aliasListJson);
+                    File.WriteAllText($@"UtilFiles{Path.DirectorySeparatorChar}alias.txt", aliasListJson);
 
                     return true;
                 }
@@ -59,7 +59,7 @@ namespace ProjectNoctis.Domain.Models
                     AliasList.Remove(alias);
 
                     var aliasListJson = JsonConvert.SerializeObject(AliasList);
-                    File.WriteAllText(@"UtilFiles\alias.txt", aliasListJson);
+                    File.WriteAllText($@"UtilFiles{Path.DirectorySeparatorChar}alias.txt", aliasListJson);
 
                     return true;
                 }

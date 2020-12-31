@@ -26,6 +26,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
         public List<SheetSynchros> Synchros { get; set; }
         public List<SheetBraves> Braves { get; set; }
         public List<SheetBursts> Bursts { get; set; }
+        public List<SheetGuardianSummons> GuardianSummons { get; set; }
         public List<SheetRecordMaterias> RecordMaterias { get; set; }
         public List<SheetLegendMaterias> LegendMaterias { get; set; }
         public List<SheetLegendSpheres> LegendSpheres { get; set; }
@@ -155,6 +156,11 @@ namespace ProjectNoctis.Domain.SheetDatabase
                                 Console.WriteLine("Started RBs");
                                 ParseRecordBoard(data, headers);
                                 Console.WriteLine("Updated RBs");
+                                break;
+                            case "Guardian Summon Commands":
+                                Console.WriteLine("Started Guardian Summons");
+                                ParseGuardians(data, headers);
+                                Console.WriteLine("Updated Guardian Summons");
                                 break;
                             default:
                                 break;
@@ -506,6 +512,44 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
             Bursts = bursts;
         }
+
+        public void ParseGuardians(IList<IList<object>> guardianData, IList<object> headers)
+        {
+            var guardians = new List<SheetGuardianSummons>();
+
+            foreach (var guardian in guardianData)
+            {
+                try
+                {
+                    guardians.Add(new SheetGuardianSummons
+                    {
+                        Name = guardian[headers.IndexOf("Name")].ToString(),
+                        Character = guardian[headers.IndexOf("Character")].ToString(),
+                        Effects = guardian[headers.IndexOf("Effects")].ToString(),
+                        Element = guardian[headers.IndexOf("Element")].ToString(),
+                        Formula = guardian[headers.IndexOf("Formula")].ToString(),
+                        JPName = guardian[headers.IndexOf("Name (JP)")].ToString(),
+                        Multiplier = guardian[headers.IndexOf("Multiplier")].ToString(),
+                        SB = guardian[headers.IndexOf("SB")].ToString(),
+                        Source = guardian[headers.IndexOf("Source")].ToString(),
+                        School = guardian[headers.IndexOf("School")].ToString(),
+                        GuardianSlot = guardian[headers.IndexOf("Guardian Ability Slot")].ToString(),
+                        Target = guardian[headers.IndexOf("Target")].ToString(),
+                        GuardianId = guardian[headers.IndexOf("ID")].ToString(),
+                        Type = guardian[headers.IndexOf("Type")].ToString(),
+                        Time = guardian[headers.IndexOf("Time")].ToString()
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Throwing out guardian for {guardian[headers.IndexOf("Character")]} due to bad data during update");
+                    continue;
+                }
+            }
+
+            GuardianSummons = guardians;
+        }
+
         public void ParseBraves(IList<IList<object>> braveData, IList<object> headers)
         {
             var braves = new List<SheetBraves>();
@@ -543,6 +587,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
             Braves = braves;
         }
+
         public void ParseSynchros(IList<IList<object>> synchroData, IList<object> headers)
         {
             var synchros = new List<SheetSynchros>();

@@ -595,6 +595,7 @@ namespace ProjectNoctis.Factories.Concrete
                 embed.Fields.AddRange(BuildStatusEmbedFields(limit.LimitStatuses));
                 embed.Fields.AddRange(BuildOtherEmbedFields(limit.LimitOthers));
                 embeds.Add(embed.Build());
+                embeds.AddRange(BuildGuardianCommandEmbeds(limit.GuardianCommands));
             }
 
             return embeds;
@@ -837,6 +838,80 @@ namespace ProjectNoctis.Factories.Concrete
             }
 
             return synchroEmbeds;
+        }
+
+        public List<Embed> BuildGuardianCommandEmbeds(IList<GuardianCommand> guardianCommands)
+        {
+            var guardianEmbeds = new List<Embed>();
+
+            foreach (var command in guardianCommands)
+            {
+                var embed = new EmbedBuilder();
+
+                embed.Title = $"{command.Info.Source}'s {command.Info.Name} ( Slot {command.Info.GuardianSlot} )";
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "Effects",
+                    Value = command.Info.Effects != string.Empty ? command.Info.Effects : "-"
+                });
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "School",
+                    Value = command.Info.School != string.Empty ? command.Info.School : "-",
+                    IsInline = true
+                });
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "Element",
+                    Value = command.Info.Element != string.Empty ? command.Info.Element : "-",
+                    IsInline = true
+                });
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "Type",
+                    Value = command.Info.Type != string.Empty ? command.Info.Type : "-",
+                    IsInline = true
+                });
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "Multiplier",
+                    Value = command.Info.Multiplier != string.Empty ? command.Info.Multiplier : "-",
+                    IsInline = true
+                });
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "Target",
+                    Value = command.Info.Target != string.Empty ? command.Info.Target : "-",
+                    IsInline = true
+                });
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "Cast Time",
+                    Value = command.Info.Time != string.Empty ? command.Info.Time : "-",
+                    IsInline = true
+                });
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "SB Charge",
+                    Value = command.Info.SB != string.Empty ? command.Info.SB : "-",
+                    IsInline = true
+                });
+
+                embed.Fields.AddRange(BuildStatusEmbedFields(command.GuardianStatuses));
+                embed.Fields.AddRange(BuildOtherEmbedFields(command.GuardianOthers));
+
+                guardianEmbeds.Add(embed.Build());
+            }
+
+            return guardianEmbeds;
         }
 
         public Embed BuildEmbedForRecordDive(string name)

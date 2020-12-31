@@ -198,10 +198,10 @@ namespace ProjectNoctis.Services.Concrete
 
                 newlimit.Info = limit;
 
+                AddGuardianCommandsToLimitBreak(newlimit);
+
                 newlimits.Add(newlimit);
-
             };
-
             return newlimits;
         }
 
@@ -210,6 +210,40 @@ namespace ProjectNoctis.Services.Concrete
             var soulbreaksFromDb = soulbreakRepository.GetAllSoulbreaksByCharacterName(name);
 
             return soulbreaksFromDb.Select(x => new Soulbreak() { Info = x }).ToList();
+        }
+
+        public void AddGuardianCommandsToLimitBreak(LimitBreak limitBreak)
+        {
+            var Guardians = soulbreakRepository.GetGuardianCommandsByCharacterAndLimitBreak(limitBreak.Info.Character, limitBreak.Info.Name);
+
+            limitBreak.GuardianCommands = new List<GuardianCommand>();
+
+            foreach (var guardian in Guardians)
+            {
+                var newGuardian = new GuardianCommand();
+
+                newGuardian.Info = guardian;
+
+                newGuardian.GuardianStatuses = statusRepository.GetStatusesByEffectText(guardian.Name, guardian.Effects);
+                FilterAttachElementFromStatuses(newGuardian.GuardianStatuses);
+
+                newGuardian.GuardianOthers = new Dictionary<string, List<SheetOthers>>();
+
+                foreach (var status in newGuardian.GuardianStatuses.SelectMany(x => x.Value))
+                {
+                    statusRepository.GetOthersByNamesAndSource(status.Name, newGuardian.GuardianOthers);
+                }
+
+                foreach (var other in newGuardian.GuardianOthers)
+                {
+                    foreach (var otherStatus in other.Value)
+                    {
+                        FilterAttachElementFromStatuses(otherStatus.OtherStatuses);
+                    }
+                }
+
+                limitBreak.GuardianCommands.Add(newGuardian);
+            }
         }
 
         public void AddSynchroCommandsToSoulbreak(Soulbreak soulbreak)

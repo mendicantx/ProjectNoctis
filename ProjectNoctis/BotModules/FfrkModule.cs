@@ -230,10 +230,34 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
+		[Command("lbgs")]
+		public async Task LbgsLimitBreakInfo(string name, int? index = null)
+		{
+			var limitbreaks = embedBuilder.BuildLimitBreakEmbeds("LBGS", name, index);
+
+			foreach (var limitbreak in limitbreaks)
+			{
+				await Context.Channel.SendMessageAsync(embed: limitbreak);
+			}
+		}
+
+
+		[Command("lb")]
+		public async Task LbLimitBreakInfo(string name, int? index = null)
+		{
+			var limitbreaks = embedBuilder.BuildLimitBreakEmbeds(null, name, index);
+
+			foreach (var limitbreak in limitbreaks)
+			{
+				await Context.Channel.SendMessageAsync(embed: limitbreak);
+			}
+		}
+
 		[Command("tasb")]
+		[Alias(new string[2] { "adsb", "dryad" })]
 		public async Task TasbSoulbreakInfo(string name)
 		{
-			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("TASB", name, null);
+			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("ADSB", name, null);
 
 			foreach (var soulbreak in soulbreaks)
 			{

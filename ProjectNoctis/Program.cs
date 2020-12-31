@@ -25,6 +25,7 @@ namespace ProjectNoctis
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.UseKestrel().UseUrls("http://localhost:5050");
                     webBuilder.UseStartup<Startup>();
                 });
     }
