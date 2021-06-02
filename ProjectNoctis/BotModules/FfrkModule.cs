@@ -30,6 +30,18 @@ namespace ProjectNoctis.BotModules
 			this.settings = settings;
 		}
 
+		[Command("ue")]
+		[Alias("he")]
+		public async Task UniqueEquipmentInfo(string name)
+		{
+			var equipments = embedBuilder.BuildsEmbedsForUniqueEquipment(name);
+
+			foreach (var equip in equipments)
+			{
+				await Context.Channel.SendMessageAsync(embed: equip);
+			}
+		}
+
 		[Command("bsb")]
 		[Alias("burst")]
 		public async Task BsbSoulbreakInfo(string name, int? index = null)
@@ -254,7 +266,7 @@ namespace ProjectNoctis.BotModules
 		}
 
 		[Command("tasb")]
-		[Alias(new string[2] { "adsb", "dryad" })]
+		[Alias(new string[3] { "adsb", "dryad", "dyad" })]
 		public async Task TasbSoulbreakInfo(string name)
 		{
 			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("ADSB", name, null);
@@ -418,7 +430,7 @@ namespace ProjectNoctis.BotModules
 		public async Task Help()
 		{
 			var embed = new EmbedBuilder();
-			embed.ImageUrl = "https://i.imgur.com/zL4RNEQ.png";
+			embed.ImageUrl = settings.HelpLink;
 
 			await Context.Channel.SendMessageAsync(embed:embed.Build());
 		}

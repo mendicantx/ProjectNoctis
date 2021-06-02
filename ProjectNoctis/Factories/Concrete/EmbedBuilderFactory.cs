@@ -49,6 +49,93 @@ namespace ProjectNoctis.Factories.Concrete
             this.materiaService = materiaService;
             this.settings = settings;
         }
+        
+        public List<Embed> BuildsEmbedsForUniqueEquipment(string name)
+        {
+            var uniqueEquipment = characterService.BuildUniqueEquipmentForCharacterByName(name);
+
+            var embeds = new List<Embed>();
+
+            var setEmbed = new EmbedBuilder();
+
+            if (uniqueEquipment == null)
+            {
+                setEmbed.Title = "No Matches Found";
+                return new List<Embed> { setEmbed.Build() };
+            }
+
+            setEmbed.Title = $"{uniqueEquipment.UniqueEquipmentSets.Info.Character}'s Unique Equipment Sets";
+
+            setEmbed.Fields.Add(new EmbedFieldBuilder()
+            { Name = "Two Set Bonus", Value = uniqueEquipment.UniqueEquipmentSets.Info.TwoSetBonus, IsInline = true });
+
+            setEmbed.Fields.Add(new EmbedFieldBuilder()
+            { Name = "Three Set Bonus", Value = uniqueEquipment.UniqueEquipmentSets.Info.ThreeSetBonus, IsInline = true });
+
+            var statusFields = BuildStatusEmbedFields(uniqueEquipment.UniqueEquipmentSets.Statuses);
+
+            setEmbed.Fields.AddRange(statusFields);
+
+            setEmbed.ThumbnailUrl = uniqueEquipment.CharacterUrl;
+
+            embeds.Add(setEmbed.Build());
+
+            foreach(var equip in uniqueEquipment.UniqueEquipments)
+            {
+                embeds.Add(BuildUniqueEquipmentEmbed(equip));
+            }
+
+            return embeds;
+
+        }
+
+        public Embed BuildUniqueEquipmentEmbed(UniqueEquip uniqueEquipment)
+        {
+            var embed = new EmbedBuilder();
+
+            embed.Title = uniqueEquipment.Info.Name;
+
+            embed.Fields.Add(new EmbedFieldBuilder()
+            { Name = "Season Group", Value = $"{uniqueEquipment.Info.Season} {uniqueEquipment.Info.Group}", IsInline = true });
+
+            embed.Fields.Add(new EmbedFieldBuilder()
+            { Name = "Level", Value = uniqueEquipment.Info.Level, IsInline = true });
+
+            embed.Fields.Add(new EmbedFieldBuilder()
+            { Name = "Atk", Value = uniqueEquipment.Info.Atk, IsInline = true });
+
+            embed.Fields.Add(new EmbedFieldBuilder()
+            { Name = "Mag", Value = uniqueEquipment.Info.Mag, IsInline = true });
+
+            embed.Fields.Add(new EmbedFieldBuilder()
+            { Name = "Acc", Value = uniqueEquipment.Info.Acc, IsInline = true });
+
+            embed.Fields.Add(new EmbedFieldBuilder()
+            { Name = "Def", Value = uniqueEquipment.Info.Def, IsInline = true });
+
+            embed.Fields.Add(new EmbedFieldBuilder()
+            { Name = "Eva", Value = uniqueEquipment.Info.Eva, IsInline = true });
+
+            embed.Fields.Add(new EmbedFieldBuilder()
+            { Name = "Mnd ", Value = uniqueEquipment.Info.Mnd, IsInline = true });
+
+            embed.Fields.Add(new EmbedFieldBuilder()
+            { Name = "Res", Value = uniqueEquipment.Info.Res, IsInline = true });
+
+            embed.Fields.Add(new EmbedFieldBuilder()
+            { Name = "Fixed Passives", Value = uniqueEquipment.Info.FixedPassives, IsInline = false });
+
+            embed.Fields.Add(new EmbedFieldBuilder()
+            { Name = "Random Passives", Value = uniqueEquipment.Info.RandomPassives, IsInline = false });
+
+            var statusFields = BuildStatusEmbedFields(uniqueEquipment.Statuses);
+
+            embed.Fields.AddRange(statusFields);
+
+            embed.ThumbnailUrl = uniqueEquipment.Info.EquipmentImage;
+
+            return embed.Build();
+        }
 
         public Embed BuildEmbedForBasicCharacterInfo(string name)
         {
@@ -354,6 +441,10 @@ namespace ProjectNoctis.Factories.Concrete
             }
 
             var soulbreaks = soulbreakService.BuildSoulbreakInfoFromCharNameAndTier(tier, charName, index);
+            if(tier == "CSB")
+            {
+                soulbreaks.AddRange(soulbreakService.BuildSoulbreakInfoFromCharNameAndTier("CSB+", charName, index));
+            }
             var embeds = new List<List<Embed>>();
 
             if (soulbreaks.Count() == 0)

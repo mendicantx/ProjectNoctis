@@ -33,6 +33,8 @@ namespace ProjectNoctis.Domain.SheetDatabase
         public List<SheetRecordSpheres> RecordSpheres { get; set; }
         public List<SheetRecordBoards> RecordBoards { get; set; }
         public List<SheetLimitBreaks> LimitBreaks { get; set; }
+        public List<SheetUniqueEquipment> UniqueEquipment { get; set; }
+        public List<SheetUniqueEquipmentSets> UniqueEquipmentSets { get; set; }
         public bool LastUpdateSuccessful { get; set; }
         public DateTime LastUpdateTime { get; set; }
 
@@ -162,6 +164,16 @@ namespace ProjectNoctis.Domain.SheetDatabase
                                 Console.WriteLine("Started Guardian Summons");
                                 ParseGuardians(data, headers);
                                 Console.WriteLine("Updated Guardian Summons");
+                                break;
+                            case "Unique Equipment":
+                                Console.WriteLine("Started Unique Equipment");
+                                ParseUniqueEquipment(data, headers);
+                                Console.WriteLine("Updated Unique Equipment");
+                                break;
+                            case "Unique Equipment Set Bonuses":
+                                Console.WriteLine("Started Unique Equipment Sets");
+                                ParseUniqueEquipmentSets(data, headers);
+                                Console.WriteLine("Updated Unique Equipment Sets");
                                 break;
                             default:
                                 break;
@@ -512,6 +524,79 @@ namespace ProjectNoctis.Domain.SheetDatabase
             }
 
             Bursts = bursts;
+        }
+
+        public void ParseUniqueEquipment(IList<IList<object>> equipmentData, IList<object> headers)
+        {
+            var equipments = new List<SheetUniqueEquipment>();
+
+            foreach (var equip in equipmentData)
+            {
+                try
+                {
+                    equipments.Add(new SheetUniqueEquipment
+                    {
+                        Name = equip[headers.IndexOf("Name")].ToString(),
+                        Character = equip[headers.IndexOf("Character")].ToString(),
+                        Realm = equip[headers.IndexOf("Realm")].ToString(),
+                        Season = equip[headers.IndexOf("Season")].ToString(),
+                        Group = equip[headers.IndexOf("Group")].ToString(),
+                        Type = equip[headers.IndexOf("Type")].ToString(),
+                        Synergy = equip[headers.IndexOf("Synergy")].ToString(),
+                        Combine = equip[headers.IndexOf("Combine")].ToString(),
+                        Rarity = equip[headers.IndexOf("Rarity")].ToString(),
+                        Level = equip[headers.IndexOf("Level")].ToString(),
+                        Atk = equip[headers.IndexOf("ATK")].ToString(),
+                        Def = equip[headers.IndexOf("DEF")].ToString(),
+                        Mag = equip[headers.IndexOf("MAG")].ToString(),
+                        Res = equip[headers.IndexOf("RES")].ToString(),
+                        Mnd = equip[headers.IndexOf("MND")].ToString(),
+                        Acc = equip[headers.IndexOf("ACC")].ToString(),
+                        Eva = equip[headers.IndexOf("EVA")].ToString(),
+                        FixedPassives = equip[headers.IndexOf("Fixed Passive Effects")].ToString(),
+                        RandomPassives = equip[headers.IndexOf("Random Passive Effects")].ToString(),
+                        Id = equip[headers.IndexOf("ID")].ToString()
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Throwing out Unique Equipment for {equip[headers.IndexOf("Character")]} due to bad data during update");
+                    continue;
+                }
+
+            }
+
+            UniqueEquipment = equipments;
+        }
+
+        public void ParseUniqueEquipmentSets(IList<IList<object>> equipmentData, IList<object> headers)
+        {
+            var equipments = new List<SheetUniqueEquipmentSets>();
+
+            foreach (var equip in equipmentData)
+            {
+                try
+                {
+                    equipments.Add(new SheetUniqueEquipmentSets
+                    {
+                        Character = equip[headers.IndexOf("Character")].ToString(),
+                        Realm = equip[headers.IndexOf("Realm")].ToString(),
+                        Season = equip[headers.IndexOf("Season")].ToString(),
+                        Group = equip[headers.IndexOf("Group")].ToString(),
+                        TwoSetBonus = equip[headers.IndexOf("Set Bonus (2 Piece)")].ToString(),
+                        ThreeSetBonus = equip[headers.IndexOf("Set Bonus (3 Piece)")].ToString()
+
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Throwing out Unique Equipment Set for {equip[headers.IndexOf("Character")]} due to bad data during update");
+                    continue;
+                }
+
+            }
+
+            UniqueEquipmentSets = equipments;
         }
 
         public void ParseGuardians(IList<IList<object>> guardianData, IList<object> headers)

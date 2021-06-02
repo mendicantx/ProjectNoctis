@@ -15,5 +15,6 @@ namespace ProjectNoctis.Domain.Repository.Interfaces
         SheetRecordSpheres GetCharacterRecordSphereByName(string name, bool exact = false);
 
         SheetLegendSpheres GetCharacterLegendSpereByName(string name, bool exact = false);
+        UniqueEquipment GetUniqueEquipmentByCharacterName(string name);
     }
 }

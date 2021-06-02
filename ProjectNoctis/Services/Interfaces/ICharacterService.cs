@@ -10,5 +10,6 @@ namespace ProjectNoctis.Services.Interfaces
     public interface ICharacterService
     {
         Character BuildBasicCharacterInfoByName(string name);
+        UniqueEquipment BuildUniqueEquipmentForCharacterByName(string name);
     }
 }
