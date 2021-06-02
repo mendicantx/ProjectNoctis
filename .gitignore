@@ -14,3 +14,7 @@ ProjectNoctis/ProjectNoctis/token.json
 /ProjectNoctis/Services/Concrete/BotServices/BotService.cs
 /.vs
 /ProjectNoctis/Domain - Shortcut.lnk
+/ProjectNoctis/bin/Release/netcoreapp3.0/linux-x64/publish
+/ProjectNoctis/bin/Release/netcoreapp3.0/linux-x64/Properties
+/ProjectNoctis/bin/Release/netcoreapp3.0/linux-x64/GoogleApiWrapper
+/ProjectNoctis/bin/Release/netcoreapp3.0/linux-x64

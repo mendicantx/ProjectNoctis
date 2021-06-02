@@ -62,6 +62,7 @@ namespace ProjectNoctis.Constants
         public static string[] glintAliases = new string[2] { "glint", "glint+" };
 
         public static string ffrkImageBaseUrl = "https://dff.sp.mbga.jp/dff/static/lang/image/";
+        public static string ffrkImageABBaseUrl = "https://dff.sp.mbga.jp/dff/static/lang/ab_image/";
 
         public static List<string> ffrkImagePoseList = new List<string>() { "base_hands_up.png", "base_fatal.png" };
 

@@ -35,5 +35,6 @@ namespace ProjectNoctis.Factories.Interfaces
         List<Embed> BuildEmbedsForRecordMaterias(string name);
 
         List<Embed> BuildEmbedsForLegendMaterias(string name);
+        List<Embed> BuildsEmbedsForUniqueEquipment(string name);
     }
 }

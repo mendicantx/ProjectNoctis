@@ -25,6 +25,8 @@ namespace ProjectNoctis.Domain.SheetDatabase
         bool LastUpdateSuccessful { get; set; }
         DateTime LastUpdateTime { get; set; }
         List<SheetGuardianSummons> GuardianSummons { get; set; }
+        List<SheetUniqueEquipment> UniqueEquipment { get; set; }
+        List<SheetUniqueEquipmentSets> UniqueEquipmentSets { get; set; }
 
         Task<bool> SetupProperties();
     }

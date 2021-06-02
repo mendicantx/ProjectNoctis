@@ -23,7 +23,7 @@ namespace ProjectNoctis.Domain.Repository.Concrete
         public SheetCharacters GetCharacterByName(string name)
         {
             name = aliases.ResolveAlias(name);
-           
+
             var character = dbContext.Characters.FirstOrDefault(x => x.Name.ToLower() == name.ToLower());
 
             if (character == null)
@@ -32,6 +32,29 @@ namespace ProjectNoctis.Domain.Repository.Concrete
             }
 
             return character;
+        }
+
+        public UniqueEquipment GetUniqueEquipmentByCharacterName(string name)
+        {
+            name = aliases.ResolveAlias(name);
+
+            var character = dbContext.Characters.FirstOrDefault(x => x.Name.ToLower() == name.ToLower());
+
+            if (character == null)
+            {
+                character = dbContext.Characters.OrderByDescending(x => Fuzz.PartialRatio(x.Name.ToLower(), name.ToLower())).FirstOrDefault();
+            }
+
+            var sheetUniques = dbContext.UniqueEquipment.Where(x => x.Character == character.Name);
+            var sheetUniqueSet = dbContext.UniqueEquipmentSets.FirstOrDefault(x => x.Character == character.Name);
+            var uniqueEquip = new UniqueEquipment
+            {
+                UniqueEquipments = sheetUniques.Select(x => new UniqueEquip { Info = x }).ToList(),
+                UniqueEquipmentSets = new UniqueEquipmentSet { Info = sheetUniqueSet },
+                CharacterUrl = character.CharacterImage
+            };
+
+            return uniqueEquip;
         }
 
         public List<SheetCharacters> GetCharacters()

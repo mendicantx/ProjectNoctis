@@ -14,10 +14,31 @@ namespace ProjectNoctis.Services.Concrete
     public class CharacterService : ICharacterService
     {
         private readonly ICharacterRepository characterRepository;
+        private readonly IStatusRepository statusRepository;
 
-        public CharacterService(ICharacterRepository characterRepository)
+        public CharacterService(ICharacterRepository characterRepository, IStatusRepository statusRepository)
         {
             this.characterRepository = characterRepository;
+            this.statusRepository = statusRepository;
+        }
+
+        public UniqueEquipment BuildUniqueEquipmentForCharacterByName(string name)
+        {
+            var uniqueEquipment = characterRepository.GetUniqueEquipmentByCharacterName(name);
+
+            if(uniqueEquipment.UniqueEquipmentSets.Info == null)
+            {
+                return null;
+            }
+
+            uniqueEquipment.UniqueEquipmentSets.Statuses = statusRepository.GetStatusesByEffectText(uniqueEquipment.UniqueEquipmentSets.Info.Character, uniqueEquipment.UniqueEquipmentSets.Info.TwoSetBonus + " " + uniqueEquipment.UniqueEquipmentSets.Info.ThreeSetBonus);
+
+            foreach (var equip in uniqueEquipment.UniqueEquipments)
+            {
+                equip.Statuses = statusRepository.GetStatusesByEffectText(equip.Info.Name, equip.Info.RandomPassives);
+            }
+
+            return uniqueEquipment;
         }
 
         public Character BuildBasicCharacterInfoByName(string name)

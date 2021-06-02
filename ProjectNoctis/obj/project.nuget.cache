@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "3P+zaSSt8dWhtGXQt8BplKdRD6x97//VfgkLF3LBgNFWDuqy3vzYr61VPvEuFEngi6l7toyJzipQVZtss7bEjA==",
+  "dgSpecHash": "8W7B0pINDUKuOZQjI/6A3MIX995hdNYHQk7Q+83SkT1fchrgOt948toBrgPnTZsOdoDLRpYSFfEhtoS7Ge1/Gw==",
   "success": true,
   "projectFilePath": "E:\\FunProjects\\Noctis\\ProjectNoctis\\ProjectNoctis.csproj",
   "expectedPackageFiles": [
@@ -109,10 +109,10 @@
     "C:\\Users\\Fayt\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512",
     "C:\\Users\\Fayt\\.nuget\\packages\\system.xml.xmldocument\\4.3.0\\system.xml.xmldocument.4.3.0.nupkg.sha512",
     "C:\\Users\\Fayt\\.nuget\\packages\\system.xml.xmlserializer\\4.3.0\\system.xml.xmlserializer.4.3.0.nupkg.sha512",
-    "C:\\Users\\Fayt\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\3.0.1\\microsoft.aspnetcore.app.ref.3.0.1.nupkg.sha512",
-    "C:\\Users\\Fayt\\.nuget\\packages\\microsoft.netcore.app.ref\\3.0.0\\microsoft.netcore.app.ref.3.0.0.nupkg.sha512",
     "C:\\Users\\Fayt\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.0.3\\microsoft.netcore.app.host.win-x64.3.0.3.nupkg.sha512",
-    "C:\\Users\\Fayt\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\3.0.0\\microsoft.windowsdesktop.app.ref.3.0.0.nupkg.sha512"
+    "C:\\Users\\Fayt\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\3.0.1\\microsoft.aspnetcore.app.ref.3.0.1.nupkg.sha512",
+    "C:\\Users\\Fayt\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\3.0.0\\microsoft.windowsdesktop.app.ref.3.0.0.nupkg.sha512",
+    "C:\\Users\\Fayt\\.nuget\\packages\\microsoft.netcore.app.ref\\3.0.0\\microsoft.netcore.app.ref.3.0.0.nupkg.sha512"
   ],
   "logs": []
 }

@@ -1,3 +1,4 @@
 ﻿{
-	"jpAnimaWave": "4"
+	"jpAnimaWave": "4",
+	"helpLink": ""
 }
