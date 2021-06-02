@@ -67,7 +67,8 @@ namespace ProjectNoctis.Domain.SheetDatabase
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("Failed To Pull Sheet Retrying...");
+                        Console.WriteLine("Failed To Pull Sheet Retrying..." + ex.StackTrace);
+                        Thread.Sleep(10000);
                     }
                 }
 

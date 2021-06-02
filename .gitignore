@@ -5,7 +5,8 @@
 /ProjectNoctis/UtilFiles/credentials.json
 /ProjectNoctis/Migrations
 /ProjectNoctis/GoogleApiWrapper/credentials.json
-/ProjectNoctis/bin/Debug/netcoreapp3.0/UtilFiles/credentials.json
+ProjectNoctis/bin/
+ProjectNoctis/obj/
 /.vs/ProjectNoctis/v16
 /.vs/ProjectNoctis
 /ProjectNoctis/bin/Debug/netcoreapp3.0
@@ -14,3 +15,4 @@ ProjectNoctis/ProjectNoctis/token.json
 /ProjectNoctis/Services/Concrete/BotServices/BotService.cs
 /.vs
 /ProjectNoctis/Domain - Shortcut.lnk
+/.vscode
