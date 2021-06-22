@@ -30,7 +30,7 @@ namespace ProjectNoctis.BotModules
 			this.settings = settings;
 		}
 
-		[Command("ue")]
+		[Command("ue", RunMode = RunMode.Async)]
 		[Alias("he")]
 		public async Task UniqueEquipmentInfo(string name)
 		{
@@ -42,7 +42,7 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
-		[Command("bsb")]
+		[Command("bsb", RunMode = RunMode.Async)]
 		[Alias("burst")]
 		public async Task BsbSoulbreakInfo(string name, int? index = null)
 		{
@@ -57,7 +57,7 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
-		[Command("unique")]
+		[Command("unique", RunMode = RunMode.Async)]
 		[Alias("uni")]
 		public async Task UniqueSoulbreakInfo(string name, int? index = null)
 		{
@@ -72,7 +72,7 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
-		[Command("aasb")]
+		[Command("aasb", RunMode = RunMode.Async)]
 		[Alias("woke")]
 		public async Task AasbSoulbreakInfo(string name, int? index = null)
 		{
@@ -87,7 +87,7 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
-		[Command("default")]
+		[Command("default", RunMode = RunMode.Async)]
 		public async Task DefaultSoulbreakInfo(string name, int? index = null)
 		{
 			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("Default", name, index);
@@ -101,7 +101,7 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
-		[Command("osb")]
+		[Command("osb", RunMode = RunMode.Async)]
 		public async Task OsbSoulbreakInfo(string name, int? index = null)
 		{
 			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("OSB", name, index);
@@ -115,7 +115,7 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
-		[Command("aosb")]
+		[Command("aosb", RunMode = RunMode.Async)]
 		[Alias("arcane")]
 		public async Task AosbSoulbreakInfo(string name, int? index = null)
 		{
@@ -130,7 +130,7 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
-		[Command("sasb")]
+		[Command("sasb", RunMode = RunMode.Async)]
 		[Alias("sync")]
 		public async Task SasbSoulbreakInfo(string name, int? index = null)
 		{
@@ -145,7 +145,7 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
-		[Command("csb")]
+		[Command("csb", RunMode = RunMode.Async)]
 		[Alias("chain")]
 		public async Task CsbSoulbreakInfo(string name, int? index = null)
 		{
@@ -160,7 +160,7 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
-		[Command("g")]
+		[Command("g", RunMode = RunMode.Async)]
 		[Alias(new string[5] { "glint", "glint+", "g+", "fsb", "fsb+" })]
 		public async Task GlintSoulbreakInfo(string name, int? index = null)
 		{
@@ -175,7 +175,7 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
-		[Command("brave")]
+		[Command("brave", RunMode = RunMode.Async)]
 		[Alias("brsb")]
 		public async Task BraveSoulbreakInfo(string name, int? index = null)
 		{
@@ -190,7 +190,7 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
-		[Command("usb")]
+		[Command("usb", RunMode = RunMode.Async)]
 		[Alias("ultra")]
 		public async Task UsbSoulbreakInfo(string name, int? index = null)
 		{
@@ -205,7 +205,7 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
-		[Command("ssb")]
+		[Command("ssb", RunMode = RunMode.Async)]
 		[Alias("super")]
 		public async Task SsbSoulbreakInfo(string name, int? index = null)
 		{
@@ -220,7 +220,7 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
-		[Command("lbo")]
+		[Command("lbo", RunMode = RunMode.Async)]
 		public async Task LboLimitBreakInfo(string name, int? index = null)
 		{
 			var limitbreaks = embedBuilder.BuildLimitBreakEmbeds("LBO", name, index);
@@ -231,7 +231,7 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
-		[Command("lbg")]
+		[Command("lbg", RunMode = RunMode.Async)]
 		public async Task LbgLimitBreakInfo(string name, int? index = null)
 		{
 			var limitbreaks = embedBuilder.BuildLimitBreakEmbeds("LBG", name, index);
@@ -242,7 +242,7 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
-		[Command("lbgs")]
+		[Command("lbgs", RunMode = RunMode.Async)]
 		public async Task LbgsLimitBreakInfo(string name, int? index = null)
 		{
 			var limitbreaks = embedBuilder.BuildLimitBreakEmbeds("LBGS", name, index);
@@ -254,7 +254,7 @@ namespace ProjectNoctis.BotModules
 		}
 
 
-		[Command("lb")]
+		[Command("lb", RunMode = RunMode.Async)]
 		public async Task LbLimitBreakInfo(string name, int? index = null)
 		{
 			var limitbreaks = embedBuilder.BuildLimitBreakEmbeds(null, name, index);
@@ -265,7 +265,7 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
-		[Command("tasb")]
+		[Command("tasb", RunMode = RunMode.Async)]
 		[Alias(new string[3] { "adsb", "dryad", "dyad" })]
 		public async Task TasbSoulbreakInfo(string name)
 		{
@@ -280,7 +280,7 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
-		[Command("sb")]
+		[Command("sb", RunMode = RunMode.Async)]
 		[Alias("sbs")]
 		public async Task SsbSoulbreakInfo([Remainder] string name)
 		{
@@ -292,7 +292,7 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
-		[Command("char")]
+		[Command("char", RunMode = RunMode.Async)]
 		[Summary("Return Character Info.")]
 		public async Task CharacterInfoAsync([Remainder] string name)
 		{
@@ -300,7 +300,7 @@ namespace ProjectNoctis.BotModules
 			await Context.Channel.SendMessageAsync(embed: character);
 		}
 
-		[Command("ld")]
+		[Command("ld", RunMode = RunMode.Async)]
 		[Alias("ls")]
 		[Summary("Return Legend Dive Info.")]
 		public async Task LegendDiveInfoAsync([Remainder] string name)
@@ -309,7 +309,7 @@ namespace ProjectNoctis.BotModules
 			await Context.Channel.SendMessageAsync(embed: legendDive);
 		}
 
-		[Command("rd")]
+		[Command("rd", RunMode = RunMode.Async)]
 		[Alias("rs")]
 		[Summary("Return Record Dive Info.")]
 		public async Task RecordDiveInfoAsync([Remainder] string name)
@@ -318,7 +318,7 @@ namespace ProjectNoctis.BotModules
 			await Context.Channel.SendMessageAsync(embed: recordDive);
 		}
 
-		[Command("dive")]
+		[Command("dive", RunMode = RunMode.Async)]
 		[Alias(new string[2] { "full", "fd" })]
 		[Summary("Return Full Dive Info.")]
 		public async Task FullDiveInfoAsync([Remainder] string name)
@@ -327,7 +327,7 @@ namespace ProjectNoctis.BotModules
 			await Context.Channel.SendMessageAsync(embed: fullDive);
 		}
 
-		[Command("board")]
+		[Command("board", RunMode = RunMode.Async)]
 		[Alias(new string[2] { "rb", "bd" })]
 		[Summary("Return Character Record Board Info.")]
 		public async Task RecordBoardInfoAsync([Remainder] string name)
@@ -336,7 +336,7 @@ namespace ProjectNoctis.BotModules
 			await Context.Channel.SendMessageAsync(embed: recordBoard);
 		}
 
-		[Command("abil")]
+		[Command("abil", RunMode = RunMode.Async)]
 		[Alias(new string[2] { "a", "ability" })]
 		[Summary("Return ability Info.")]
 		public async Task AbilityInfoAsync([Remainder] string name)
@@ -349,7 +349,7 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
-		[Command("abs")]
+		[Command("abs", RunMode = RunMode.Async)]
 		[Summary("Return ability Info.")]
 		public async Task AbilityBySchoolInfoAsync(string school, string rank = "6", string element = null)
 		{
@@ -357,7 +357,7 @@ namespace ProjectNoctis.BotModules
 			await Context.Channel.SendMessageAsync(embed: ability);
 		}
 
-		[Command("ha")]
+		[Command("ha", RunMode = RunMode.Async)]
 		[Alias("ua")]
 		[Summary("Return hero ability Info.")]
 		public async Task HeroAbilityInfoAsync([Remainder] string name)
@@ -370,7 +370,7 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
-		[Command("status")]
+		[Command("status", RunMode = RunMode.Async)]
 		[Alias(new string[2] { "s", "stat" })]
 		[Summary("Return Status Info.")]
 		public async Task StatusInfoAsync([Remainder] string name)
@@ -379,7 +379,7 @@ namespace ProjectNoctis.BotModules
 			await Context.Channel.SendMessageAsync(embed: status);
 		}
 
-		[Command("chase")]
+		[Command("chase", RunMode = RunMode.Async)]
 		[Alias(new string[2] { "0", "other" })]
 		[Summary("Return Other Info.")]
 		public async Task OtherInfoAsync([Remainder] string name)
@@ -388,7 +388,7 @@ namespace ProjectNoctis.BotModules
 			await Context.Channel.SendMessageAsync(embed: other);
 		}
 
-		[Command("magi")]
+		[Command("magi", RunMode = RunMode.Async)]
 		public async Task MagiciteInfoAsync([Remainder] string name)
 		{
 			var magicite = embedBuilder.BuildEmbedForMagicite(name);
@@ -396,7 +396,7 @@ namespace ProjectNoctis.BotModules
 			await Context.Channel.SendMessageAsync(embed: magicite);
 		}
 
-		[Command("lm")]
+		[Command("lm", RunMode = RunMode.Async)]
 		[Alias("lms")]
 		public async Task LegendMateriaInfoAsync([Remainder] string name)
 		{
@@ -408,7 +408,7 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
-		[Command("rm")]
+		[Command("rm", RunMode = RunMode.Async)]
 		[Alias("rms")]
 		public async Task RecordMateriaInfoAsync([Remainder] string name)
 		{
@@ -420,13 +420,13 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
-		[Command("LastUpdate")]
+		[Command("LastUpdate", RunMode = RunMode.Async)]
 		public async Task LastUpdate()
 		{
 			await Context.Channel.SendMessageAsync($"Last update was {ffrkSheetContext.LastUpdateTime} and Result was: Success {ffrkSheetContext.LastUpdateSuccessful}");
 		}
 
-		[Command("help")]
+		[Command("help", RunMode = RunMode.Async)]
 		public async Task Help()
 		{
 			var embed = new EmbedBuilder();

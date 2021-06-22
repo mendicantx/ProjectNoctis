@@ -541,40 +541,46 @@ namespace ProjectNoctis.Factories.Concrete
 
                 if (soulbreak.BraveCommands.Count() != 0 && tier != "brave")
                 {
+                    var character = GetCharacterNameForCommands(soulbreak.Info.Character);
+
                     embed.AddField(new EmbedFieldBuilder()
                     {
                         Name = "Commands",
-                        Value = $"**Please use ?brave to see commands and use index if there are multiple braves for that character (e.g: ?brave {soulbreak.Info.Character} 1)**",
+                        Value = $"**Please use ?brave to see commands and use index if there are multiple braves for that character (e.g: ?brave {character} 1)**",
                         IsInline = false
                     });
                 }
 
                 if (soulbreak.BurstCommands.Count() != 0 && (index == null || index < 0 || index >= soulbreaks.Count()) && soulbreaks.Count() > 1)
                 {
+                    var character = GetCharacterNameForCommands(soulbreak.Info.Character);
                     embed.AddField(new EmbedFieldBuilder()
                     {
                         Name = "Commands",
-                        Value = $"**Please use ?bsb {soulbreak.Info.Character} {soulbreaks.IndexOf(soulbreak) + 1} to see commands for this particular bsb**",
+                        Value = $"**Please use ?bsb {character} {soulbreaks.IndexOf(soulbreak) + 1} to see commands for this particular bsb**",
                         IsInline = false
                     });
                 }
 
                 if (soulbreak.BraveCommands.Count() != 0 && (index == null || index < 0 || index >= soulbreaks.Count()) && soulbreaks.Count() > 1 && tier == "brave")
                 {
+                    var character = GetCharacterNameForCommands(soulbreak.Info.Character);
                     embed.AddField(new EmbedFieldBuilder()
                     {
                         Name = "Commands",
-                        Value = $"**Please use ?brave {soulbreak.Info.Character} {soulbreaks.IndexOf(soulbreak) + 1} to see commands for this particular brave**",
+                        Value = $"**Please use ?brave {character} {soulbreaks.IndexOf(soulbreak) + 1} to see commands for this particular brave**",
                         IsInline = false
                     });
                 }
 
                 if (soulbreak.SynchroCommands.Count() != 0 && (index == null || index < 0 || index >= soulbreaks.Count()) && soulbreaks.Count() > 1)
                 {
+                    var character = GetCharacterNameForCommands(soulbreak.Info.Character);
+
                     embed.AddField(new EmbedFieldBuilder()
                     {
                         Name = "Commands",
-                        Value = $"**Please use ?sasb {soulbreak.Info.Character} {soulbreaks.IndexOf(soulbreak) + 1} to see commands for this particular synchro**",
+                        Value = $"**Please use ?sasb {character} {soulbreaks.IndexOf(soulbreak) + 1} to see commands for this particular synchro**",
                         IsInline = false
                     });
                 }
@@ -1605,6 +1611,14 @@ namespace ProjectNoctis.Factories.Concrete
             }
 
             return otherFields;
+        }
+
+        private string GetCharacterNameForCommands(string character) {
+            if (character.IndexOf(" ") > 0)
+                return $"\"{character}\"";
+
+            return character;
+
         }
     }
 }

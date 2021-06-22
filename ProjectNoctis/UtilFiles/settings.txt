@@ -1,4 +1,1 @@
-﻿{
-	"jpAnimaWave": "4",
-	"helpLink": ""
-}
+﻿{"jpAnimaWave":"5","helpLink":"https://i.imgur.com/ozsPjDH.png"}

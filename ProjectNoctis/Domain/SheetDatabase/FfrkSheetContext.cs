@@ -165,12 +165,12 @@ namespace ProjectNoctis.Domain.SheetDatabase
                                 ParseGuardians(data, headers);
                                 Console.WriteLine("Updated Guardian Summons");
                                 break;
-                            case "Unique Equipment":
+                            case "Hero Artifacts":
                                 Console.WriteLine("Started Unique Equipment");
                                 ParseUniqueEquipment(data, headers);
                                 Console.WriteLine("Updated Unique Equipment");
                                 break;
-                            case "Unique Equipment Set Bonuses":
+                            case "Hero Artifact Set Bonuses":
                                 Console.WriteLine("Started Unique Equipment Sets");
                                 ParseUniqueEquipmentSets(data, headers);
                                 Console.WriteLine("Updated Unique Equipment Sets");
