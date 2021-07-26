@@ -281,7 +281,7 @@ namespace ProjectNoctis.BotModules
 		}
 
 		[Command("dasb", RunMode = RunMode.Async)]
-		[Alias(new string[1] { "daasb" })]
+		[Alias(new string[2] { "daasb", "dual" })]
 		public async Task DasbSoulbreakInfo(string name)
 		{
 			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("DASB", name, null);
