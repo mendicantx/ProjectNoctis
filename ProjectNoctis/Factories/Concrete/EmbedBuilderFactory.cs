@@ -456,7 +456,7 @@ namespace ProjectNoctis.Factories.Concrete
             {
                 var heroAbilityPage = GetPage(heroAbilities, i, 20);
                 var embed = new EmbedBuilder();
-                embed.Title = $"{school}'s Hero Abilities (Page {i + 1} of {pageAmount})";
+                embed.Title = $"{school}'s Hero Abilities (Page {i + 1} of {pageAmount}) ({heroAbilities.Count} Total)";
                 
                 foreach (var heroAbility in heroAbilityPage)
                 {
