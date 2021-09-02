@@ -385,6 +385,19 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
+		[Command("uas", RunMode = RunMode.Async)]
+		[Alias("has")]
+		[Summary("Return hero ability Info by school.")]
+		public async Task HeroAbilityBySchoolInfoAsync(string school)
+		{
+			var ability = embedBuilder.BuildEmbedForHeroAbilityBySchoolInformation(school);
+
+			foreach (var abilEmbed in ability)
+			{
+				await Context.Channel.SendMessageAsync(embed: abilEmbed);
+			}
+		}
+
 		[Command("status", RunMode = RunMode.Async)]
 		[Alias(new string[2] { "s", "stat" })]
 		[Summary("Return Status Info.")]

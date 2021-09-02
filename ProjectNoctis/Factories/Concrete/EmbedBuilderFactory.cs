@@ -433,6 +433,46 @@ namespace ProjectNoctis.Factories.Concrete
             return embeds;
         }
 
+        public List<Embed> BuildEmbedForHeroAbilityBySchoolInformation(string school) {
+            var heroAbilities = abilityService.BuildAbilityBySchoolInfo(school, "6");
+            heroAbilities = heroAbilities.Where(x => x.IsHeroAbility()).ToList();
+
+
+            var pageAmount = Math.Ceiling(heroAbilities.Count() / 20.0);
+
+            var embedGroup = new List<Embed>();
+
+            if (heroAbilities.Count() == 0)
+            {
+                var errorEmbed = new EmbedBuilder();
+                errorEmbed.Title = "No Matches Found For School: " + school;
+
+                embedGroup.Add(errorEmbed.Build());
+
+                return embedGroup;
+            }
+
+            for (int i = 0; i < pageAmount; i++)
+            {
+                var heroAbilityPage = GetPage(heroAbilities, i, 20);
+                var embed = new EmbedBuilder();
+                embed.Title = $"{school}'s Hero Abilities (Page {i + 1} of {pageAmount})";
+                
+                foreach (var heroAbility in heroAbilityPage)
+                {
+                    embed.Fields.Add(new EmbedFieldBuilder()
+                    {
+                        Name = $"{heroAbility.Info.Name}",
+                        Value = $"{heroAbility.Info.Effects} - {heroAbility.Info.Type} - {heroAbility.Info.Formula} - {heroAbility.Info.Multiplier} - {heroAbility.Info.Target} - {heroAbility.Info.Time} - {heroAbility.Info.SB}"
+                    });
+                }
+
+                embedGroup.Add(embed.Build());
+            }
+
+            return embedGroup;
+        }
+
         public List<List<Embed>> BuildSoulbreakEmbeds(string tier, string charName, int? index)
         {
             if (index != null)
@@ -1525,6 +1565,11 @@ namespace ProjectNoctis.Factories.Concrete
         }
 
         IList<Soulbreak> GetPage(IList<Soulbreak> list, int page, int pageSize)
+        {
+            return list.Skip(page * pageSize).Take(pageSize).ToList();
+        }
+
+        IList<Ability> GetPage(IList<Ability> list, int page, int pageSize)
         {
             return list.Skip(page * pageSize).Take(pageSize).ToList();
         }
