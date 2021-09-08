@@ -221,6 +221,7 @@ namespace ProjectNoctis.BotModules
 		}
 
 		[Command("lbo", RunMode = RunMode.Async)]
+		[Alias("olb")]
 		public async Task LboLimitBreakInfo(string name, int? index = null)
 		{
 			var limitbreaks = embedBuilder.BuildLimitBreakEmbeds("LBO", name, index);
@@ -232,6 +233,7 @@ namespace ProjectNoctis.BotModules
 		}
 
 		[Command("lbg", RunMode = RunMode.Async)]
+		[Alias("flb")]
 		public async Task LbgLimitBreakInfo(string name, int? index = null)
 		{
 			var limitbreaks = embedBuilder.BuildLimitBreakEmbeds("LBG", name, index);
@@ -243,6 +245,8 @@ namespace ProjectNoctis.BotModules
 		}
 
 		[Command("lbgs", RunMode = RunMode.Async)]
+		[Alias("glb")]
+
 		public async Task LbgsLimitBreakInfo(string name, int? index = null)
 		{
 			var limitbreaks = embedBuilder.BuildLimitBreakEmbeds("LBGS", name, index);
