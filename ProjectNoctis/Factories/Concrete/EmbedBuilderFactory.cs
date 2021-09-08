@@ -1515,22 +1515,37 @@ namespace ProjectNoctis.Factories.Concrete
             if (tier == "lmr") {
                 var lmrs = materiaService.BuildLegendMateriaInfoByAnimaWave(wave).ToList();
 
-                var embed = new EmbedBuilder();
-                embed.Title = $"Anima Wave {wave} - LMR";
                 var realms = lmrs.GroupBy(x => x.Info.Realm);
 
-                foreach (var realm in realms) {
-                    var realmLmrs = realm.ToList();
-                    var realmLmrStrings = realmLmrs.Select(x => $"{x.Info.Character}: {x.Info.Effect}");
+                for (int realmPage = 0; realmPage < 3; realmPage++) {
 
-                    embed.Fields.Add(new EmbedFieldBuilder() {
-                        Name = realm.Key,
-                        Value = String.Join(Environment.NewLine, realmLmrStrings)
-                    });
+                    var embed = new EmbedBuilder();
+                    embed.Title = $"Anima Wave {wave} - LMR";
+                    var currentRealms = realms.Skip(realmPage*6).Take(6);
+
+
+                    foreach (var realm in currentRealms) {
+                        var realmLmrs = realm.ToList();
+
+                        for (int realmLmrPage = 0; realmLmrPage < 5; realmLmrPage++) {
+                            var realmLmrStrings = realmLmrs.Skip(realmLmrPage*10).Take(10).Select(x => $"{x.Info.Character}: {x.Info.Effect}");
+
+                            if (realmLmrStrings.Count() == 0)
+                                break;
+
+                            embed.Fields.Add(new EmbedFieldBuilder() {
+                                Name = realmLmrPage > 0 ? $"{realm.Key} - (Part {realmLmrPage+1})" : realm.Key,
+                                Value = String.Join(Environment.NewLine, realmLmrStrings)
+                            });
+
+                        }
+
+                    }
+                    
+                    embeds.Add(embed.Build());
 
                 }
 
-                embeds.Add(embed.Build());
 
             } else {
 
