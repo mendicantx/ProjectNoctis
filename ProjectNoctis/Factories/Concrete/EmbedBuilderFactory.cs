@@ -1508,6 +1508,63 @@ namespace ProjectNoctis.Factories.Concrete
             return embeds;
         }
 
+        public List<Embed> BuildEmbedsForAnimaWave(string wave, string tier) {
+            var embeds = new List<Embed>();
+
+            
+            if (tier == "lmr") {
+                var lmrs = materiaService.BuildLegendMateriaInfoByAnimaWave(wave).ToList();
+
+                var embed = new EmbedBuilder();
+                embed.Title = $"Anima Wave {wave} - LMR";
+                var realms = lmrs.GroupBy(x => x.Info.Realm);
+
+                foreach (var realm in realms) {
+                    var realmLmrs = realm.ToList();
+                    var realmLmrStrings = realmLmrs.Select(x => $"{x.Info.Character}: {x.Info.Effect}");
+
+                    embed.Fields.Add(new EmbedFieldBuilder() {
+                        Name = realm.Key,
+                        Value = String.Join(Environment.NewLine, realmLmrStrings)
+                    });
+
+                }
+
+                embeds.Add(embed.Build());
+
+            } else {
+
+                var soulbreaks = soulbreakService.BuildSoulbreakInfoForAnimaWave(wave).ToList();
+
+                if (tier == "glint") {
+                    soulbreaks = soulbreaks.Where(x => x.Info.Tier.ToLower() == "glint" || x.Info.Tier.ToLower() == "glint+").ToList();
+                } else if ( tier == "unique") {
+                    soulbreaks = soulbreaks.Where(x => x.Info.Tier.ToLower() == "sb").ToList();
+                } else {
+                    soulbreaks = soulbreaks.Where(x => x.Info.Tier.ToLower() == tier).ToList();
+                }
+
+                var embed = new EmbedBuilder();
+                embed.Title = $"Anima Wave {wave} - {tier.ToUpper()}";
+                var realms = soulbreaks.GroupBy(x => x.Info.Realm);
+
+                foreach (var realm in realms) {
+                    var realmSbs = realm.ToList();
+                    var realmSbStrings = realmSbs.Select(x => $"{x.Info.Name} ({x.Info.Character})");
+
+                    embed.Fields.Add(new EmbedFieldBuilder() {
+                        Name = realm.Key,
+                        Value = String.Join(Environment.NewLine, realmSbStrings)
+                    });
+
+                }
+
+                embeds.Add(embed.Build());
+            }
+
+            return embeds;
+        }
+
         public List<Embed> BuildEmbedsForLegendMaterias(string name)
         {
             var embeds = new List<Embed>();

@@ -37,5 +37,7 @@ namespace ProjectNoctis.Factories.Interfaces
 
         List<Embed> BuildEmbedsForLegendMaterias(string name);
         List<Embed> BuildsEmbedsForUniqueEquipment(string name);
+
+        List<Embed> BuildEmbedsForAnimaWave(string wave, string tier);
     }
 }

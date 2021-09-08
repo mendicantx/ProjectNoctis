@@ -212,6 +212,14 @@ namespace ProjectNoctis.Services.Concrete
             return soulbreaksFromDb.Select(x => new Soulbreak() { Info = x }).ToList();
         }
 
+        public List<Soulbreak> BuildSoulbreakInfoForAnimaWave(string wave)
+        {
+            var soulbreaksFromDb = soulbreakRepository.GetSoulbreaksByAnimaWave(wave);
+
+            return soulbreaksFromDb.Select(x => new Soulbreak() { Info = x }).ToList();
+        }
+
+
         public void AddGuardianCommandsToLimitBreak(LimitBreak limitBreak)
         {
             var Guardians = soulbreakRepository.GetGuardianCommandsByCharacterAndLimitBreak(limitBreak.Info.Character, limitBreak.Info.Name);

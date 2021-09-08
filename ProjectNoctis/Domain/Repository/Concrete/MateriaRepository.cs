@@ -74,5 +74,12 @@ namespace ProjectNoctis.Domain.Repository.Concrete
 
             return legendMaterias;
         }
+
+        public List<SheetLegendMaterias> GetLegendMateriasByAnimaWave(string wave)
+        {
+            var legendMaterias = dbContext.LegendMaterias.Where(x => x.Anima == wave).ToList();
+
+            return legendMaterias;
+        }
     }
 }

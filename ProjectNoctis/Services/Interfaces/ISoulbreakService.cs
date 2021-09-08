@@ -13,5 +13,7 @@ namespace ProjectNoctis.Services.Interfaces
         List<Soulbreak> BuildSoulbreakInfoForAllCharSoulbreaksFromName(string name);
 
         List<LimitBreak> BuildLimitInfoFromCharNameAndTier(string tier, string character, int? index = null);
+
+        List<Soulbreak> BuildSoulbreakInfoForAnimaWave(string wave);
     }
 }

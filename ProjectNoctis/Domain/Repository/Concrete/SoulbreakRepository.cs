@@ -137,5 +137,9 @@ namespace ProjectNoctis.Domain.Repository.Concrete
 
             return guardianCommands;
         }
+
+        public List<SheetSoulbreaks> GetSoulbreaksByAnimaWave(string wave) {
+            return dbContext.Soulbreaks.Where(x => x.Anima == wave).ToList();
+        }
     }
 }

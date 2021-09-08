@@ -11,5 +11,7 @@ namespace ProjectNoctis.Services.Interfaces
         List<LegendMateria> BuildLegendMateriaInfoByName(string name);
 
         List<RecordMateria> BuildRecordMateriaInfoByName(string name);
+
+        List<LegendMateria> BuildLegendMateriaInfoByAnimaWave(string wave);
     }
 }

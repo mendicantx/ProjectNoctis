@@ -63,5 +63,25 @@ namespace ProjectNoctis.Services.Concrete
 
             return newLegendMaterias;
         }
+
+        public List<LegendMateria> BuildLegendMateriaInfoByAnimaWave(string wave) {
+            var legendMaterias = materiaRepository.GetLegendMateriasByAnimaWave(wave);
+            var newLegendMaterias = new List<LegendMateria>();
+
+            foreach (var materia in legendMaterias)
+            {
+                var newMateria = new LegendMateria();
+
+                newMateria.Info = materia;
+                newMateria.Statuses = statusRepository.GetStatusesByEffectText(materia.Name, materia.Effect);
+                newMateria.Others = new Dictionary<string, List<SheetOthers>>();
+
+                statusRepository.GetOthersByNamesAndSource(materia.Name, newMateria.Others);
+
+                newLegendMaterias.Add(newMateria);
+            }
+
+            return newLegendMaterias;
+        }
     }
 }

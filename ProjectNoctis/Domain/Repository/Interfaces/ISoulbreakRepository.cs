@@ -17,5 +17,7 @@ namespace ProjectNoctis.Domain.Repository.Interfaces
 
         List<SheetLimitBreaks> GetLimitBreaksByCharacterNameAndTier(string tier, string name, int? index = null);
         List<SheetGuardianSummons> GetGuardianCommandsByCharacterAndLimitBreak(string character, string limitBreak);
+
+        List<SheetSoulbreaks> GetSoulbreaksByAnimaWave(string wave);
     }
 }

@@ -452,6 +452,25 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
+		[Command("anima", RunMode = RunMode.Async)]
+		public async Task AnimaWaveSoulbreakInfoAsync(string wave, string tier)
+		{
+			tier = tier.ToLower();
+			var validTiers = new [] {"unique", "ssb", "bsb", "usb", "glint", "aasb", "lmr"};
+
+			if ( !validTiers.Contains(tier) ) {
+				await Context.Channel.SendMessageAsync($"Usage: ?anima <wave> <tier>. Valid tiers are: {string.Join(", ", validTiers)}"); 
+				return;
+			}
+
+			var animaWaveEmbeds = embedBuilder.BuildEmbedsForAnimaWave(wave, tier);
+
+			foreach (var animaWave in animaWaveEmbeds)
+			{
+				await Context.Channel.SendMessageAsync(embed: animaWave);
+			}
+		}
+
 		[Command("LastUpdate", RunMode = RunMode.Async)]
 		public async Task LastUpdate()
 		{
