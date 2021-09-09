@@ -456,7 +456,7 @@ namespace ProjectNoctis.BotModules
 		public async Task AnimaWaveSoulbreakInfoAsync(string wave, string tier)
 		{
 			tier = tier.ToLower();
-			var validTiers = new [] {"unique", "ssb", "bsb", "usb", "glint", "aasb", "lmr"};
+			var validTiers = new [] {"unique", "ssb", "bsb", "usb", "glint", "aasb", "csb", "lmr"};
 
 			if ( !validTiers.Contains(tier) ) {
 				await Context.Channel.SendMessageAsync($"Usage: ?anima <wave> <tier>. Valid tiers are: {string.Join(", ", validTiers)}"); 
