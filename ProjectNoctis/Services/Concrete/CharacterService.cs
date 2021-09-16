@@ -26,12 +26,10 @@ namespace ProjectNoctis.Services.Concrete
         {
             var uniqueEquipment = characterRepository.GetUniqueEquipmentByCharacterName(name);
 
-            if(uniqueEquipment.UniqueEquipmentSets.Info == null)
+            if(uniqueEquipment.UniqueEquipmentSets.Info != null)
             {
-                return null;
+                uniqueEquipment.UniqueEquipmentSets.Statuses = statusRepository.GetStatusesByEffectText(uniqueEquipment.UniqueEquipmentSets.Info.Character, uniqueEquipment.UniqueEquipmentSets.Info.TwoSetBonus + " " + uniqueEquipment.UniqueEquipmentSets.Info.ThreeSetBonus);
             }
-
-            uniqueEquipment.UniqueEquipmentSets.Statuses = statusRepository.GetStatusesByEffectText(uniqueEquipment.UniqueEquipmentSets.Info.Character, uniqueEquipment.UniqueEquipmentSets.Info.TwoSetBonus + " " + uniqueEquipment.UniqueEquipmentSets.Info.ThreeSetBonus);
 
             foreach (var equip in uniqueEquipment.UniqueEquipments)
             {

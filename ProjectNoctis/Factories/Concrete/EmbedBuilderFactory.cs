@@ -64,17 +64,23 @@ namespace ProjectNoctis.Factories.Concrete
                 return new List<Embed> { setEmbed.Build() };
             }
 
-            setEmbed.Title = $"{uniqueEquipment.UniqueEquipmentSets.Info.Character}'s Unique Equipment Sets";
+            if (uniqueEquipment.UniqueEquipmentSets.Info != null) {
+                setEmbed.Title = $"{uniqueEquipment.UniqueEquipmentSets.Info.Character}'s Unique Equipment Sets";
 
-            setEmbed.Fields.Add(new EmbedFieldBuilder()
-            { Name = "Two Set Bonus", Value = uniqueEquipment.UniqueEquipmentSets.Info.TwoSetBonus, IsInline = true });
+                setEmbed.Fields.Add(new EmbedFieldBuilder()
+                { Name = "Two Set Bonus", Value = uniqueEquipment.UniqueEquipmentSets.Info.TwoSetBonus, IsInline = true });
 
-            setEmbed.Fields.Add(new EmbedFieldBuilder()
-            { Name = "Three Set Bonus", Value = uniqueEquipment.UniqueEquipmentSets.Info.ThreeSetBonus, IsInline = true });
+                setEmbed.Fields.Add(new EmbedFieldBuilder()
+                { Name = "Three Set Bonus", Value = uniqueEquipment.UniqueEquipmentSets.Info.ThreeSetBonus, IsInline = true });
 
-            var statusFields = BuildStatusEmbedFields(uniqueEquipment.UniqueEquipmentSets.Statuses);
+                var statusFields = BuildStatusEmbedFields(uniqueEquipment.UniqueEquipmentSets.Statuses);
 
-            setEmbed.Fields.AddRange(statusFields);
+                setEmbed.Fields.AddRange(statusFields);
+
+            } else {
+                setEmbed.Title = "Set Bonuses not found.";
+            }
+
 
             setEmbed.ThumbnailUrl = uniqueEquipment.CharacterUrl;
 
