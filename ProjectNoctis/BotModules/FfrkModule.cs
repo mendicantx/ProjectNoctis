@@ -34,6 +34,7 @@ namespace ProjectNoctis.BotModules
 		[Alias("he")]
 		public async Task UniqueEquipmentInfo(string name)
 		{
+			LogMessageInfo();
 			var equipments = embedBuilder.BuildsEmbedsForUniqueEquipment(name);
 
 			foreach (var equip in equipments)
@@ -46,6 +47,8 @@ namespace ProjectNoctis.BotModules
 		[Alias("burst")]
 		public async Task BsbSoulbreakInfo(string name, int? index = null)
 		{
+			LogMessageInfo();
+
 			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("BSB", name, index);
 
 			foreach (var soulbreak in soulbreaks)
@@ -61,6 +64,8 @@ namespace ProjectNoctis.BotModules
 		[Alias("uni")]
 		public async Task UniqueSoulbreakInfo(string name, int? index = null)
 		{
+			LogMessageInfo();
+
 			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("SB", name, index);
 
 			foreach (var soulbreak in soulbreaks)
@@ -76,6 +81,8 @@ namespace ProjectNoctis.BotModules
 		[Alias("woke")]
 		public async Task AasbSoulbreakInfo(string name, int? index = null)
 		{
+			LogMessageInfo();
+
 			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("AASB", name, index);
 
 			foreach (var soulbreak in soulbreaks)
@@ -90,6 +97,8 @@ namespace ProjectNoctis.BotModules
 		[Command("default", RunMode = RunMode.Async)]
 		public async Task DefaultSoulbreakInfo(string name, int? index = null)
 		{
+			LogMessageInfo();
+
 			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("Default", name, index);
 
 			foreach (var soulbreak in soulbreaks)
@@ -104,6 +113,8 @@ namespace ProjectNoctis.BotModules
 		[Command("osb", RunMode = RunMode.Async)]
 		public async Task OsbSoulbreakInfo(string name, int? index = null)
 		{
+			LogMessageInfo();
+
 			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("OSB", name, index);
 
 			foreach (var soulbreak in soulbreaks)
@@ -119,6 +130,8 @@ namespace ProjectNoctis.BotModules
 		[Alias("arcane")]
 		public async Task AosbSoulbreakInfo(string name, int? index = null)
 		{
+			LogMessageInfo();
+
 			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("AOSB", name, index);
 
 			foreach (var soulbreak in soulbreaks)
@@ -134,6 +147,8 @@ namespace ProjectNoctis.BotModules
 		[Alias("sync")]
 		public async Task SasbSoulbreakInfo(string name, int? index = null)
 		{
+			LogMessageInfo();
+
 			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("SASB", name, index);
 
 			foreach (var soulbreak in soulbreaks)
@@ -149,6 +164,8 @@ namespace ProjectNoctis.BotModules
 		[Alias("chain")]
 		public async Task CsbSoulbreakInfo(string name, int? index = null)
 		{
+			LogMessageInfo();
+
 			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("CSB", name, index);
 
 			foreach (var soulbreak in soulbreaks)
@@ -164,6 +181,8 @@ namespace ProjectNoctis.BotModules
 		[Alias(new string[5] { "glint", "glint+", "g+", "fsb", "fsb+" })]
 		public async Task GlintSoulbreakInfo(string name, int? index = null)
 		{
+			LogMessageInfo();
+
 			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("g", name, index);
 
 			foreach (var soulbreak in soulbreaks)
@@ -179,6 +198,8 @@ namespace ProjectNoctis.BotModules
 		[Alias("brsb")]
 		public async Task BraveSoulbreakInfo(string name, int? index = null)
 		{
+			LogMessageInfo();
+
 			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("brave", name, index);
 
 			foreach (var soulbreak in soulbreaks)
@@ -194,6 +215,8 @@ namespace ProjectNoctis.BotModules
 		[Alias("ultra")]
 		public async Task UsbSoulbreakInfo(string name, int? index = null)
 		{
+			LogMessageInfo();
+
 			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("USB", name, index);
 
 			foreach (var soulbreak in soulbreaks)
@@ -209,6 +232,8 @@ namespace ProjectNoctis.BotModules
 		[Alias("super")]
 		public async Task SsbSoulbreakInfo(string name, int? index = null)
 		{
+			LogMessageInfo();
+
 			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("SSB", name, index);
 
 			foreach (var soulbreak in soulbreaks)
@@ -224,6 +249,8 @@ namespace ProjectNoctis.BotModules
 		[Alias("olb")]
 		public async Task LboLimitBreakInfo(string name, int? index = null)
 		{
+			LogMessageInfo();
+
 			var limitbreaks = embedBuilder.BuildLimitBreakEmbeds("LBO", name, index);
 
 			foreach (var limitbreak in limitbreaks)
@@ -236,6 +263,8 @@ namespace ProjectNoctis.BotModules
 		[Alias("flb")]
 		public async Task LbgLimitBreakInfo(string name, int? index = null)
 		{
+			LogMessageInfo();
+
 			var limitbreaks = embedBuilder.BuildLimitBreakEmbeds("LBG", name, index);
 
 			foreach (var limitbreak in limitbreaks)
@@ -249,6 +278,8 @@ namespace ProjectNoctis.BotModules
 
 		public async Task LbgsLimitBreakInfo(string name, int? index = null)
 		{
+			LogMessageInfo();
+
 			var limitbreaks = embedBuilder.BuildLimitBreakEmbeds("LBGS", name, index);
 
 			foreach (var limitbreak in limitbreaks)
@@ -261,6 +292,8 @@ namespace ProjectNoctis.BotModules
 		[Command("lb", RunMode = RunMode.Async)]
 		public async Task LbLimitBreakInfo(string name, int? index = null)
 		{
+			LogMessageInfo();
+
 			var limitbreaks = embedBuilder.BuildLimitBreakEmbeds(null, name, index);
 
 			foreach (var limitbreak in limitbreaks)
@@ -273,6 +306,8 @@ namespace ProjectNoctis.BotModules
 		[Alias(new string[3] { "adsb", "dryad", "dyad" })]
 		public async Task TasbSoulbreakInfo(string name)
 		{
+			LogMessageInfo();
+
 			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("ADSB", name, null);
 
 			foreach (var soulbreak in soulbreaks)
@@ -288,6 +323,8 @@ namespace ProjectNoctis.BotModules
 		[Alias(new string[2] { "daasb", "dual" })]
 		public async Task DasbSoulbreakInfo(string name)
 		{
+			LogMessageInfo();
+
 			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("DASB", name, null);
 
 			foreach (var soulbreak in soulbreaks)
@@ -303,6 +340,8 @@ namespace ProjectNoctis.BotModules
 		[Alias("sbs")]
 		public async Task SsbSoulbreakInfo([Remainder] string name)
 		{
+			LogMessageInfo();
+
 			var soulbreaks = embedBuilder.BuildEmbedsForCharacterSoulbreaks(name);
 
 			foreach (var soulbreak in soulbreaks)
@@ -315,6 +354,8 @@ namespace ProjectNoctis.BotModules
 		[Summary("Return Character Info.")]
 		public async Task CharacterInfoAsync([Remainder] string name)
 		{
+			LogMessageInfo();
+
 			var character = embedBuilder.BuildEmbedForBasicCharacterInfo(name);
 			await Context.Channel.SendMessageAsync(embed: character);
 		}
@@ -324,6 +365,8 @@ namespace ProjectNoctis.BotModules
 		[Summary("Return Legend Dive Info.")]
 		public async Task LegendDiveInfoAsync([Remainder] string name)
 		{
+			LogMessageInfo();
+
 			var legendDive = embedBuilder.BuildEmbedForLegendDive(name);
 			await Context.Channel.SendMessageAsync(embed: legendDive);
 		}
@@ -333,6 +376,8 @@ namespace ProjectNoctis.BotModules
 		[Summary("Return Record Dive Info.")]
 		public async Task RecordDiveInfoAsync([Remainder] string name)
 		{
+			LogMessageInfo();
+
 			var recordDive = embedBuilder.BuildEmbedForRecordDive(name);
 			await Context.Channel.SendMessageAsync(embed: recordDive);
 		}
@@ -342,6 +387,8 @@ namespace ProjectNoctis.BotModules
 		[Summary("Return Full Dive Info.")]
 		public async Task FullDiveInfoAsync([Remainder] string name)
 		{
+			LogMessageInfo();
+
 			var fullDive = embedBuilder.BuildEmbedForFullDive(name);
 			await Context.Channel.SendMessageAsync(embed: fullDive);
 		}
@@ -351,6 +398,8 @@ namespace ProjectNoctis.BotModules
 		[Summary("Return Character Record Board Info.")]
 		public async Task RecordBoardInfoAsync([Remainder] string name)
 		{
+			LogMessageInfo();
+
 			var recordBoard = embedBuilder.BuildEmbedForRecordBoard(name);
 			await Context.Channel.SendMessageAsync(embed: recordBoard);
 		}
@@ -360,6 +409,8 @@ namespace ProjectNoctis.BotModules
 		[Summary("Return ability Info.")]
 		public async Task AbilityInfoAsync([Remainder] string name)
 		{
+			LogMessageInfo();
+
 			var ability = embedBuilder.BuildEmbedForAbilityInformation(name, false);
 
 			foreach(var abilEmbed in ability)
@@ -372,6 +423,8 @@ namespace ProjectNoctis.BotModules
 		[Summary("Return ability Info.")]
 		public async Task AbilityBySchoolInfoAsync(string school, string rank = "6", string element = null)
 		{
+			LogMessageInfo();
+
 			var ability = embedBuilder.BuildEmbedForAbilityBySchoolInformation(school, rank, element);
 			await Context.Channel.SendMessageAsync(embed: ability);
 		}
@@ -381,6 +434,8 @@ namespace ProjectNoctis.BotModules
 		[Summary("Return hero ability Info.")]
 		public async Task HeroAbilityInfoAsync([Remainder] string name)
 		{
+			LogMessageInfo();
+
 			var ability = embedBuilder.BuildEmbedForAbilityInformation(name, true);
 
 			foreach (var abilEmbed in ability)
@@ -394,6 +449,8 @@ namespace ProjectNoctis.BotModules
 		[Summary("Return hero ability Info by school.")]
 		public async Task HeroAbilityBySchoolInfoAsync(string school)
 		{
+			LogMessageInfo();
+
 			var ability = embedBuilder.BuildEmbedForHeroAbilityBySchoolInformation(school);
 
 			foreach (var abilEmbed in ability)
@@ -407,6 +464,8 @@ namespace ProjectNoctis.BotModules
 		[Summary("Return Status Info.")]
 		public async Task StatusInfoAsync([Remainder] string name)
 		{
+			LogMessageInfo();
+
 			var status = embedBuilder.BuildEmbedForStatus(name);
 			await Context.Channel.SendMessageAsync(embed: status);
 		}
@@ -416,6 +475,8 @@ namespace ProjectNoctis.BotModules
 		[Summary("Return Other Info.")]
 		public async Task OtherInfoAsync([Remainder] string name)
 		{
+			LogMessageInfo();
+
 			var other = embedBuilder.BuildEmbedForOther(name);
 			await Context.Channel.SendMessageAsync(embed: other);
 		}
@@ -423,6 +484,8 @@ namespace ProjectNoctis.BotModules
 		[Command("magi", RunMode = RunMode.Async)]
 		public async Task MagiciteInfoAsync([Remainder] string name)
 		{
+			LogMessageInfo();
+
 			var magicite = embedBuilder.BuildEmbedForMagicite(name);
 
 			await Context.Channel.SendMessageAsync(embed: magicite);
@@ -432,6 +495,8 @@ namespace ProjectNoctis.BotModules
 		[Alias("lms")]
 		public async Task LegendMateriaInfoAsync([Remainder] string name)
 		{
+			LogMessageInfo();
+
 			var materias = embedBuilder.BuildEmbedsForLegendMaterias(name);
 
 			foreach(var materia in materias)
@@ -444,6 +509,8 @@ namespace ProjectNoctis.BotModules
 		[Alias("rms")]
 		public async Task RecordMateriaInfoAsync([Remainder] string name)
 		{
+			LogMessageInfo();
+
 			var materias = embedBuilder.BuildEmbedsForRecordMaterias(name);
 
 			foreach (var materia in materias)
@@ -455,6 +522,8 @@ namespace ProjectNoctis.BotModules
 		[Command("anima", RunMode = RunMode.Async)]
 		public async Task AnimaWaveSoulbreakInfoAsync(string wave, string tier)
 		{
+			LogMessageInfo();
+
 			tier = tier.ToLower();
 			var validTiers = new [] {"unique", "ssb", "bsb", "usb", "glint", "aasb", "csb", "lmr"};
 
@@ -480,6 +549,8 @@ namespace ProjectNoctis.BotModules
 		[Command("help", RunMode = RunMode.Async)]
 		public async Task Help()
 		{
+			LogMessageInfo();
+
 			var embed = new EmbedBuilder();
 			embed.ImageUrl = settings.HelpLink;
 
@@ -510,6 +581,8 @@ namespace ProjectNoctis.BotModules
 		[RequireUserPermission(ChannelPermission.ManageMessages)]
 		public async Task AddAliasAsync(string alias, [Remainder] string realName)
 		{
+			LogMessageInfo();
+
 			var result = aliases.AddAlias(alias, realName);
 			if (result)
 			{
@@ -525,6 +598,8 @@ namespace ProjectNoctis.BotModules
 		[RequireUserPermission(ChannelPermission.ManageMessages)]
 		public async Task RemoveAliasAsync([Remainder] string alias)
 		{
+			LogMessageInfo();
+
 			var result = aliases.RemoveAlias(alias);
 			if (result)
 			{
@@ -540,6 +615,8 @@ namespace ProjectNoctis.BotModules
 		[RequireUserPermission(ChannelPermission.ManageMessages)]
 		public async Task CheckAliasAsync([Remainder] string alias)
 		{
+			LogMessageInfo();
+
 			var result = aliases.GetAlias(alias);
 			if (result != null)
 			{
@@ -555,6 +632,8 @@ namespace ProjectNoctis.BotModules
 		[RequireUserPermission(ChannelPermission.ManageMessages)]
 		public async Task CheckAliasAsync(string setting, [Remainder] string value)
 		{
+			LogMessageInfo();
+
 			var result = settings.UpdateSettings(setting, value);
 			if (result)
 			{
@@ -564,6 +643,18 @@ namespace ProjectNoctis.BotModules
 			{
 				await Context.Channel.SendMessageAsync("Failed to update setting.");
 			}
+		}
+
+		[Command("elnino", RunMode = RunMode.Async)]
+		public async Task ElNino()
+		{
+			LogMessageInfo();
+
+			await Context.Channel.SendMessageAsync($"https://media.discordapp.net/attachments/653313996241371137/883198628473217075/1630641351884995866381789306802.gif");
+		}
+
+		private void LogMessageInfo() {
+			Console.WriteLine($"Command in {Context.Guild.Name} ({Context.Guild.Id}) #{Context.Channel.Name} from {Context.User.ToString()}: {Context.Message.Content} ");
 		}
 	}
 }

@@ -78,7 +78,7 @@ namespace ProjectNoctis.Factories.Concrete
                 setEmbed.Fields.AddRange(statusFields);
 
             } else {
-                setEmbed.Title = "Set Bonuses not found.";
+                setEmbed.Title = "Set Bonuses not found in DB.";
             }
 
 
