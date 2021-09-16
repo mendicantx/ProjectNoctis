@@ -36,6 +36,10 @@ namespace ProjectNoctis.Services.Concrete
                 equip.Statuses = statusRepository.GetStatusesByEffectText(equip.Info.Name, equip.Info.RandomPassives);
             }
 
+            if (uniqueEquipment.UniqueEquipments.Count() == 0 && uniqueEquipment.UniqueEquipmentSets.Info == null) {
+                return null;
+            }
+
             return uniqueEquipment;
         }
 
