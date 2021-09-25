@@ -78,7 +78,7 @@ namespace ProjectNoctis.BotModules
 		}
 
 		[Command("aasb", RunMode = RunMode.Async)]
-		[Alias("woke")]
+		[Alias(new string[2] { "woke", "awake"})]
 		public async Task AasbSoulbreakInfo(string name, int? index = null)
 		{
 			LogMessageInfo();
@@ -127,7 +127,7 @@ namespace ProjectNoctis.BotModules
 		}
 
 		[Command("aosb", RunMode = RunMode.Async)]
-		[Alias("arcane")]
+		[Alias(new string[2] { "arcane", "uosb"})]
 		public async Task AosbSoulbreakInfo(string name, int? index = null)
 		{
 			LogMessageInfo();
