@@ -654,7 +654,11 @@ namespace ProjectNoctis.BotModules
 		}
 
 		private void LogMessageInfo() {
-			Console.WriteLine($"Command in {Context.Guild.Name} ({Context.Guild.Id}) #{Context.Channel.Name} from {Context.User.ToString()}: {Context.Message.Content} ");
+			if (Context.Guild != null) 
+				Console.WriteLine($"Command in {Context.Guild.Name} ({Context.Guild.Id}) #{Context.Channel.Name} from {Context.User.ToString()}: {Context.Message.Content} ");
+			else
+				Console.WriteLine($"Command in DMs from {Context.User.ToString()}: {Context.Message.Content} ");
+			
 		}
 	}
 }
