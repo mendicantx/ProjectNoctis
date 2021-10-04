@@ -43,7 +43,7 @@ namespace ProjectNoctis.Constants
 
         public static List<string> elementList = new List<string>()
         {
-            "Holy","Dark","Water","Ice","Wind","Earth","Fire","Lightning"
+            "Holy","Dark","Water","Ice","Wind","Earth","Fire","Lightning","Poison"
         };
 
         public static Dictionary<string, string> elementWeakness = new Dictionary<string, string>()
@@ -56,6 +56,7 @@ namespace ProjectNoctis.Constants
             {"Earth","Wind"},
             {"Water","Lightning"},
             {"Ice","Fire"}
+            {"Poison","Poison"}
         };
 
         public static string[] abilityAliases = new string[2] { "a", "ability" };
