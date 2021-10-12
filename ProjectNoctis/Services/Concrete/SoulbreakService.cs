@@ -64,10 +64,10 @@ namespace ProjectNoctis.Services.Concrete
 
         public void FilterAttachElementFromStatuses(Dictionary<string, List<SheetStatus>> statuses)
         {
-            SheetStatus attachElement = new SheetStatus() { DefaultDuration = "25", Effects = "Replaces Attack command, increases {Element} damage dealt by 50/80/120% (abilities) or 80/100/120% (Soul Breaks), {Element} resistance +20%" };
-            SheetStatus attachElementStacking = new SheetStatus() { DefaultDuration = "25", Effects = "Allow to stack Attach {Element}, up to Attach {Element} 3" };
-            SheetStatus buffElement = new SheetStatus() { DefaultDuration = "15", Effects = "Increases {Element} damage dealt by 10%, cumulable" };
-            SheetStatus imperilElement = new SheetStatus() { DefaultDuration = "15", Effects = "{Element} Resistance -10%, cumulable" };
+            SheetStatus attachElementTemplate = new SheetStatus() { DefaultDuration = "25", Effects = "Replaces Attack command, increases {Element} damage dealt by 50/80/120% (abilities) or 80/100/120% (Soul Breaks), {Element} resistance +20%" };
+            SheetStatus attachElementStackingTemplate = new SheetStatus() { DefaultDuration = "25", Effects = "Allow to stack Attach {Element}, up to Attach {Element} 3" };
+            SheetStatus buffElementTemplate = new SheetStatus() { DefaultDuration = "15", Effects = "Increases {Element} damage dealt by 10%, cumulable" };
+            SheetStatus imperilElementTemplate = new SheetStatus() { DefaultDuration = "15", Effects = "{Element} Resistance -10%, cumulable" };
 
             var attachElements = statuses
                     .Select(x => new KeyValuePair<string, List<SheetStatus>>
@@ -105,78 +105,41 @@ namespace ProjectNoctis.Services.Concrete
                 return;
             }
 
-            if (attachElements.Count() > 0)
-            {
-                var elements = new List<string>();
-                foreach (var source in attachElements)
-                {
-                    //var matchingElements = statuses[source.Key].Where(x => source.Value.Any(y => y.Name == x.Name));
-                    foreach (var element in source.Value)
-                    {
-                        statuses[source.Key].Remove(element);
-                        elements.AddRange(Constants.Constants.elementList.Where(x => element.Name.Contains(x)));
-                    }
-                }
-                var omni = attachElement;
-                omni.Name = $"Attach {string.Join(", ", elements)}";
-                omni.Effects = omni.Effects.Replace("{Element}", string.Join(", ", elements));
-                statuses[statuses.First().Key].Add(omni);
-            }
 
-            if (stackingElements.Count() > 0)
-            {
-                var elements = new List<string>();
-                foreach (var source in stackingElements)
-                {
-                    //var matchingElements = statuses[source.Key].Where(x => source.Value.Any(y => y.Name == x.Name));
-                    foreach (var element in source.Value)
-                    {
-                        statuses[source.Key].Remove(element);
-                        elements.AddRange(Constants.Constants.elementList.Where(x => element.Name.Contains(x)));
-                    }
+            //Add Attached Elements
+            AddElements(statuses, attachElementTemplate, attachElements, "Attach {Element}");
 
-                    var omni = attachElementStacking;
-                    omni.Name = $"Attach {string.Join(", ", elements)} With Stacking";
-                    omni.Effects = omni.Effects.Replace("{Element}", string.Join(", ", elements));
-                    statuses[statuses.First().Key].Add(omni);
+            //Add Stacking Attached Elements
+            AddElements(statuses, attachElementStackingTemplate, stackingElements, "Attach {Element} With Stacking");
+
+            //Add Buffed Elements
+            AddElements(statuses, buffElementTemplate, buffElements, "Buff {Element}");
+
+            //Add Impleril Elements
+            AddElements(statuses, imperilElementTemplate, imperilElements, "Imperil {Element}");
+
+        }
+
+        private static void AddElements(Dictionary<string, List<SheetStatus>> statuses, SheetStatus templateStatus, List<KeyValuePair<string, List<SheetStatus>>> elementalStatuses, string nameTemplate)
+        {
+            if (elementalStatuses.Count() == 0)
+                return;
+                
+            var elements = new List<string>();
+            foreach (var source in elementalStatuses)
+            {
+                foreach (var element in source.Value)
+                {
+                    statuses[source.Key].Remove(element);
+                    elements.AddRange(Constants.Constants.elementList.Where(x => element.Name.Contains(x)).Distinct());
                 }
             }
+            elements = elements.Distinct().ToList<string>();
 
-            if (buffElements.Count() > 0)
-            {
-                var elements = new List<string>();
-                foreach (var source in buffElements)
-                {
-                    //var matchingElements = statuses[source.Key].Where(x => source.Value.Any(y => y.Name == x.Name));
-                    foreach (var element in source.Value)
-                    {
-                        statuses[source.Key].Remove(element);
-                        elements.AddRange(Constants.Constants.elementList.Where(x => element.Name.Contains(x)));
-                    }
-                }
-                var omni = buffElement;
-                omni.Name = $"Buff {string.Join(", ", elements)}";
-                omni.Effects = omni.Effects.Replace("{Element}", string.Join(", ", elements));
-                statuses[statuses.First().Key].Add(omni);
-            }
-
-            if (imperilElements.Count() > 0)
-            {
-                var elements = new List<string>();
-                foreach (var source in imperilElements)
-                {
-                    //var matchingElements = statuses[source.Key].Where(x => source.Value.Any(y => y.Name == x.Name));
-                    foreach (var element in source.Value)
-                    {
-                        statuses[source.Key].Remove(element);
-                        elements.AddRange(Constants.Constants.elementList.Where(x => element.Name.Contains(x)));
-                    }
-                }
-                var omni = imperilElement;
-                omni.Name = $"Imperil {string.Join(", ", elements)}";
-                omni.Effects = omni.Effects.Replace("{Element}", string.Join(", ", elements));
-                statuses[statuses.First().Key].Add(omni);
-            }
+            var omni = templateStatus;
+            omni.Name = nameTemplate.Replace("{Element}", string.Join(", ", elements));
+            omni.Effects = omni.Effects.Replace("{Element}", string.Join(", ", elements));
+            statuses[statuses.First().Key].Add(omni);
         }
 
         public List<LimitBreak> BuildLimitInfoFromCharNameAndTier(string tier, string character, int? index = null)

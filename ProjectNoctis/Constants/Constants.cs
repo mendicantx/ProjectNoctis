@@ -55,7 +55,7 @@ namespace ProjectNoctis.Constants
             {"Lightning","Earth"},
             {"Earth","Wind"},
             {"Water","Lightning"},
-            {"Ice","Fire"}
+            {"Ice","Fire"},
             {"Poison","Poison"}
         };
 
