@@ -525,6 +525,24 @@ namespace ProjectNoctis.BotModules
 			LogMessageInfo();
 
 			tier = tier.ToLower();
+			if (new [] {"unique", "uni"}.Contains(tier))
+				tier = "unique";
+			if (new [] {"ssb", "super"}.Contains(tier))
+				tier = "ssb";
+			if (new [] {"bsb", "burst"}.Contains(tier))
+				tier = "bsb";
+			if (new [] {"usb", "ultra"}.Contains(tier))
+				tier = "usb";
+			if (new [] {"glint", "glint+", "g+", "fsb", "fsb+"}.Contains(tier))
+				tier = "glint";
+			if (new [] {"aasb", "woke", "awake"}.Contains(tier))
+				tier = "aasb";
+			if (new [] {"csb", "chain"}.Contains(tier))
+				tier = "csb";				
+			if (new [] {"lm", "lms", "lmr" }.Contains(tier))
+				tier = "lmr";				
+
+
 			var validTiers = new [] {"unique", "ssb", "bsb", "usb", "glint", "aasb", "csb", "lmr"};
 
 			if ( !validTiers.Contains(tier) ) {
