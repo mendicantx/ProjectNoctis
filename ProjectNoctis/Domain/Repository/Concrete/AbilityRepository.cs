@@ -50,7 +50,7 @@ namespace ProjectNoctis.Domain.Repository.Concrete
                 name = charNames.OrderByDescending(x => Fuzz.PartialRatio(x, name.ToLower())).FirstOrDefault();
             }
 
-            var ability = dbContext.Abilities.Where(x => x.Name.ToLower().Contains($"({name.ToLower()} only)")).ToList();
+            var ability = dbContext.Abilities.Where(x => x.Name.ToLower().Contains($"({name.ToLower()} only)")).OrderBy(x => x.IntroducingEvent.JPDate).ToList();
 
             return ability;
         }

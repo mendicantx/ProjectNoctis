@@ -35,6 +35,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
         public List<SheetLimitBreaks> LimitBreaks { get; set; }
         public List<SheetUniqueEquipment> UniqueEquipment { get; set; }
         public List<SheetUniqueEquipmentSets> UniqueEquipmentSets { get; set; }
+        public List<SheetEvents> Events { get; set;}
         public bool LastUpdateSuccessful { get; set; }
         public DateTime LastUpdateTime { get; set; }
 
@@ -85,6 +86,11 @@ namespace ProjectNoctis.Domain.SheetDatabase
                         data.Remove(data[0]);
                         switch (sheetName)
                         {
+                            case "Events":
+                                Console.WriteLine("Started Events ");
+                                ParseEvents(data, headers);
+                                Console.WriteLine("Updated Events ");
+                                break;
                             case "Characters":
                                 Console.WriteLine("Started Chars ");
                                 ParseCharacters(data, headers);
@@ -182,6 +188,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
                     }
                 }
 
+                bindAbilitiesToEventRelease();
                 LastUpdateTime = DateTime.Now;
                 return true;
             }
@@ -193,6 +200,15 @@ namespace ProjectNoctis.Domain.SheetDatabase
             
         }
 
+        public void bindAbilitiesToEventRelease() {
+            Console.WriteLine("Starting to Bind Abilities to Events");
+            foreach (var ability in Abilities) {
+                ability.IntroducingEvent = Events.Where(x => x.EventName == ability.IntroducingEventName).FirstOrDefault();
+                if(ability.IntroducingEvent == null)
+                    ability.IntroducingEvent = new SheetEvents { EventName = "Not found", JPDate = DateTime.MinValue, GLDate = DateTime.MinValue};
+            }
+            Console.WriteLine("Done Binding Abilities to Events");
+        }
         public async Task<IList<IList<object>>> GetSpreadsheetData(string sheetName)
         {
             var data = await service.Spreadsheets.Values.Get(spreadsheetId, sheetName).ExecuteAsync();
@@ -673,7 +689,39 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
             Braves = braves;
         }
+        public void ParseEvents(IList<IList<object>> eventData, IList<object> headers)
+        {
+            var events = new List<SheetEvents>();
 
+            foreach (var sheetEvent in eventData)
+            {
+                try 
+                {
+                    var glDateString = sheetEvent[headers.IndexOf("GL Date")].ToString();
+                    var jpDateString = sheetEvent[headers.IndexOf("JP Date")].ToString();
+
+                    DateTime glDate;
+                    DateTime jpDate;
+
+                    DateTime.TryParse(glDateString, out glDate);
+                    DateTime.TryParse(jpDateString, out jpDate);
+
+                    events.Add(new SheetEvents
+                    {
+                        EventName = sheetEvent[headers.IndexOf("Event Name")].ToString(),
+                        GLDate = glDate,
+                        JPDate = jpDate
+                    });
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"Throwing out Event for {sheetEvent[headers.IndexOf("Event Name")]} due to bad data during update");
+                    continue;
+                }
+            }
+
+            Events = events;
+        }
         public void ParseSynchros(IList<IList<object>> synchroData, IList<object> headers)
         {
             var synchros = new List<SheetSynchros>();
@@ -965,6 +1013,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
                         Time = GetStringValueFromHeader(ability, headers, "Time"),
                         Type = GetStringValueFromHeader(ability, headers, "Type"),
                         Uses = GetStringValueFromHeader(ability, headers, "Uses"),
+                        IntroducingEventName = GetStringValueFromHeader(ability, headers, "Introducing Event"),
                         OrbsRequired = new Dictionary<string, string>(),
                         OrbCosts = new Dictionary<string, string>()
                     };
