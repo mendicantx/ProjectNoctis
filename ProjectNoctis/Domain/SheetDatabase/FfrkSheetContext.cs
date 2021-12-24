@@ -447,6 +447,9 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
             foreach (var lm in lmData)
             {
+                if (lm.Count() < 10)
+                    continue;
+
                 try
                 {
                     var animaIndex = headers.IndexOf("Anima");
@@ -511,6 +514,8 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
             foreach (var burst in burstData)
             {
+                if (burst.Count() < 20)
+                    continue;
                 try
                 {
                     bursts.Add(new SheetBursts
@@ -621,6 +626,8 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
             foreach (var guardian in guardianData)
             {
+                if (guardian.Count() < 20)
+                    continue;
                 try
                 {
                     guardians.Add(new SheetGuardianSummons
@@ -658,6 +665,9 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
             foreach (var brave in braveData)
             {
+                if (brave.Count() < 22)
+                    continue;
+
                 try 
                 {
                     braves.Add(new SheetBraves
@@ -728,6 +738,9 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
             foreach (var synchro in synchroData)
             {
+                if (synchro.Count() < 20)
+                    continue;
+
                 try
                 {
                     synchros.Add(new SheetSynchros
