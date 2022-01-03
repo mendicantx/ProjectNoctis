@@ -1698,7 +1698,7 @@ namespace ProjectNoctis.Factories.Concrete
                         var statusField = new EmbedFieldBuilder()
                         {
                             Name = title,
-                            Value = status.Effects,
+                            Value = status.Effects.Length > 0 ? status.Effects : "Not in DB.",
                             IsInline = false
                         };
 
