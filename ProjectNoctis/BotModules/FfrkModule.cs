@@ -541,9 +541,11 @@ namespace ProjectNoctis.BotModules
 				tier = "csb";				
 			if (new [] {"lm", "lms", "lmr" }.Contains(tier))
 				tier = "lmr";				
+			if (new [] {"aosb", "uosb" }.Contains(tier))
+				tier = "aosb";				
 
 
-			var validTiers = new [] {"unique", "ssb", "bsb", "usb", "glint", "aasb", "csb", "lmr"};
+			var validTiers = new [] {"unique", "ssb", "bsb", "usb", "glint", "aasb", "csb", "lmr", "aosb"};
 
 			if ( !validTiers.Contains(tier) ) {
 				await Context.Channel.SendMessageAsync($"Usage: ?anima <wave> <tier>. Valid tiers are: {string.Join(", ", validTiers)}"); 
