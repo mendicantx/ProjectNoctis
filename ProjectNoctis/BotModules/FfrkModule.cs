@@ -274,6 +274,7 @@ namespace ProjectNoctis.BotModules
 		}
 
 		[Command("lbc", RunMode = RunMode.Async)]
+		[Alias("lcsb")]
 
 		public async Task LbcLimitBreakInfo(string name, int? index = null)
 		{
