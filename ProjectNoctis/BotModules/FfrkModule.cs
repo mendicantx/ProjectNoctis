@@ -273,6 +273,21 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
+		[Command("lbc", RunMode = RunMode.Async)]
+
+		public async Task LbcLimitBreakInfo(string name, int? index = null)
+		{
+			LogMessageInfo();
+
+			var limitbreaks = embedBuilder.BuildLimitBreakEmbeds("LBC", name, index);
+
+			foreach (var limitbreak in limitbreaks)
+			{
+				await Context.Channel.SendMessageAsync(embed: limitbreak);
+			}
+		}
+
+
 		[Command("lbgs", RunMode = RunMode.Async)]
 		[Alias("glb")]
 
