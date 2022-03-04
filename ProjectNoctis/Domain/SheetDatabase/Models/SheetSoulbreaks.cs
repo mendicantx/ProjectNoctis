@@ -11,6 +11,7 @@ namespace ProjectNoctis.Domain.SheetDatabase.Models
         public string Realm { get; set; }
         public string Character { get; set; }
         public string Tier { get; set; }
+        public string SoulbreakVersion { get; set;}
         public string Time { get; set; }
         public string Type { get; set; }
         public string Element { get; set; }

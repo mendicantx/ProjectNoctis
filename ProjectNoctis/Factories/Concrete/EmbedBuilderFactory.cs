@@ -552,14 +552,6 @@ namespace ProjectNoctis.Factories.Concrete
                     IsInline = true
                 });
 
-                embed.Fields.Add(new EmbedFieldBuilder()
-                {
-                    Name = "SB Type",
-                    Value = soulbreak.Info.Tier != string.Empty ? soulbreak.Info.Tier : "-",
-                    IsInline = true
-                });
-
-                
                 if (soulbreak.Info.Anima != null)
                 {
                     var animaValue = $"Yes (Wave: {soulbreak.Info.Anima})";
@@ -582,6 +574,22 @@ namespace ProjectNoctis.Factories.Concrete
                     });
                 }
 
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "SB Type",
+                    Value = soulbreak.Info.Tier != string.Empty ? soulbreak.Info.Tier : "-",
+                    IsInline = true
+                });
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "SB Ver",
+                    Value = soulbreak.Info.SoulbreakVersion != string.Empty ? soulbreak.Info.SoulbreakVersion : "-",
+                    IsInline = true
+                });
+
+                
+                
                 embed.Fields.AddRange(BuildStatusEmbedFields(soulbreak.SoulbreakStatuses));
                 embed.Fields.AddRange(BuildOtherEmbedFields(soulbreak.SoulbreakOthers));
 

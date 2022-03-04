@@ -857,6 +857,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
                         Realm = soulbreak[headers.IndexOf("Realm")].ToString(),
                         Relic = soulbreak[headers.IndexOf("Relic")].ToString(),
                         SoulbreakBonus = soulbreak[headers.IndexOf("Mastery Bonus")].ToString(),
+                        SoulbreakVersion = soulbreak[headers.IndexOf("SB Ver")].ToString(),
                         SoulbreakId = soulbreak[headers.IndexOf("ID")].ToString(),
                         Target = soulbreak[headers.IndexOf("Target")].ToString(),
                         Tier = soulbreak[headers.IndexOf("Tier")].ToString(),
