@@ -440,7 +440,7 @@ namespace ProjectNoctis.Factories.Concrete
         }
 
         public List<Embed> BuildEmbedForHeroAbilityBySchoolInformation(string school) {
-            var heroAbilities = abilityService.BuildAbilityBySchoolInfo(school, "6");
+            var heroAbilities = abilityService.BuildAbilityBySchoolInfo(school, "HA");
             heroAbilities = heroAbilities.Where(x => x.IsHeroAbility()).ToList();
 
 
