@@ -1,4 +1,5 @@
-﻿using ProjectNoctis.Domain.SheetDatabase.Models;
+﻿using System.Data;
+using ProjectNoctis.Domain.SheetDatabase.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +16,9 @@ namespace ProjectNoctis.Services.Models
         public IList<SynchroCommand> SynchroCommands { get; set; }
         public Dictionary<string, List<SheetStatus>> SoulbreakStatuses { get; set; }
         public Dictionary<string, List<SheetOthers>> SoulbreakOthers { get; set; }
+
+        public bool IsDualShift() {
+            return Info.Name.ToUpper().Contains("(DUAL SHIFT)");
+        }
     }
 }

@@ -656,12 +656,34 @@ namespace ProjectNoctis.Factories.Concrete
                     embedGroup.AddRange(BuildSynchroCommandEmbeds(soulbreak.SynchroCommands));
                 }
 
+                if (soulbreak.IsDualShift()) {
+                    embedGroup.AddRange(BuildDualAwakeningModePrioritiesEmbeds(soulbreak));
+                }
+
                 embeds.Add(embedGroup);
             }
 
             return embeds;
         }
 
+
+        public List<Embed> BuildDualAwakeningModePrioritiesEmbeds(Soulbreak soulbreak) {
+
+            var embeds = new List<Embed>();
+
+            var embed = new EmbedBuilder();
+
+            var statuses = soulbreak.SoulbreakStatuses.First(x => x.Key.ToUpper().Contains("(DUAL SHIFT)"));
+            var status = statuses.Value.First(x => x.Name.ToUpper().Contains("MODE II"));
+
+            embed.Title = status.Name + " Mode Priorities";
+
+            embed.Description = status.ExclusiveStatus;
+
+            embeds.Add(embed.Build());
+
+            return embeds;
+        }
         public List<Embed> BuildLimitBreakEmbeds(string tier, string charName, int? index)
         {
             if (index != null)
