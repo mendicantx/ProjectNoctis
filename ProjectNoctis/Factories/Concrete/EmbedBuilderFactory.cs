@@ -627,19 +627,21 @@ namespace ProjectNoctis.Factories.Concrete
                     });
                 }
 
+                embedGroup.Add(embed.Build());
+
                 if (soulbreak.SynchroCommands.Count() != 0 && (index == null || index < 0 || index >= soulbreaks.Count()) && soulbreaks.Count() > 1)
                 {
                     var character = GetCharacterNameForCommands(soulbreak.Info.Character);
-
-                    embed.AddField(new EmbedFieldBuilder()
+                    var commandMessage = new EmbedBuilder();
+                    commandMessage.AddField(new EmbedFieldBuilder()
                     {
                         Name = "Commands",
-                        Value = $"**Please use ?sasb {character} {soulbreaks.IndexOf(soulbreak) + 1} to see commands for this particular synchro**",
+                        Value = $"**Please use ?sync {character} {soulbreaks.IndexOf(soulbreak) + 1} to see commands for this particular sync**",
                         IsInline = false
                     });
+                    embedGroup.Add(commandMessage.Build());
                 }
 
-                embedGroup.Add(embed.Build());
 
                 if (soulbreak.BraveCommands.Count() != 0 && tier == "brave" && (soulbreaks.Count() == 1 || (index == null && index > -1 && index < soulbreaks.Count())))
                 {

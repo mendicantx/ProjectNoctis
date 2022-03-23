@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿using System.Data;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using Newtonsoft.Json;
@@ -22,12 +23,17 @@ namespace ProjectNoctis.BotModules
 		private readonly Aliases aliases;
 		private readonly Settings settings;
 
+		private readonly List<ulong> bannedUsers;
+
 		public FfrkModule(IEmbedBuilderFactory embedBuilder, IFfrkSheetContext ffrkSheetContext, Aliases aliases, Settings settings)
 		{
 			this.embedBuilder = embedBuilder;
 			this.ffrkSheetContext = ffrkSheetContext;
 			this.aliases = aliases;
 			this.settings = settings;
+			bannedUsers = new List<ulong>();
+			// bannedUsers.Add(676608867588767789);
+
 		}
 
 		[Command("ue", RunMode = RunMode.Async)]
@@ -691,10 +697,12 @@ namespace ProjectNoctis.BotModules
 
 		private void LogMessageInfo() {
 			if (Context.Guild != null) 
-				Console.WriteLine($"Command in {Context.Guild.Name} ({Context.Guild.Id}) #{Context.Channel.Name} from {Context.User.ToString()}: {Context.Message.Content} ");
+				Console.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - Command in {Context.Guild.Name} ({Context.Guild.Id}) #{Context.Channel.Name} from {Context.User.ToString()} ({Context.User.Id}): {Context.Message.Content} ");
 			else
-				Console.WriteLine($"Command in DMs from {Context.User.ToString()}: {Context.Message.Content} ");
+				Console.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} - Command in DMs from {Context.User.ToString()} ({Context.User.Id}): {Context.Message.Content} ");
 			
+			if (bannedUsers.Contains(Context.User.Id)) 
+				throw new Exception("Banned user detected. " + Context.User.ToString());
 		}
 	}
 }
