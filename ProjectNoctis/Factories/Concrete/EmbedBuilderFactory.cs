@@ -676,7 +676,7 @@ namespace ProjectNoctis.Factories.Concrete
             var embed = new EmbedBuilder();
 
             var statuses = soulbreak.SoulbreakStatuses.First(x => x.Key.ToUpper().Contains("(DUAL SHIFT)"));
-            var status = statuses.Value.First(x => x.Name.ToUpper().Contains("MODE II"));
+            var status = statuses.Value.First(x => x.Name.ToUpper().Contains("II"));
 
             embed.Title = status.Name + " Mode Priorities";
 

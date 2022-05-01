@@ -810,7 +810,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
         {
             var statuses = new List<SheetStatus>();
 
-            foreach (var status in statusData.Where(x => x.Count() >= 7))
+            foreach (var status in statusData.Where(x => x.Count() >= 6))
             {
                 try
                 {
