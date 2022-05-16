@@ -50,10 +50,7 @@ namespace ProjectNoctis.Domain.Repository.Concrete
            
             if (index != null)
             {
-                if (index.Value < soulbreaks.Count() && index > -1)
-                {
-                    return new List<SheetSoulbreaks>() { soulbreaks[index.Value] };
-                }
+                return soulbreaks.Where(x => x.SoulbreakVersion.EndsWith(index.ToString())).ToList();
             }
 
             return soulbreaks;
@@ -92,7 +89,7 @@ namespace ProjectNoctis.Domain.Repository.Concrete
 
             if (tier == null)
             {
-                limits = dbContext.LimitBreaks.Where(x => (x.Character.ToLower() == name.ToLower() || x.ID == name) && (x.Tier == "LBO" || x.Tier == "LBG" || x.Tier == "LBGS")).ToList();
+                limits = dbContext.LimitBreaks.Where(x => (x.Character.ToLower() == name.ToLower() || x.ID == name) && (x.Tier == "LBO" || x.Tier == "LBG" || x.Tier == "LBGS" || x.Tier == "LBC")).ToList();
             }
             else
             {

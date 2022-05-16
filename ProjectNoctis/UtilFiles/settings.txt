@@ -1,1 +1,1 @@
-﻿{"jpAnimaWave":"7","helpLink":"https://cdn.discordapp.com/attachments/585875815175028744/904800122184024084/bot_help.png"}
+﻿{"jpAnimaWave":"7","helpLink":"https://i.imgur.com/elcH5Lz.png"}
