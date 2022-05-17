@@ -464,6 +464,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
                         Master = lm[headers.IndexOf("Master")].ToString(),
                         JPName = lm[headers.IndexOf("Name (JP)")].ToString(),
                         LMId = lm[headers.IndexOf("ID")].ToString(),
+                        LMVer = lm[headers.IndexOf("LM Ver")].ToString(),
                         Relic = lm[headers.IndexOf("Relic")].ToString(),
                         Anima = anima
                     });

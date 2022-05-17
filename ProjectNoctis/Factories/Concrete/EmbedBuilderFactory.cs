@@ -1564,7 +1564,7 @@ namespace ProjectNoctis.Factories.Concrete
                         var realmLmrs = realm.ToList();
 
                         for (int realmLmrPage = 0; realmLmrPage < 5; realmLmrPage++) {
-                            var realmLmrStrings = realmLmrs.Skip(realmLmrPage*10).Take(10).Select(x => $"{x.Info.Character}: {x.Info.Effect}");
+                            var realmLmrStrings = realmLmrs.Skip(realmLmrPage*10).Take(10).Select(x => $"{x.Info.Character} {x.Info.LMVer} - {x.Info.Effect}");
 
                             if (realmLmrStrings.Count() == 0)
                                 break;
@@ -1601,7 +1601,7 @@ namespace ProjectNoctis.Factories.Concrete
 
                 foreach (var realm in realms) {
                     var realmSbs = realm.ToList();
-                    var realmSbStrings = realmSbs.Select(x => $"{x.Info.Name} ({x.Info.Character})");
+                    var realmSbStrings = realmSbs.Select(x => $"{x.Info.Character} {x.Info.SoulbreakVersion} - {x.Info.Name}");
 
                     embed.Fields.Add(new EmbedFieldBuilder() {
                         Name = realm.Key,
