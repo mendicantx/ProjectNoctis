@@ -341,6 +341,23 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
+		[Command("zsb", RunMode = RunMode.Async)]
+		[Alias(new string[1] { "uasb" })]
+		public async Task ZsbSoulbreakInfo(string name, int? index = null)
+		{
+			LogMessageInfo();
+
+			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("ZSB", name, index);
+
+			foreach (var soulbreak in soulbreaks)
+			{
+				foreach (var soulbreakGroup in soulbreak)
+				{
+					await Context.Channel.SendMessageAsync(embed: soulbreakGroup);
+				}
+			}
+		}
+
 		[Command("dasb", RunMode = RunMode.Async)]
 		[Alias(new string[2] { "daasb", "dual" })]
 		public async Task DasbSoulbreakInfo(string name, int? index = null)
