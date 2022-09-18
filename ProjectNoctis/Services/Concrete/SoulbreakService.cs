@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+﻿using System.Runtime.CompilerServices;
+using System.Globalization;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using ProjectNoctis.Domain.Repository.Interfaces;
 using ProjectNoctis.Domain.SheetDatabase.Models;
 using ProjectNoctis.Services.Interfaces;
@@ -16,11 +18,13 @@ namespace ProjectNoctis.Services.Concrete
     {
         public ISoulbreakRepository soulbreakRepository;
         public IStatusRepository statusRepository;
+        public IZenithAbilityService zenithAbilityService;
 
-        public SoulbreakService(ISoulbreakRepository soulbreakRepository, IStatusRepository statusRepository)
+        public SoulbreakService(ISoulbreakRepository soulbreakRepository, IStatusRepository statusRepository, IZenithAbilityService zenithAbilityService)
         {
             this.soulbreakRepository = soulbreakRepository;
             this.statusRepository = statusRepository;
+            this.zenithAbilityService = zenithAbilityService;
         }
 
         public List<Soulbreak> BuildSoulbreakInfoFromCharNameAndTier(string tier, string character, int? index = null)
@@ -54,6 +58,7 @@ namespace ProjectNoctis.Services.Concrete
                 AddSynchroCommandsToSoulbreak(newSoulbreak);
                 AddBurstCommandsToSoulbreak(newSoulbreak);
                 AddBraveCommandsToSoulbreak(newSoulbreak);
+                AddZenithAbilitiesToSoulbreak(newSoulbreak);
 
                 newSoulbreaks.Add(newSoulbreak);
 
@@ -313,6 +318,11 @@ namespace ProjectNoctis.Services.Concrete
 
                 soulbreak.BraveCommands.Add(newBrave);
             }
+        }
+
+        public void AddZenithAbilitiesToSoulbreak(Soulbreak soulbreak)
+        {
+            soulbreak.ZenithAbilities = zenithAbilityService.BuildAbilityInfoBySoulbreakName(soulbreak.SoulbreakStatuses.Keys.ToList());
         }
     }
 }

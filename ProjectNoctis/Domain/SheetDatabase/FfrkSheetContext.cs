@@ -19,6 +19,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
         public Spreadsheet spreadsheet_meta = null;
         public List<SheetCharacters> Characters { get; set; }
         public List<SheetAbilities> Abilities { get; set; }
+        public List<SheetZenithAbilities> ZenithAbilities { get; set; }
         public List<SheetMagicites> Magicites { get; set; }
         public List<SheetSoulbreaks> Soulbreaks { get; set; }
         public List<SheetStatus> Statuses { get; set; }
@@ -180,6 +181,11 @@ namespace ProjectNoctis.Domain.SheetDatabase
                                 Console.WriteLine("Started Unique Equipment Sets");
                                 ParseUniqueEquipmentSets(data, headers);
                                 Console.WriteLine("Updated Unique Equipment Sets");
+                                break;
+                            case "Zenith SB Abilities":
+                                Console.WriteLine("Started Zenith Abilities");
+                                ParseZenithAbilities(data, headers);
+                                Console.WriteLine("Updated Zenith Abilities");
                                 break;
                             default:
                                 break;
@@ -1065,6 +1071,46 @@ namespace ProjectNoctis.Domain.SheetDatabase
             }
 
             this.Abilities = abilities;
+        }
+        public void ParseZenithAbilities(IList<IList<object>> abilityData, IList<object> headers)
+        {
+            var abilities = new List<SheetZenithAbilities>();
+
+            foreach (var ability in abilityData)
+            {
+                try
+                {
+                    var newAbility = new SheetZenithAbilities
+                    {
+                        Name = GetStringValueFromHeader(ability, headers, "Name"),
+                        School = GetStringValueFromHeader(ability, headers, "School"),
+                        SB = GetStringValueFromHeader(ability, headers, "SB"),
+                        ID = GetStringValueFromHeader(ability, headers, "ID"),
+                        AutoTarget = GetStringValueFromHeader(ability, headers, "Auto Target"),
+                        Effects = GetStringValueFromHeader(ability, headers, "Effects"),
+                        Multiplier = GetStringValueFromHeader(ability, headers, "Multiplier"),
+                        Element = GetStringValueFromHeader(ability, headers, "Element"),
+                        Formula = GetStringValueFromHeader(ability, headers, "Formula"),
+                        JPName = GetStringValueFromHeader(ability, headers, "Name (JP)"),
+                        Target = GetStringValueFromHeader(ability, headers, "Target"),
+                        Time = GetStringValueFromHeader(ability, headers, "Time"),
+                        Type = GetStringValueFromHeader(ability, headers, "Type"),
+                        Character = GetStringValueFromHeader(ability, headers, "Character"),
+                        Source = GetStringValueFromHeader(ability, headers, "Source"),
+                        SoulbreakVersion = GetStringValueFromHeader(ability, headers, "SB Ver")
+                    };
+
+
+                    abilities.Add(newAbility);
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"Throwing out zenith ability {GetStringValueFromHeader(ability, headers, "Name")} due to bad data during update");
+                    continue;
+                }
+            }
+
+            this.ZenithAbilities = abilities;
         }
         public void ParseCharacters(IList<IList<object>> characterData, IList<Object> headers)
         {

@@ -654,6 +654,10 @@ namespace ProjectNoctis.Factories.Concrete
                     embedGroup.AddRange(BuildSynchroCommandEmbeds(soulbreak.SynchroCommands));
                 }
 
+                if (soulbreak.ZenithAbilities.Count() != 0) {
+                    embedGroup.AddRange(BuildZenithAbilityEmbeds(soulbreak.ZenithAbilities));
+                }
+
                 if (soulbreak.IsDualShift()) {
                     embedGroup.AddRange(BuildDualAwakeningModePrioritiesEmbeds(soulbreak));
                 }
@@ -664,6 +668,103 @@ namespace ProjectNoctis.Factories.Concrete
             return embeds;
         }
 
+        public IList<Embed> BuildZenithAbilityEmbeds(IList<ZenithAbility> zenithAbilities)
+        {
+            var embeds = new List<Embed>();
+
+            if (zenithAbilities == null)
+            {
+                var embed = new EmbedBuilder();
+                embed.Title = "No Zenith Abilities Found";
+                embeds.Add(embed.Build());
+                return embeds;
+            }
+
+            foreach (var ability in zenithAbilities)
+            {
+                var embed = new EmbedBuilder();
+
+                if (ability == null)
+                {
+                    embed.Title = "No Ability Found";
+                    embeds.Add(embed.Build());
+                    return embeds;
+                }
+
+                embed.Title = ability.Info.Name;
+                embed.ThumbnailUrl = ability.Info.AbilityImage;
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "Ability Source",
+                    Value = ability.Info.Source != string.Empty ? ability.Info.Source : "-"
+                });
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "Effect",
+                    Value = ability.Info.Effects != string.Empty ? ability.Info.Effects : "-"
+                });
+
+                var statusFields = BuildStatusEmbedFields(ability.AbilityStatuses);
+
+                embed.Fields.AddRange(statusFields);
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "Type",
+                    Value = ability.Info.Type != string.Empty ? ability.Info.Type : "-",
+                    IsInline = true
+                });
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "Target",
+                    Value = ability.Info.Target != string.Empty ? ability.Info.Target : "-",
+                    IsInline = true
+                });
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "Multiplier",
+                    Value = ability.Info.Multiplier != string.Empty ? ability.Info.Multiplier : "-",
+                    IsInline = true
+                });
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "Cast Time",
+                    Value = ability.Info.Time != string.Empty ? ability.Info.Time : "-",
+                    IsInline = true
+                });
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "SB Charge",
+                    Value = ability.Info.SB != string.Empty ? ability.Info.SB : "-",
+                    IsInline = true
+                });
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "School",
+                    Value = ability.Info.School != string.Empty ? ability.Info.School : "-",
+                    IsInline = true
+                });
+
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "Element",
+                    Value = ability.Info.Element != string.Empty ? ability.Info.Element : "-",
+                    IsInline = true
+                });
+
+
+                embeds.Add(embed.Build());
+            }
+
+            return embeds;
+        }
 
         public List<Embed> BuildDualAwakeningModePrioritiesEmbeds(Soulbreak soulbreak) {
 
