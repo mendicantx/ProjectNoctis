@@ -20,16 +20,10 @@ namespace ProjectNoctis.Services.Concrete
         }
 
 
-        public List<ZenithAbility> BuildAbilityInfoBySoulbreakName(IList<string> statusNames)
+        public List<ZenithAbility> BuildAbilityInfoBySoulbreakName(string soulbreakName)
         {
-            var zenithStatus = statusNames.Where(x => x.ToLower().Contains("zenith mode:")).FirstOrDefault();
-
-            if(zenithStatus == null) {
-                return new List<ZenithAbility>();
-            }
-
             var statusRegex = new Regex(Constants.Constants.statusRegex);
-            var abilityMatch = zenithAbilityRepository.GetZenithAbilityBySoulbreakName(zenithStatus);
+            var abilityMatch = zenithAbilityRepository.GetZenithAbilityBySoulbreakName(soulbreakName);
 
             if (abilityMatch.Count == 0)
             {

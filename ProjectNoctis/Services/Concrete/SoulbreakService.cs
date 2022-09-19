@@ -322,7 +322,7 @@ namespace ProjectNoctis.Services.Concrete
 
         public void AddZenithAbilitiesToSoulbreak(Soulbreak soulbreak)
         {
-            soulbreak.ZenithAbilities = zenithAbilityService.BuildAbilityInfoBySoulbreakName(soulbreak.SoulbreakStatuses.Keys.ToList());
+            soulbreak.ZenithAbilities = zenithAbilityService.BuildAbilityInfoBySoulbreakName(soulbreak.Info.Name);
         }
     }
 }

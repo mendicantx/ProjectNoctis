@@ -8,7 +8,7 @@ namespace ProjectNoctis.Services.Interfaces
 {
     public interface IZenithAbilityService
     {
-        List<ZenithAbility> BuildAbilityInfoBySoulbreakName(IList<string> statusNames);
+        List<ZenithAbility> BuildAbilityInfoBySoulbreakName(string soulbreakName);
 
     }
 }
