@@ -184,7 +184,7 @@ namespace ProjectNoctis.BotModules
 		}
 
 		[Command("g", RunMode = RunMode.Async)]
-		[Alias(new string[5] { "glint", "glint+", "g+", "fsb", "fsb+" })]
+		[Alias(new string[] { "glint", "glint+", "glint++", "g+", "g++", "fsb", "fsb+", "fsb++" })]
 		public async Task GlintSoulbreakInfo(string name, int? index = null)
 		{
 			LogMessageInfo();
@@ -572,7 +572,7 @@ namespace ProjectNoctis.BotModules
 				tier = "bsb";
 			if (new [] {"usb", "ultra"}.Contains(tier))
 				tier = "usb";
-			if (new [] {"glint", "glint+", "g+", "fsb", "fsb+"}.Contains(tier))
+			if (new [] {"glint", "glint+", "g+", "glint++", "g++", "fsb", "fsb+", "fsb++"}.Contains(tier))
 				tier = "glint";
 			if (new [] {"aasb", "woke", "awake"}.Contains(tier))
 				tier = "aasb";

@@ -60,7 +60,7 @@ namespace ProjectNoctis.Constants
         };
 
         public static string[] abilityAliases = new string[2] { "a", "ability" };
-        public static string[] glintAliases = new string[2] { "glint", "glint+" };
+        public static string[] glintAliases = new string[] { "glint", "glint+", "glint++" };
 
         public static string ffrkImageBaseUrl = "https://dff.sp.mbga.jp/dff/static/lang/image/";
         public static string ffrkImageABBaseUrl = "https://dff.sp.mbga.jp/dff/static/lang/ab_image/";

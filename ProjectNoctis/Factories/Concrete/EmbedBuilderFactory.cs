@@ -1689,7 +1689,7 @@ namespace ProjectNoctis.Factories.Concrete
                 var soulbreaks = soulbreakService.BuildSoulbreakInfoForAnimaWave(wave).ToList();
 
                 if (tier == "glint") {
-                    soulbreaks = soulbreaks.Where(x => x.Info.Tier.ToLower() == "glint" || x.Info.Tier.ToLower() == "glint+").ToList();
+                    soulbreaks = soulbreaks.Where(x => x.Info.Tier.ToLower() == "glint" || x.Info.Tier.ToLower() == "glint+" || x.Info.Tier.ToLower() == "glint++").ToList();
                 } else if ( tier == "unique") {
                     soulbreaks = soulbreaks.Where(x => x.Info.Tier.ToLower() == "sb").ToList();
                 } else {

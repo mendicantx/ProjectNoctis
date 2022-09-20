@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿using System.Security.Cryptography.X509Certificates;
+using Discord;
 using Discord.Commands;
 using FuzzySharp;
 using Google.Apis.Sheets.v4.Data;
@@ -37,7 +38,7 @@ namespace ProjectNoctis.Domain.Repository.Concrete
             List<SheetSoulbreaks> soulbreaks = new List<SheetSoulbreaks>(); 
             if (tier == "g")
             {
-                soulbreaks = dbContext.Soulbreaks.Where(x => (x.Character.ToLower() == name.ToLower() || x.SoulbreakId == name) && (x.Tier == "Glint" || x.Tier == "Glint+")).ToList();
+                soulbreaks = dbContext.Soulbreaks.Where(x => (x.Character.ToLower() == name.ToLower() || x.SoulbreakId == name) && (x.Tier == "Glint" || x.Tier == "Glint+" || x.Tier == "Glint++")).ToList();
             }
             else if (tier == "brave")
             {
