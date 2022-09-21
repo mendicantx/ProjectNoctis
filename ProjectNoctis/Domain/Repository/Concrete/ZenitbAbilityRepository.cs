@@ -20,7 +20,7 @@ namespace ProjectNoctis.Domain.Repository.Concrete
 
         public List<SheetZenithAbilities> GetZenithAbilityBySoulbreakName(string soulBreakName)
         {
-            var abilities = dbContext.ZenithAbilities.Where(x => x.Source.ToLower().Contains(soulBreakName.ToLower())).ToList();
+            var abilities = dbContext.ZenithAbilities.Where(x => x.Source.ToLower().Trim() == soulBreakName.ToLower().Trim()).ToList();
             return abilities;
         }
 
