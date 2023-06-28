@@ -358,6 +358,23 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
+		[Command("casb", RunMode = RunMode.Async)]
+		public async Task CasbSoulbreakInfo(string name, int? index = null)
+		{
+			LogMessageInfo();
+
+			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("CASB", name, index);
+
+			foreach (var soulbreak in soulbreaks)
+			{
+				foreach (var soulbreakGroup in soulbreak)
+				{
+					await Context.Channel.SendMessageAsync(embed: soulbreakGroup);
+				}
+			}
+		}
+
+
 		[Command("dasb", RunMode = RunMode.Async)]
 		[Alias(new string[2] { "daasb", "dual" })]
 		public async Task DasbSoulbreakInfo(string name, int? index = null)
@@ -365,6 +382,23 @@ namespace ProjectNoctis.BotModules
 			LogMessageInfo();
 
 			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("DASB", name, index);
+
+			foreach (var soulbreak in soulbreaks)
+			{
+				foreach (var soulbreakGroup in soulbreak)
+				{
+					await Context.Channel.SendMessageAsync(embed: soulbreakGroup);
+				}
+			}
+		}
+
+		[Command("ozsb", RunMode = RunMode.Async)]
+		[Alias(new string[1] { "oz" })]
+		public async Task OzsbSoulbreakInfo(string name, int? index = null)
+		{
+			LogMessageInfo();
+
+			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("OZSB", name, index);
 
 			foreach (var soulbreak in soulbreaks)
 			{

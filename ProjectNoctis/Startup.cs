@@ -39,6 +39,7 @@ namespace ProjectNoctis
             services.AddTransient<ICharacterService, CharacterService>();
             services.AddTransient<IAbilityService, AbilityService>();
             services.AddTransient<IZenithAbilityService, ZenithAbilityService>();
+            services.AddTransient<ICrystalForceAbilityService, CrystalForceAbilityService>();
             services.AddTransient<ISoulbreakService, SoulbreakService>();
             services.AddTransient<IDiveService, DiveService>();
             services.AddTransient<IMagiciteService, MagiciteService>();
@@ -51,6 +52,7 @@ namespace ProjectNoctis
             services.AddTransient<IMagiciteRepository, MagiciteRepository>();
             services.AddTransient<IAbilityRepository, AbilityRepository>();
             services.AddTransient<IZenithAbilityRepository, ZenithAbilityRepository>();
+            services.AddTransient<ICrystalForceAbilityRepository, CrystalForceAbilityRepository>();
             services.AddTransient<IStatusRepository, StatusRepository>();
             services.AddTransient<IMateriaRepository, MateriaRepository>();
 

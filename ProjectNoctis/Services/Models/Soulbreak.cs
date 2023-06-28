@@ -15,6 +15,7 @@ namespace ProjectNoctis.Services.Models
         public IList<BurstCommand> BurstCommands { get; set; }
         public IList<SynchroCommand> SynchroCommands { get; set; }
         public IList<ZenithAbility> ZenithAbilities { get; set; }
+        public IList<CrystalForceAbility> CrystalForceAbilities { get; set; }
         public Dictionary<string, List<SheetStatus>> SoulbreakStatuses { get; set; }
         public Dictionary<string, List<SheetOthers>> SoulbreakOthers { get; set; }
 

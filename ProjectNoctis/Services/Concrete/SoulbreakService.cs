@@ -19,12 +19,14 @@ namespace ProjectNoctis.Services.Concrete
         public ISoulbreakRepository soulbreakRepository;
         public IStatusRepository statusRepository;
         public IZenithAbilityService zenithAbilityService;
+        public ICrystalForceAbilityService crystalForceAbilityService;
 
-        public SoulbreakService(ISoulbreakRepository soulbreakRepository, IStatusRepository statusRepository, IZenithAbilityService zenithAbilityService)
+        public SoulbreakService(ISoulbreakRepository soulbreakRepository, IStatusRepository statusRepository, IZenithAbilityService zenithAbilityService, ICrystalForceAbilityService crystalForceAbilityService)
         {
             this.soulbreakRepository = soulbreakRepository;
             this.statusRepository = statusRepository;
             this.zenithAbilityService = zenithAbilityService;
+            this.crystalForceAbilityService = crystalForceAbilityService;
         }
 
         public List<Soulbreak> BuildSoulbreakInfoFromCharNameAndTier(string tier, string character, int? index = null)
@@ -59,6 +61,7 @@ namespace ProjectNoctis.Services.Concrete
                 AddBurstCommandsToSoulbreak(newSoulbreak);
                 AddBraveCommandsToSoulbreak(newSoulbreak);
                 AddZenithAbilitiesToSoulbreak(newSoulbreak);
+                AddCrystalForceAbilitiesToSoulbreak(newSoulbreak);
 
                 newSoulbreaks.Add(newSoulbreak);
 
@@ -324,5 +327,11 @@ namespace ProjectNoctis.Services.Concrete
         {
             soulbreak.ZenithAbilities = zenithAbilityService.BuildAbilityInfoBySoulbreakName(soulbreak.Info.Name);
         }
+
+        public void AddCrystalForceAbilitiesToSoulbreak(Soulbreak soulbreak)
+        {
+            soulbreak.CrystalForceAbilities = crystalForceAbilityService.BuildAbilityInfoBySoulbreakName(soulbreak.Info.Name);
+        }
+
     }
 }
