@@ -54,9 +54,15 @@ namespace ProjectNoctis.Services.Concrete
 
                 newMateria.Info = materia;
                 newMateria.Statuses = statusRepository.GetStatusesByEffectText(materia.Name, materia.Effect);
-                newMateria.Others = new Dictionary<string, List<SheetOthers>>();
+                newMateria.Others = statusRepository.GetOthersByNamesAndSource(materia.Name, newMateria.Others);
 
-                statusRepository.GetOthersByNamesAndSource(materia.Name, newMateria.Others);
+                foreach (var materiaStatus in newMateria.Statuses) {
+                    foreach (var statusEffect in materiaStatus.Value) {
+                        newMateria.Others = statusRepository.GetOthersByNamesAndSource(statusEffect.Name, newMateria.Others);
+                    }
+                }
+
+
 
                 newLegendMaterias.Add(newMateria);
             }

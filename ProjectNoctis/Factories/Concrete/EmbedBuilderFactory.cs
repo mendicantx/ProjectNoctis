@@ -1867,6 +1867,8 @@ namespace ProjectNoctis.Factories.Concrete
                 }
 
                 embed.Fields.AddRange(BuildStatusEmbedFields(materia.Statuses));
+                embed.Fields.AddRange(BuildOtherEmbedFields(materia.Others));
+
 
                 embeds.Add(embed.Build());
             }
