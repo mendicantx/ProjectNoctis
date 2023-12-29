@@ -308,46 +308,46 @@ namespace ProjectNoctis.Domain.SheetDatabase
         public void ParseBoardMotes(IList<object> board, Dictionary<string, int> motes)
         {
             var boardCount = board.Count();
-            if (motes.ContainsKey(board[3].ToString()))
+            if (motes.ContainsKey(board[4].ToString()))
             {
-                motes[board[3].ToString()] += Int32.Parse(board[4].ToString());
+                motes[board[4].ToString()] += Int32.Parse(board[5].ToString());
             }
             else
             {
-                motes.Add(board[3].ToString(), Int32.Parse(board[4].ToString()));
+                motes.Add(board[4].ToString(), Int32.Parse(board[5].ToString()));
             }
 
-            if (boardCount >= 7)
+            if (boardCount >= 8)
             {
-                if (motes.ContainsKey(board[5].ToString()))
+                if (motes.ContainsKey(board[6].ToString()))
                 {
-                    motes[board[5].ToString()] += Int32.Parse(board[6].ToString());
+                    motes[board[6].ToString()] += Int32.Parse(board[7].ToString());
                 }
                 else
                 {
-                    motes.Add(board[5].ToString(), Int32.Parse(board[6].ToString()));
+                    motes.Add(board[6].ToString(), Int32.Parse(board[7].ToString()));
                 }
             }
-            if (boardCount >= 9)
+            if (boardCount >= 10)
             {
-                if (motes.ContainsKey(board[7].ToString()))
+                if (motes.ContainsKey(board[8].ToString()))
                 {
-                    motes[board[7].ToString()] += Int32.Parse(board[8].ToString());
+                    motes[board[8].ToString()] += Int32.Parse(board[9].ToString());
                 }
                 else
                 {
-                    motes.Add(board[7].ToString(), Int32.Parse(board[8].ToString()));
+                    motes.Add(board[8].ToString(), Int32.Parse(board[9].ToString()));
                 }
             }
-            if (boardCount >= 11)
+            if (boardCount >= 12)
             {
-                if (motes.ContainsKey(board[9].ToString()))
+                if (motes.ContainsKey(board[10].ToString()))
                 {
-                    motes[board[9].ToString()] += Int32.Parse(board[10].ToString());
+                    motes[board[10].ToString()] += Int32.Parse(board[11].ToString());
                 }
                 else
                 {
-                    motes.Add(board[9].ToString(), Int32.Parse(board[10].ToString()));
+                    motes.Add(board[10].ToString(), Int32.Parse(board[11].ToString()));
                 }
             }
 
@@ -856,7 +856,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
                 {
                     var animaIndex = headers.IndexOf("Anima");
                     var anima = animaIndex < soulbreak.Count() ? soulbreak[headers.IndexOf("Anima")].ToString() : "";
-                    soulbreaks.Add(new SheetSoulbreaks
+                    var newSoulbreak = new SheetSoulbreaks
                     {
                         Name = soulbreak[headers.IndexOf("Name")].ToString(),
                         Anima = anima,
@@ -876,7 +876,12 @@ namespace ProjectNoctis.Domain.SheetDatabase
                         Tier = soulbreak[headers.IndexOf("Tier")].ToString(),
                         Type = soulbreak[headers.IndexOf("Type")].ToString(),
                         Time = soulbreak[headers.IndexOf("Time")].ToString()
-                    });
+                    };
+
+                    if (newSoulbreak.Name.Length == 0)
+                        continue;
+                        
+                    soulbreaks.Add(newSoulbreak);
                 }
                 catch(Exception ex)
                 {
@@ -1105,6 +1110,9 @@ namespace ProjectNoctis.Domain.SheetDatabase
                         Source = GetStringValueFromHeader(ability, headers, "Source"),
                         SoulbreakVersion = GetStringValueFromHeader(ability, headers, "SB Ver")
                     };
+
+                    if (newAbility.Source.Length == 0 || newAbility.Name.Length == 0)
+                        continue;
 
 
                     abilities.Add(newAbility);
