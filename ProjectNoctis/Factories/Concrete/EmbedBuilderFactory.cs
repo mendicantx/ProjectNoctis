@@ -1924,7 +1924,7 @@ namespace ProjectNoctis.Factories.Concrete
             {
                 foreach (var status in statusSource.Value)
                 {
-                    var time = status.DefaultDuration != "-" ? $"{status.DefaultDuration}s" : string.Empty;
+                    var time = status.DefaultDuration != "-" ? $"{status.DefaultDuration}" : string.Empty;
                     var title = $":small_orange_diamond: Status: {status.Name}: {time}";
 
                     if(statusFields.Where(x => x.Name == title).Count() == 0)

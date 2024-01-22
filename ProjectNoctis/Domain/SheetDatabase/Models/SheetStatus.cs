@@ -11,7 +11,6 @@ namespace ProjectNoctis.Domain.SheetDatabase.Models
         public string Effects { get; set; }
         public string StatusId { get; set; }
         public string DefaultDuration { get; set; }
-        public string MindModifier { get; set; }
         public string ExclusiveStatus { get; set; }
     }
 }

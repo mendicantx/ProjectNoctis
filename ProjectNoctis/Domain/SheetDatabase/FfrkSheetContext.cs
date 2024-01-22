@@ -832,7 +832,6 @@ namespace ProjectNoctis.Domain.SheetDatabase
                         DefaultDuration = status[headers.IndexOf("Default Duration")].ToString(),
                         Effects = status[headers.IndexOf("Effects")].ToString(),
                         ExclusiveStatus = status[headers.IndexOf("Exclusive Status")].ToString(),
-                        MindModifier = status[headers.IndexOf("MND Modifier")].ToString(),
                         Name = status[headers.IndexOf("Common Name")].ToString(),
                         StatusId = status[headers.IndexOf("ID")].ToString()
                     });
