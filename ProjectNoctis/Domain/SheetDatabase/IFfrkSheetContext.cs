@@ -8,6 +8,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
     public interface IFfrkSheetContext
     {
         List<SheetAbilities> Abilities { get; set; }
+        List<SheetHeroAbilities> HeroAbilities { get; set; }
         List<SheetZenithAbilities> ZenithAbilities { get; set; }
         List<SheetCrystalForceAbilities> CrystalForceAbilities { get; set; }
         List<SheetBraves> Braves { get; set; }

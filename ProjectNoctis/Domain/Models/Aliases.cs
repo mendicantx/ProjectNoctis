@@ -39,7 +39,7 @@ namespace ProjectNoctis.Domain.Models
 
                     return true;
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
                     return false;
                 }
@@ -63,7 +63,7 @@ namespace ProjectNoctis.Domain.Models
 
                     return true;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return false;
                 }

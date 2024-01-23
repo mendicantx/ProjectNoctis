@@ -501,7 +501,7 @@ namespace ProjectNoctis.BotModules
 		{
 			LogMessageInfo();
 
-			var ability = embedBuilder.BuildEmbedForAbilityInformation(name, false);
+			var ability = embedBuilder.BuildEmbedForAbilityInformation(name);
 
 			foreach(var abilEmbed in ability)
 			{
@@ -526,7 +526,7 @@ namespace ProjectNoctis.BotModules
 		{
 			LogMessageInfo();
 
-			var ability = embedBuilder.BuildEmbedForAbilityInformation(name, true);
+			var ability = embedBuilder.BuildEmbedForHeroAbilityAbilityInformation(name);
 
 			foreach (var abilEmbed in ability)
 			{

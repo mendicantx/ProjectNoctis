@@ -44,7 +44,7 @@ namespace ProjectNoctis.Domain.Models
                     SetupSettings();
                     return true;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return false;
                 }

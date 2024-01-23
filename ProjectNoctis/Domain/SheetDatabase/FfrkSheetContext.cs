@@ -19,6 +19,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
         public Spreadsheet spreadsheet_meta = null;
         public List<SheetCharacters> Characters { get; set; }
         public List<SheetAbilities> Abilities { get; set; }
+        public List<SheetHeroAbilities> HeroAbilities { get; set; }
         public List<SheetZenithAbilities> ZenithAbilities { get; set; }
         public List<SheetCrystalForceAbilities> CrystalForceAbilities { get; set; }
         public List<SheetMagicites> Magicites { get; set; }
@@ -101,6 +102,11 @@ namespace ProjectNoctis.Domain.SheetDatabase
                             case "Abilities":
                                 Console.WriteLine("Started Abils ");
                                 ParseAbilities(data, headers);
+                                Console.WriteLine("Updated Abils ");
+                                break;
+                            case "Hero Abilities":
+                                Console.WriteLine("Started Abils ");
+                                ParseHeroAbilities(data, headers);
                                 Console.WriteLine("Updated Abils ");
                                 break;
                             case "Magicite":
@@ -251,7 +257,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
                             ParseBoardMotes(characterBonus, boardMotes);
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         Console.WriteLine($"Throwing out board for {characterName} due to bad data during update");
                         continue;
@@ -268,7 +274,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
                 RecordBoards = recordBoards;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Console.WriteLine($"Unhandled record boards error due to bad data during update");
             }
@@ -378,7 +384,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
                         Stats = characterStats
                     });
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
                     Console.WriteLine($"Throwing out Record Sphere for {character.Key} due to bad data during update");
                     continue;
@@ -445,7 +451,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
                     });
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
                     Console.WriteLine($"Throwing out Legend Sphere for {character.Key} due to bad data during update");
                     continue;
@@ -512,7 +518,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
                     });
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
                     Console.WriteLine($"Throwing out Record Materia for {rm[headers.IndexOf("Character")]} due to bad data during update");
                     continue;
@@ -549,7 +555,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
                         Time = burst[headers.IndexOf("Time")].ToString()
                     });
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
                     Console.WriteLine($"Throwing out Burst for {burst[headers.IndexOf("Character")]} due to bad data during update");
                     continue;
@@ -592,7 +598,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
                         Id = equip[headers.IndexOf("ID")].ToString()
                     });
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     Console.WriteLine($"Throwing out Unique Equipment for {equip[headers.IndexOf("Character")]} due to bad data during update");
                     continue;
@@ -622,7 +628,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
                     });
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     Console.WriteLine($"Throwing out Unique Equipment Set for {equip[headers.IndexOf("Character")]} due to bad data during update");
                     continue;
@@ -662,7 +668,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
                         Time = guardian[headers.IndexOf("Time")].ToString()
                     });
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     Console.WriteLine($"Throwing out guardian for {guardian[headers.IndexOf("Character")]} due to bad data during update");
                     continue;
@@ -703,7 +709,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
                         Time = brave[headers.IndexOf("Time")].ToString()
                     });
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
                     Console.WriteLine($"Throwing out Brave for {brave[headers.IndexOf("Character")]} due to bad data during update");
                     continue;
@@ -736,7 +742,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
                         JPDate = jpDate
                     });
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
                     Console.WriteLine($"Throwing out Event for {sheetEvent[headers.IndexOf("Event Name")]} due to bad data during update");
                     continue;
@@ -777,7 +783,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
                         Time = synchro[headers.IndexOf("Time")].ToString()
                     });
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
                     Console.WriteLine($"Throwing out Synchro for {synchro[headers.IndexOf("Character")]} due to bad data during update");
                     continue;
@@ -836,7 +842,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
                         StatusId = status[headers.IndexOf("ID")].ToString()
                     });
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
                     Console.WriteLine($"Throwing out Status {status[headers.IndexOf("Common Name")]} due to bad data during update");
                     continue;
@@ -882,7 +888,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
                         
                     soulbreaks.Add(newSoulbreak);
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
                     Console.WriteLine($"Throwing out Soulbreak for {soulbreak[headers.IndexOf("Character")]} due to bad data during update");
                     continue;
@@ -920,7 +926,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
                         Time = limit[headers.IndexOf("Time")].ToString(),
                     });
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
                     Console.WriteLine($"Throwing out limit break for {limit[headers.IndexOf("Character")]} due to bad data during update");
                     continue;
@@ -956,7 +962,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
                     });
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
                     Console.WriteLine($"Throwing out magicite for {GetStringValueFromHeader(magicite, headers, "Name")} due to bad data during update");
                     continue;
@@ -984,7 +990,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
                     }
                     i++;
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
                     Console.WriteLine($"Throwing out magicite passive {magicite[headers.IndexOf(passive)]} due to bad data during update");
                     i++;
@@ -1073,7 +1079,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
                     abilities.Add(newAbility);
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
                     Console.WriteLine($"Throwing out ability {GetStringValueFromHeader(ability, headers, "Name")} due to bad data during update");
                     continue;
@@ -1082,6 +1088,72 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
             this.Abilities = abilities;
         }
+
+        public void ParseHeroAbilities(IList<IList<object>> abilityData, IList<object> headers)
+        {
+            var abilities = new List<SheetHeroAbilities>();
+
+            foreach (var ability in abilityData)
+            {
+                try
+                {
+                    var newAbility = new SheetHeroAbilities
+                    {
+                        Character = GetStringValueFromHeader(ability, headers, "Character"),
+                        Name = GetStringValueFromHeader(ability, headers, "Name"),
+                        HAVersion = GetStringValueFromHeader(ability, headers, "HA Ver"),
+                        Type = GetStringValueFromHeader(ability, headers, "Type"),
+                        Target = GetStringValueFromHeader(ability, headers, "Target"),
+                        Formula = GetStringValueFromHeader(ability, headers, "Formula"),
+                        Multiplier = GetStringValueFromHeader(ability, headers, "Multiplier"),
+                        Element = GetStringValueFromHeader(ability, headers, "Element"),
+                        Time = GetStringValueFromHeader(ability, headers, "Time"),
+                        Effects = GetStringValueFromHeader(ability, headers, "Effects"),
+                        Counter = GetStringValueFromHeader(ability, headers, "Counter"),
+                        AutoTarget = GetStringValueFromHeader(ability, headers, "Auto Target"),
+                        SB = GetStringValueFromHeader(ability, headers, "SB"),
+                        Uses = GetStringValueFromHeader(ability, headers, "Uses"),
+                        Max = GetStringValueFromHeader(ability, headers, "Max"),
+                        School = GetStringValueFromHeader(ability, headers, "School"),
+                        JPName = GetStringValueFromHeader(ability, headers, "Name (JP)"),
+                        ID = GetStringValueFromHeader(ability, headers, "ID"),
+                        OrbsRequired = new Dictionary<string, string>(),
+                        OrbCosts = new Dictionary<string, string>()
+                    };
+
+                    //Orb Required 1-4
+                    for (int i = 1; i <= 3; i++)
+                    {
+                        var orbReq = GetStringValueFromHeader(ability, headers, $"Orb {i} Required");
+
+                        if (orbReq != String.Empty && orbReq != null)
+                        {
+                            newAbility.OrbsRequired.Add($"{i}", orbReq);
+                        }
+
+                        //Ranks 1-5
+                        for (int x = 1; x <= 5; x++)
+                        {
+                            var orbCost = GetStringValueFromHeader(ability, headers, $"{i}-R{x}");
+
+                            if (orbCost != string.Empty && orbCost != null && orbCost != "0")
+                            {
+                                newAbility.OrbCosts.Add($"{i}-R{x}", orbCost);
+                            }
+                        }
+                    }
+
+                    abilities.Add(newAbility);
+                }
+                catch(Exception)
+                {
+                    Console.WriteLine($"Throwing out ability {GetStringValueFromHeader(ability, headers, "Name")} due to bad data during update");
+                    continue;
+                }
+            }
+
+            this.HeroAbilities = abilities;
+        }        
         public void ParseZenithAbilities(IList<IList<object>> abilityData, IList<object> headers)
         {
             var abilities = new List<SheetZenithAbilities>();
@@ -1116,7 +1188,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
                     abilities.Add(newAbility);
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
                     Console.WriteLine($"Throwing out zenith ability {GetStringValueFromHeader(ability, headers, "Name")} due to bad data during update");
                     continue;
@@ -1157,7 +1229,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
                     abilities.Add(newAbility);
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
                     Console.WriteLine($"Throwing out Crystal Force ability {GetStringValueFromHeader(ability, headers, "Name")} for {GetStringValueFromHeader(ability, headers, "Character")} due to bad data during update");
                     continue;
@@ -1192,7 +1264,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
 
                     });
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
                     Console.WriteLine($"Throwing out character {character[headers.IndexOf("Name")]} due to bad data during update");
                     continue;
