@@ -105,9 +105,9 @@ namespace ProjectNoctis.Domain.SheetDatabase
                                 Console.WriteLine("Updated Abils ");
                                 break;
                             case "Hero Abilities":
-                                Console.WriteLine("Started Abils ");
+                                Console.WriteLine("Started Hero Abils ");
                                 ParseHeroAbilities(data, headers);
-                                Console.WriteLine("Updated Abils ");
+                                Console.WriteLine("Updated Hero Abils ");
                                 break;
                             case "Magicite":
                                 Console.WriteLine("Started Magicites");
@@ -206,7 +206,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
                     }
                 }
 
-                bindAbilitiesToEventRelease();
+                //bindAbilitiesToEventRelease();
                 LastUpdateTime = DateTime.Now;
                 return true;
             }
@@ -479,7 +479,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
                         Character = lm[headers.IndexOf("Character")].ToString(),
                         Effect = lm[headers.IndexOf("Effect")].ToString(),
                         Realm = lm[headers.IndexOf("Realm")].ToString(),
-                        Master = lm[headers.IndexOf("Master")].ToString(),
+                        Master = lm[headers.IndexOf("Mastery Bonus")].ToString(),
                         JPName = lm[headers.IndexOf("Name (JP)")].ToString(),
                         LMId = lm[headers.IndexOf("ID")].ToString(),
                         LMVer = lm[headers.IndexOf("LM Ver")].ToString(),
@@ -1241,7 +1241,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
         public void ParseCharacters(IList<IList<object>> characterData, IList<Object> headers)
         {
             var characters = new List<SheetCharacters>();
-            foreach (var character in characterData.Where(x => x.Count >= 108))
+            foreach (var character in characterData.Where(x => x.Count >= 104))
             {
                 try
                 {

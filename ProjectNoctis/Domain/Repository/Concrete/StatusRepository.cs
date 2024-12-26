@@ -70,40 +70,40 @@ namespace ProjectNoctis.Domain.Repository.Concrete
             }
 
             var splitMatches = new List<string>();
-            foreach(var name in names)
-            {
-                if (name.Contains(@"/"))
-                {
-                    var nameSplit = name.Split('/');
+            // foreach(var name in names)
+            // {
+            //     if (name.Contains(@"/"))
+            //     {
+            //         var nameSplit = name.Split('/');
 
-                    var primaryName = nameSplit[0];
-                    if (primaryName.Contains("("))
-                    {
-                        splitMatches.Add(primaryName + ")");
-                    }
-                    else
-                    {
-                        splitMatches.Add(primaryName);
-                    }
+            //         var primaryName = nameSplit[0];
+            //         if (primaryName.Contains("("))
+            //         {
+            //             splitMatches.Add(primaryName + ")");
+            //         }
+            //         else
+            //         {
+            //             splitMatches.Add(primaryName);
+            //         }
                     
-                    var breakingIndex = primaryName.LastIndexOf(" ") + 1;
+            //         var breakingIndex = primaryName.LastIndexOf(" ") + 1;
 
-                    for (int i = 1; i < nameSplit.Count(); i++)
-                    {
-                        var replacementSubstring = primaryName.Substring(breakingIndex, primaryName.Length - breakingIndex);
+            //         for (int i = 1; i < nameSplit.Count(); i++)
+            //         {
+            //             var replacementSubstring = primaryName.Substring(breakingIndex, primaryName.Length - breakingIndex);
 
-                        if (primaryName.Contains("(") && !nameSplit[i].Contains(")"))
-                        {
-                            splitMatches.Add(primaryName.Replace(replacementSubstring,"("+nameSplit[i])+")");
-                        }
-                        else
-                        {
-                            splitMatches.Add(primaryName.Replace(replacementSubstring, nameSplit[i]));
-                        }
+            //             if (primaryName.Contains("(") && !nameSplit[i].Contains(")"))
+            //             {
+            //                 splitMatches.Add(primaryName.Replace(replacementSubstring,"("+nameSplit[i])+")");
+            //             }
+            //             else
+            //             {
+            //                 splitMatches.Add(primaryName.Replace(replacementSubstring, nameSplit[i]));
+            //             }
 
-                    }
-                }
-            }
+            //         }
+            //     }
+            // }
 
             names.AddRange(splitMatches);
 

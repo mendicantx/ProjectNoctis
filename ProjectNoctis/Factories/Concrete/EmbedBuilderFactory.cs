@@ -1014,7 +1014,11 @@ public class EmbedBuilderFactory : IEmbedBuilderFactory
 
             var embed = new EmbedBuilder();
 
-            var statuses = soulbreak.SoulbreakStatuses.First(x => x.Key.ToUpper().Contains("(DUAL SHIFT)"));
+            if (soulbreak.SoulbreakStatuses.Count() == 0)
+                return embeds;
+                
+            var statuses = soulbreak.SoulbreakStatuses.FirstOrDefault(x => x.Key.ToUpper().Contains("(DUAL SHIFT)"));
+                
             var status = statuses.Value.FirstOrDefault(x => x.Name.ToUpper().Contains("II"));
             if (status == null)
                 return embeds;
