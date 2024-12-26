@@ -373,6 +373,22 @@ namespace ProjectNoctis.BotModules
 				}
 			}
 		}
+		[Command("lbsd", RunMode = RunMode.Async)]
+		
+		public async Task LbsdSoulbreakInfo(string name, int? index = null)
+		{
+			LogMessageInfo();
+
+			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("LBSD", name, index);
+
+			foreach (var soulbreak in soulbreaks)
+			{
+				foreach (var soulbreakGroup in soulbreak)
+				{
+					await Context.Channel.SendMessageAsync(embed: soulbreakGroup);
+				}
+			}
+		}
 
 		[Command("casb", RunMode = RunMode.Async)]
 		public async Task CasbSoulbreakInfo(string name, int? index = null)
