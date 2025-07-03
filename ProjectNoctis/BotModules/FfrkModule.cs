@@ -357,6 +357,23 @@ namespace ProjectNoctis.BotModules
 			}
 		}
 
+		[Command("tactical", RunMode = RunMode.Async)]
+		[Alias(new string[1] { "tact" })]
+		public async Task TacticalSoulbreakInfo(string name, int? index = null)
+		{
+			LogMessageInfo();
+
+			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("TASB", name, index);
+
+			foreach (var soulbreak in soulbreaks)
+			{
+				foreach (var soulbreakGroup in soulbreak)
+				{
+					await Context.Channel.SendMessageAsync(embed: soulbreakGroup);
+				}
+			}
+		}
+
 		[Command("zsb", RunMode = RunMode.Async)]
 		[Alias(new string[1] { "uasb" })]
 		public async Task ZsbSoulbreakInfo(string name, int? index = null)
