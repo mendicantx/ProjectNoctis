@@ -257,43 +257,50 @@ namespace ProjectNoctis.BotModules
 		{
 			LogMessageInfo();
 
-			var limitbreaks = embedBuilder.BuildLimitBreakEmbeds("LBO", name, index);
+			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("LBO", name, index);
 
-			foreach (var limitbreak in limitbreaks)
+			foreach (var soulbreak in soulbreaks)
 			{
-				await Context.Channel.SendMessageAsync(embed: limitbreak);
+				foreach (var soulbreakGroup in soulbreak)
+				{
+					await Context.Channel.SendMessageAsync(embed: soulbreakGroup);
+				}
 			}
 		}
 
 		[Command("lbg", RunMode = RunMode.Async)]
 		[Alias("flb")]
-		public async Task LbgLimitBreakInfo(string name, int? index = null)
+		public async Task LbgSoulbreakInfo(string name, int? index = null)
 		{
 			LogMessageInfo();
 
-			var limitbreaks = embedBuilder.BuildLimitBreakEmbeds("LBG", name, index);
+			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("LBG", name, index);
 
-			foreach (var limitbreak in limitbreaks)
+			foreach (var soulbreak in soulbreaks)
 			{
-				await Context.Channel.SendMessageAsync(embed: limitbreak);
+				foreach (var soulbreakGroup in soulbreak)
+				{
+					await Context.Channel.SendMessageAsync(embed: soulbreakGroup);
+				}
 			}
 		}
 
 		[Command("lbc", RunMode = RunMode.Async)]
 		[Alias("lcsb")]
-
-		public async Task LbcLimitBreakInfo(string name, int? index = null)
+		public async Task LbcSoulbreakInfo(string name, int? index = null)
 		{
 			LogMessageInfo();
 
-			var limitbreaks = embedBuilder.BuildLimitBreakEmbeds("LBC", name, index);
+			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("LBC", name, index);
 
-			foreach (var limitbreak in limitbreaks)
+			foreach (var soulbreak in soulbreaks)
 			{
-				await Context.Channel.SendMessageAsync(embed: limitbreak);
+				foreach (var soulbreakGroup in soulbreak)
+				{
+					await Context.Channel.SendMessageAsync(embed: soulbreakGroup);
+				}
 			}
 		}
-
 
 		[Command("lbgs", RunMode = RunMode.Async)]
 		[Alias("glb")]
@@ -302,11 +309,14 @@ namespace ProjectNoctis.BotModules
 		{
 			LogMessageInfo();
 
-			var limitbreaks = embedBuilder.BuildLimitBreakEmbeds("LBGS", name, index);
+			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("LBGS", name, index);
 
-			foreach (var limitbreak in limitbreaks)
+			foreach (var soulbreak in soulbreaks)
 			{
-				await Context.Channel.SendMessageAsync(embed: limitbreak);
+				foreach (var soulbreakGroup in soulbreak)
+				{
+					await Context.Channel.SendMessageAsync(embed: soulbreakGroup);
+				}
 			}
 		}
 
@@ -342,11 +352,30 @@ namespace ProjectNoctis.BotModules
 		}
 
 		[Command("masb", RunMode = RunMode.Async)]
+		[Alias(new string[1] { "ma" })]
+
 		public async Task MasbSoulbreakInfo(string name, int? index = null)
 		{
 			LogMessageInfo();
 
 			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("MASB", name, index);
+
+			foreach (var soulbreak in soulbreaks)
+			{
+				foreach (var soulbreakGroup in soulbreak)
+				{
+					await Context.Channel.SendMessageAsync(embed: soulbreakGroup);
+				}
+			}
+		}
+
+		[Command("buster", RunMode = RunMode.Async)]
+		[Alias(new string[2] { "bust", "ba" })]
+		public async Task BusterSoulbreakInfo(string name, int? index = null)
+		{
+			LogMessageInfo();
+
+			var soulbreaks = embedBuilder.BuildSoulbreakEmbeds("Buster", name, index);
 
 			foreach (var soulbreak in soulbreaks)
 			{
@@ -425,7 +454,7 @@ namespace ProjectNoctis.BotModules
 
 
 		[Command("dasb", RunMode = RunMode.Async)]
-		[Alias(new string[2] { "daasb", "dual" })]
+		[Alias(new string[3] { "daasb", "dual", "da" })]
 		public async Task DasbSoulbreakInfo(string name, int? index = null)
 		{
 			LogMessageInfo();

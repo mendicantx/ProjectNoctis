@@ -40,6 +40,10 @@ namespace ProjectNoctis.Domain.Repository.Concrete
             {
                 soulbreaks = dbContext.Soulbreaks.Where(x => (x.Character.ToLower() == name.ToLower() || x.SoulbreakId == name) && (x.Tier == "Glint" || x.Tier == "Glint+" || x.Tier == "Glint++")).ToList();
             }
+            else if (tier == "LBG")
+            {
+                soulbreaks = dbContext.Soulbreaks.Where(x => (x.Character.ToLower() == name.ToLower() || x.SoulbreakId == name) && (x.Tier == "LBG" || x.Tier == "LBG+")).ToList();
+            }
             else if (tier == "brave")
             {
                 soulbreaks = dbContext.Soulbreaks.Where(x => (x.Character.ToLower() == name.ToLower() || x.SoulbreakId == name) && x.Effects.Contains("[Brave Mode]")).ToList();
