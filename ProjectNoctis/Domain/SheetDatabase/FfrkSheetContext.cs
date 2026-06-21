@@ -397,6 +397,7 @@ namespace ProjectNoctis.Domain.SheetDatabase
         {
             for (var i = start; i <= end; i++)
             {
+                if (i >= sphere.Count) break;
                 var sphereValue = sphere[i].ToString();
 
                 if (sphereValue.Contains("+"))
@@ -438,8 +439,10 @@ namespace ProjectNoctis.Domain.SheetDatabase
                     foreach (var legendSphere in character)
                     {
                         ParseStatsFromSpheres(characterStats, characterMisc, legendSphere, 2, 6);
-                        mote1 = legendSphere[headers.IndexOf("Mote 1 Required")].ToString();
-                        mote2 = legendSphere[headers.IndexOf("Mote 2 Required")].ToString();
+                        var mote1Idx = headers.IndexOf("Mote 1 Required");
+                        var mote2Idx = headers.IndexOf("Mote 2 Required");
+                        mote1 = mote1Idx >= 0 && mote1Idx < legendSphere.Count ? legendSphere[mote1Idx].ToString() : "";
+                        mote2 = mote2Idx >= 0 && mote2Idx < legendSphere.Count ? legendSphere[mote2Idx].ToString() : "";
                     }
                     characters.Add(new SheetLegendSpheres
                     {
@@ -574,28 +577,29 @@ namespace ProjectNoctis.Domain.SheetDatabase
             {
                 try
                 {
+                    string Col(string name) { var i = headers.IndexOf(name); return i >= 0 && i < equip.Count ? equip[i].ToString() : ""; }
                     equipments.Add(new SheetUniqueEquipment
                     {
-                        Name = equip[headers.IndexOf("Name")].ToString(),
-                        Character = equip[headers.IndexOf("Character")].ToString(),
-                        Realm = equip[headers.IndexOf("Realm")].ToString(),
-                        Season = equip[headers.IndexOf("Season")].ToString(),
-                        Group = equip[headers.IndexOf("Group")].ToString(),
-                        Type = equip[headers.IndexOf("Type")].ToString(),
-                        Synergy = equip[headers.IndexOf("Synergy")].ToString(),
-                        Combine = equip[headers.IndexOf("Combine")].ToString(),
-                        Rarity = equip[headers.IndexOf("Rarity")].ToString(),
-                        Level = equip[headers.IndexOf("Level")].ToString(),
-                        Atk = equip[headers.IndexOf("ATK")].ToString(),
-                        Def = equip[headers.IndexOf("DEF")].ToString(),
-                        Mag = equip[headers.IndexOf("MAG")].ToString(),
-                        Res = equip[headers.IndexOf("RES")].ToString(),
-                        Mnd = equip[headers.IndexOf("MND")].ToString(),
-                        Acc = equip[headers.IndexOf("ACC")].ToString(),
-                        Eva = equip[headers.IndexOf("EVA")].ToString(),
-                        FixedPassives = equip[headers.IndexOf("Fixed Passive Effects")].ToString(),
-                        RandomPassives = equip[headers.IndexOf("Random Passive Effects")].ToString(),
-                        Id = equip[headers.IndexOf("ID")].ToString()
+                        Name = Col("Name"),
+                        Character = Col("Character"),
+                        Realm = Col("Realm"),
+                        Season = Col("Season"),
+                        Group = Col("Group"),
+                        Type = Col("Type"),
+                        Synergy = Col("Synergy"),
+                        Combine = Col("Combine"),
+                        Rarity = Col("Rarity"),
+                        Level = Col("Level"),
+                        Atk = Col("ATK"),
+                        Def = Col("DEF"),
+                        Mag = Col("MAG"),
+                        Res = Col("RES"),
+                        Mnd = Col("MND"),
+                        Acc = Col("ACC"),
+                        Eva = Col("EVA"),
+                        FixedPassives = Col("Fixed Passive Effects"),
+                        RandomPassives = Col("Random Passive Effects"),
+                        Id = Col("ID")
                     });
                 }
                 catch (Exception)
